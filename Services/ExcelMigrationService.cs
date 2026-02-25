@@ -26,37 +26,6 @@ public class ExcelMigrationService : IExcelMigrationService
         "PressureUnitID"
     };
 
-
-    //public static readonly Dictionary<string, string> ProjectMapping = new(StringComparer.OrdinalIgnoreCase)
-    //    {
-
-    //        { "k__uuu_shell_creator", "ProjectID" },
-    //        { "record_no", "RecordNo" },
-    //        {"shellnumber" ,"Shellnumber"},
-    //        { "uuu_record_last_update_date", "UpdatedAt" },
-    //        { "uuu_record_last_update_user", "UpdatedName" },
-    //        { "k__uuu_record_last_update_user", "UpdatedBy" },
-
-    //        { "process_status", "ProcessStatus" },
-    //        { "status", "Status" },
-
-    //        { "creator_id", "CreatedName" },
-    //        { "k__creator_id", "CreatedBy" },
-
-    //        { "uot_c_number_sdt120", "CNumber" },
-
-    //        { "ucp_pm_smn", "ManagerName" },
-    //        { "k__ci_project_manager_upk", "ManagerID" },
-
-    //        { "description", "Description" },
-
-    //        { "uuu_shell_template_picker", "ProjectTemplateID" },
-    //        { "uuu_shell_location", "ProjectTypeMasterID" },
-
-    //        { "ugenprojectname", "ProjectName" },
-
-    //        { "uuu_creation_date", "CreatedAt" }
-    //    };
     public static readonly Dictionary<string, string> ProjectMapping = new(StringComparer.OrdinalIgnoreCase)
         {
 
