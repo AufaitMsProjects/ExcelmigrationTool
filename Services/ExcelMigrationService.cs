@@ -6,6 +6,8 @@ using System.Text;
 
 namespace ExcelMigrationTool.Services;
 
+//Excel migration service
+
 public class ExcelMigrationService : IExcelMigrationService
 {
     // SQL Command timeout in seconds (10 minutes for large datasets)
