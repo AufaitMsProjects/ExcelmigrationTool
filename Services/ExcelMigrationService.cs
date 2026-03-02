@@ -1433,7 +1433,21 @@ public class ExcelMigrationService : IExcelMigrationService
         { "uuu_record_last_update_user",      "UpdatedName" },
     };
 
-
+    // Hardcoded column mapping for ApprovalLog table
+    private static readonly Dictionary<string, string> ApprovalLogColumnMapping = new(StringComparer.OrdinalIgnoreCase)
+{
+     { "task_id", "ApprovalLogID" },
+     { "process_source_id", "CompanyId" },
+     { "process_project_id", "ProjectID" },
+     { "task_round", "SequenceNumber" },
+     { "name", "StepName" },
+     { "assignee_id", "ApproverUserId" },
+     { "action_name", "ActionName" },
+     { "status", "StatusID" },
+     { "source_modelname", "ApprovalUrl" },
+     { "task_start_date", "CreatedAt" },
+     { "task_end_date", "end_date" }
+};
     public async Task<UploadResponse> MigrateExcelToSqlServerAsync(
         string connectionString,
         string schemaName,
@@ -1513,6 +1527,13 @@ public class ExcelMigrationService : IExcelMigrationService
 
         // Check if this is SpecificationRelease table - use single table migration
         if (string.Equals(tableName, "SpecificationRelease", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var srConnection = new SqlConnection(connectionString);
+            await srConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(srConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+        // Check if this is ApprovalLog table - use single table migration
+        if (string.Equals(tableName, "ApprovalLog", StringComparison.OrdinalIgnoreCase))
         {
             await using var srConnection = new SqlConnection(connectionString);
             await srConnection.OpenAsync(cancellationToken);
@@ -4424,6 +4445,47 @@ public class ExcelMigrationService : IExcelMigrationService
         return mappings;
     }
 
+    private List<ColumnMapping> MatchColumnsForApprovalLog(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        var mappings = new List<ColumnMapping>();
+        var excelColumns = excelData.Columns.Cast<DataColumn>().ToList();
+
+        // Create a lookup for SQL column metadata by column name (case-insensitive)
+        var sqlColumnLookup = tableMetadata.ToDictionary(
+            m => m.ColumnName,
+            m => m,
+            StringComparer.OrdinalIgnoreCase);
+
+        // Iterate through the hardcoded mapping dictionary
+        foreach (var mappingEntry in ApprovalLogColumnMapping)
+        {
+            var excelColumnName = mappingEntry.Key;
+            var sqlColumnName = mappingEntry.Value;
+
+            // Check if Excel has this column
+            var excelColumn = excelColumns.FirstOrDefault(
+                ec => ec.ColumnName.Equals(excelColumnName, StringComparison.OrdinalIgnoreCase));
+
+            if (excelColumn == null)
+                continue; // Skip if Excel column not found
+
+            // Check if SQL table has the mapped column
+            if (!sqlColumnLookup.TryGetValue(sqlColumnName, out var sqlColumn))
+                continue; // Skip if SQL column not found in metadata
+
+            // Add the mapping
+            mappings.Add(new ColumnMapping
+            {
+                ExcelColumnName = excelColumn.ColumnName,
+                SqlColumnName = sqlColumn.ColumnName,
+                SqlDataType = sqlColumn.DataType,
+                IsIdentity = sqlColumn.IsIdentity,
+                IsNullable = sqlColumn.IsNullable
+            });
+        }
+
+        return mappings;
+    }
     private async Task CreateTempTableAsync(
         SqlConnection connection,
         SqlTransaction transaction,
