@@ -26,6 +26,8 @@ public class ExcelMigrationService : IExcelMigrationService
         "PressureUnitID"
     };
 
+    private static readonly Dictionary<string, string> _pkCache = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
 
     //public static readonly Dictionary<string, string> ProjectMapping = new(StringComparer.OrdinalIgnoreCase)
     //    {
@@ -62,13 +64,14 @@ public class ExcelMigrationService : IExcelMigrationService
 
             { "shell_pid", "ProjectID" },
             { "record_no", "RecordNo" },
-            {"shellnumber" ,"Shellnumber"},
+            {"shellname" ,"ProjectName"},
             { "shell_last_modified_date", "UpdatedAt" },
             { "uuu_record_last_update_user", "UpdatedName" },
             { "k__uuu_record_last_update_user", "UpdatedBy" },
+        {"shellnumber","Shellnumber" },
 
             { "process_status", "ProcessStatus" },
-            { "status", "Status" },
+            { "order_status", "Status" },
 
             { "creator_id", "CreatedName" },
             { "k__creator_id", "CreatedBy" },
@@ -81,11 +84,11 @@ public class ExcelMigrationService : IExcelMigrationService
             { "description", "Description" },
 
             { "uuu_shell_template_picker", "ProjectTemplateID" },
-            { "uuu_shell_location", "ProjectTypeMasterID" },
+            { "shelllocation", "ProjectTypeMasterID" },
 
-            { "ugenprojectname", "ProjectName" },
+            //{ "ugenprojectname", "ProjectName" },
 
-            { "uuu_creation_date", "CreatedAt" }
+            { "shell_createdate", "CreatedAt" }
         };
 
 
@@ -228,6 +231,27 @@ public class ExcelMigrationService : IExcelMigrationService
             { "ubg_remarks_ldt", "InitiatorReviewRemarks" },
 
             { "uot_sd", "CProjectNumber" }
+    };
+
+    private static readonly Dictionary<string, string> BankGuaranteeOTMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "record_id", "OrderTransmittalID" },
+        { "uuu_li_last_update_date", "UpdatedAt" },
+        { "ubg_type_of_bg_pd", "TypeOfGuarantee" },
+        { "ot_guarantee_against_pd", "GuaranteeAgainst" },
+        { "ot_bg_contractual_term_sldt", "ContractualTerms" },
+        { "ot_bg_guarantee_da", "PercentageOfGuarantee" },
+        { "ot_bg_guarantee_amt_da", "GuaranteeAmountINR" },
+        { "ot_guarantee_amt_da", "GuaranteeAmount" },
+        { "uot_cur1_pd", "Currency" },
+        { "ot_exchange_rate_da", "ExchangeRate" },
+        { "ubg_guarantee_num_sdt250", "BankGuaranteeNo" },
+        { "ot_bg_stat_pd", "BGStatus" },
+        { "ot_issued_date_dop", "IssuedDate" },
+        { "ot_expiry_date_dop", "ExpiryDate" },
+        { "ubg_bank_name_sdt250", "IssuingBank" },
+        { "project_id", "Projectid" },
+        { "id", "BankGuaranteeID" }
     };
 
 
@@ -460,6 +484,47 @@ public class ExcelMigrationService : IExcelMigrationService
         { "project_id", "Projectid" }
     };
 
+    // Hardcoded column mapping for PaymentENC table
+    private static readonly Dictionary<string, string> PaymentENCMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "ot_pay_per_da", "PaymentInPercent" },
+        { "ot_milestone_pd", "TypeOfPayment" },
+        { "ot_payment_sdt500", "PaymentTerms" },
+        { "total_amount_da_ot", "TotalAmountINR" },
+        { "record_id", "OrderTransmittalID" },
+        { "id", "PaymentENCID" },
+        { "project_id", "Projectid" }
+    };
+
+    // Hardcoded column mapping for OrderTransmittalNotes table
+    private static readonly Dictionary<string, string> OrderTransmittalNotesMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "NotesId", "Id" },
+        { "record_id", "OrderTransmittalID" },
+        { "project_id", "ProjectId" },
+        { "notes", "Notes" }
+    };
+
+    // Hardcoded column mapping for LiquidatedDamage table
+    private static readonly Dictionary<string, string> LiquidatedDamageMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "ot_ldclse_sdt500", "LDClause" },
+        { "ot_type_ld_pd", "LiquidatedDamageType" },
+        { "ot_ld_max_pd", "IsAmountPercent_Maximum" },
+        { "ot_ld_min_pd", "IsAmountPercent_Minimum" },
+        { "ot_min_amout_dec", "MinimumAmount_INRofPercent" },
+        { "ot_max_amount_dec", "MaximumAmount_INRofPercent" },
+        { "ot_min_1_dec", "MinimumPercent" },
+        { "ot_max_5_dec", "MaximumPercent" },
+        { "ot_ld_min_da", "MinimumAmountINR" },
+        { "ot_ld_max_da", "MaximumAmountINR" },
+        { "uuu_li_last_update_date", "UpdatedAt" },
+        { "others", "LiquidatedDamageOthersSpecify" },
+        { "record_id", "OrderTransmittalID" },
+        { "id", "LiquidatedDamageID" },
+        { "project_id", "Projectid" }
+    };
+
     // Hardcoded column mapping for UserList table
     private static readonly Dictionary<string, string> UserListMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
@@ -507,6 +572,22 @@ public class ExcelMigrationService : IExcelMigrationService
         { "projectid", "ProjectId" }
     };
 
+    // Hardcoded column mapping for MonthlyPlanning table
+    private static readonly Dictionary<string, string> MonthlyPlanningMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "record_no", "RecordNo" },
+        { "status", "Status" },
+        { "amount", "TotalEquivalentAmountINR" },
+        { "uuu_record_last_update_date", "CreatedAt" },
+        { "k__creator_id", "CreatedBy" },
+        { "creator_id", "CreatedName" },
+        { "uuu_li_last_update_date", "UpdatedAt" },
+        { "k__uuu_record_last_update_user", "UpdatedBy" },
+        { "uuu_record_last_update_user", "UpdatedName" },
+        { "id", "MonthlyPlanningId" },
+        { "project_id", "ProjectId" }
+    };
+
     // Hardcoded column mapping for MonthlyPlanningLineItem table (child of MonthlyPlanning)
     private static readonly Dictionary<string, string> MonthlyPlanningLineItemMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
@@ -544,6 +625,7 @@ public class ExcelMigrationService : IExcelMigrationService
             { "status", "Status" },
             { "project_id", "ProjectID" },
         {"k__uppr_project_pk","ProjectManagerId" },
+        { "uppr_project_pk","ProjectManagerName"},
 
             { "k__customer_contacts_dp", "CustomerContactID" },
             { "k__customer_contacts_dp1", "CustomerContactID2" },
@@ -779,9 +861,11 @@ public class ExcelMigrationService : IExcelMigrationService
            { "id", "CustomerContactID" },
             { "record_no", "RecordNo" },
             { "title", "Title" },
+        {"status","Status" },
 
             { "uuu_record_last_update_date", "UpdatedAt" },
             { "k__creator_id", "CreatedBy" },
+        {"creator_id","CreatedName" },
             { "uuu_creation_date", "CreatedAt" },
 
             { "uircntctfstnmtb", "ContactName" },
@@ -1194,10 +1278,14 @@ public class ExcelMigrationService : IExcelMigrationService
             { "project_id", "ProjectId" },
             { "process_status", "ProcessStatus" },
             { "status", "Status" },
-            { "creator_id", "CreatedBy" },
+            { "creator_id", "CreatedName" },
+        {"k__creator_id","CreatedBy" },
+
+
             { "uuu_creation_date", "CreatedAt" },
             { "uuu_record_last_update_date", "UpdatedAt" },
-            { "uuu_record_last_update_user", "UpdatedBy" },
+            { "uuu_record_last_update_user", "UpdatedName" },
+        {"k__uuu_record_last_update_user","UpdatedBy" },
 
             // ---- Alternator Options ----
             { "uot_alternator_scope", "AlternatorScopeID" },
@@ -1385,8 +1473,8 @@ public class ExcelMigrationService : IExcelMigrationService
             { "elec_ot_rmk9_mtb4000", "BatteryRemarks" },
 
             // ---- OT / Reference ----
-            { "ot_sel_ot_rec_bpp", "OrderTransmittalID" },
-            { "ot_select_project_sp", "CloneProjectId" }
+            { "k__ot_sel_ot_rec_bpp", "OrderTransmittalID" },
+            { "k__ot_select_project_sp", "CloneProjectId" }
         };
 
 
@@ -1481,10 +1569,14 @@ public class ExcelMigrationService : IExcelMigrationService
             return response;
         }
 
-        // Check if table name starts with "OrderTransmittal" OR is "Payment_Supply" - migrate to all matching tables
+        // Check if table name starts with "OrderTransmittal" OR is "Payment_Supply" or "Payment_ENC" - migrate to all matching tables
         if (tableName.StartsWith("OrderTransmittal", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(tableName, "Payment_Supply", StringComparison.OrdinalIgnoreCase) ||
-            string.Equals(tableName, "payment_supply", StringComparison.OrdinalIgnoreCase))
+            string.Equals(tableName, "payment_supply", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(tableName, "payment_enc", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(tableName, "LiquidatedDamage", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(tableName, "OrderTransmittal_Notes", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(tableName, "BankGuarantee", StringComparison.OrdinalIgnoreCase))
         {
             return await MigrateToOrderTransmittalTablesAsync(connectionString, schemaName, tableName, excelData, cancellationToken);
         }
@@ -1513,6 +1605,15 @@ public class ExcelMigrationService : IExcelMigrationService
             await using var icfpConnection = new SqlConnection(connectionString);
             await icfpConnection.OpenAsync(cancellationToken);
             return await MigrateToSingleTableAsync(icfpConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        // Check if this is MonthlyPlanning table - use single table migration
+        if (string.Equals(tableName, "MonthlyPlanning", StringComparison.OrdinalIgnoreCase) ||
+            tableName.StartsWith("MonthlyPlanning", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var mpConnection = new SqlConnection(connectionString);
+            await mpConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(mpConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
         }
 
         // Check if this is MonthlyPlanningLineItem table - use single table migration
@@ -1730,55 +1831,121 @@ public class ExcelMigrationService : IExcelMigrationService
 
         try
         {
-            // Step 1: Find all tables matching the criteria
+            // Step 1: Identify which tables to migrate
             var matchingTables = new List<string>();
-
-            // If user specifically asked for "Payment_Supply", only migrate that table
-            if (string.Equals(tableNamePrefix, "Payment_Supply", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(tableNamePrefix, "payment_supply", StringComparison.OrdinalIgnoreCase))
+            var allPotentialTables = new List<string>();
+            
+            // If the user specifically requested a known child table, only migrate that one
+            if (string.Equals(tableNamePrefix, "payment_supply", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(tableNamePrefix, "payment_enc", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(tableNamePrefix, "LiquidatedDamage", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(tableNamePrefix, "OrderTransmittal_Notes", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(tableNamePrefix, "OrderTransmittal_SiteOverView", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(tableNamePrefix, "OrderTransmittal_RiskAndInsurance", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(tableNamePrefix, "OrderTransmittal_ErectionAndCommissioning", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(tableNamePrefix, "OrderTransmittal_ConsultantDetails", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(tableNamePrefix, "BankGuarantee", StringComparison.OrdinalIgnoreCase))
             {
-                var paymentSupplyTables = await GetTablesWithPrefixAsync(connection, schemaName, "payment_supply", cancellationToken);
-                matchingTables.AddRange(paymentSupplyTables);
+                matchingTables.Add(tableNamePrefix);
             }
             else
             {
-                // Default behavior: Migrate OrderTransmittal ONLY
-                var otTables = await GetTablesWithPrefixAsync(connection, schemaName, "OrderTransmittal", cancellationToken);
-                matchingTables.AddRange(otTables);
-                // Do NOT include payment_supply unless explicitly requested
+                // Default behavior for "OrderTransmittal" prefix: 
+                // We ONLY want the main table and the specific child tables we have filtering logic for
+                var prefixSearch = "OrderTransmittal";
+                allPotentialTables = await GetTablesWithPrefixAsync(connection, schemaName, prefixSearch, cancellationToken);
+                
+                var childTablesToSupport = new HashSet<string>(StringComparer.OrdinalIgnoreCase) 
+                { 
+                    "OrderTransmittal", 
+                    "OrderTransmittal_Notes", 
+                    "OrderTransmittal_SiteOverView",
+                    "OrderTransmittal_RiskAndInsurance",
+                    "OrderTransmittal_ErectionAndCommissioning",
+                    "OrderTransmittal_ConsultantDetails",
+                    "payment_supply", 
+                    "payment_enc", 
+                    "LiquidatedDamage",
+                    "BankGuarantee"
+                };
+
+                matchingTables = allPotentialTables
+                    .Where(t => childTablesToSupport.Contains(t))
+                    .ToList();
+
+                // If user targeted "OrderTransmittal" exactly, ensure the core sub-tables are included 
+                // even if the prefix search missed them (though it shouldn't)
+                if (string.Equals(tableNamePrefix, "OrderTransmittal", StringComparison.OrdinalIgnoreCase))
+                {
+                    var coreSubTables = new[] { 
+                        "OrderTransmittal_SiteOverView", 
+                        "OrderTransmittal_RiskAndInsurance", 
+                        "OrderTransmittal_ErectionAndCommissioning", 
+                        "OrderTransmittal_ConsultantDetails" 
+                    };
+                    foreach (var subTable in coreSubTables)
+                    {
+                        if (!matchingTables.Contains(subTable, StringComparer.OrdinalIgnoreCase))
+                        {
+                            matchingTables.Add(subTable);
+                        }
+                    }
+                }
+            }
+            // Ensure OrderTransmittal (main table) is at least considered if we found no others
+            if (!matchingTables.Any(t => string.Equals(t, "OrderTransmittal", StringComparison.OrdinalIgnoreCase)) &&
+                allPotentialTables.Any(t => string.Equals(t, "OrderTransmittal", StringComparison.OrdinalIgnoreCase)))
+            {
+                matchingTables.Add("OrderTransmittal");
             }
 
             if (matchingTables.Count == 0)
             {
-                response.ErrorMessages.Add($"No tables found with prefix 'OrderTransmittal' in schema '{schemaName}'.");
+                response.ErrorMessages.Add($"No matching tables found in schema '{schemaName}' for prefix '{tableNamePrefix}'.");
                 return response;
             }
 
-            // Step 2: Sort tables to ensure parent table is migrated first
-            // Parent table is "OrderTransmittal" (exact match), child tables have underscores
-            var parentTable = matchingTables.FirstOrDefault(t =>
-                string.Equals(t, "OrderTransmittal", StringComparison.OrdinalIgnoreCase));
-            var childTables = matchingTables.Where(t =>
-                !string.Equals(t, "OrderTransmittal", StringComparison.OrdinalIgnoreCase))
-                .OrderBy(t => t).ToList();
-
-            // Build ordered list: parent first, then children
+            // Step 2: Determine order (Parent tables first, then child tables)
             var orderedTables = new List<string>();
-            if (parentTable != null)
-            {
-                orderedTables.Add(parentTable);
-            }
+            var parentTables = matchingTables.Where(t => string.Equals(t, "OrderTransmittal", StringComparison.OrdinalIgnoreCase)).ToList();
+            var childTables = matchingTables.Where(t => !string.Equals(t, "OrderTransmittal", StringComparison.OrdinalIgnoreCase)).ToList();
+
+            orderedTables.AddRange(parentTables);
             orderedTables.AddRange(childTables);
 
-            // Step 3: Migrate Excel data to each matching table in order
+            // Step 3: Check data types once before the loop
+            bool hasTabId = excelData.Columns.Contains("uuu_tab_id");
+            bool isPaymentSupplyData = false;
+            bool isPaymentENCData = false;
+            bool isOrderTransmittalNotesData = false;
+            bool isLiquidatedDamageData = false;
+            bool isBankGuaranteeData = false;
+
+            if (hasTabId)
+            {
+                // Traverse once to determine which types of data are present
+                foreach (DataRow row in excelData.Rows)
+                {
+                    var tabId = row["uuu_tab_id"]?.ToString();
+                    if (tabId == "11") isPaymentSupplyData = true;
+                    else if (tabId == "12") isPaymentENCData = true;
+                    else if (tabId == "0") isOrderTransmittalNotesData = true;
+                    else if (tabId == "4") isLiquidatedDamageData = true;
+                    else if (tabId == "6") isBankGuaranteeData = true;
+                    
+                    if (isPaymentSupplyData && isPaymentENCData && isOrderTransmittalNotesData && isLiquidatedDamageData && isBankGuaranteeData) 
+                        break; // Found all types
+                }
+            }
+
+            // Step 4: Migrate Excel data to each matching table in order
             foreach (var targetTable in orderedTables)
             {
                 DataTable tableSpecificData = excelData;
-                bool isPaymentSupplyData = excelData.Columns.Contains("uuu_tab_id") && 
-                                           excelData.AsEnumerable().Any(r => r["uuu_tab_id"]?.ToString() == "11");
                 
-                // If the Excel data is for payment_supply (uuu_tab_id=11), SKIP the main OrderTransmittal table
-                if (isPaymentSupplyData && string.Equals(targetTable, "OrderTransmittal", StringComparison.OrdinalIgnoreCase))
+                // If the Excel data is for child tables, SKIP the main OrderTransmittal table
+                if ((isPaymentSupplyData || isPaymentENCData || isOrderTransmittalNotesData || isLiquidatedDamageData || isBankGuaranteeData) && 
+                    string.Equals(targetTable, "OrderTransmittal", StringComparison.OrdinalIgnoreCase))
                 {
                     continue;
                 }
@@ -1790,6 +1957,70 @@ public class ExcelMigrationService : IExcelMigrationService
                     {
                         var filteredRows = excelData.AsEnumerable()
                             .Where(r => r["uuu_tab_id"]?.ToString() == "11")
+                            .ToList();
+
+                        if (filteredRows.Count > 0)
+                            tableSpecificData = filteredRows.CopyToDataTable();
+                        else
+                            continue; // Skip table if no matching rows
+                    }
+                }
+
+                // Special row filtering for payment_enc child table based on uuu_tab_id
+                if (string.Equals(targetTable, "payment_enc", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (excelData.Columns.Contains("uuu_tab_id"))
+                    {
+                        var filteredRows = excelData.AsEnumerable()
+                            .Where(r => r["uuu_tab_id"]?.ToString() == "12")
+                            .ToList();
+
+                        if (filteredRows.Count > 0)
+                            tableSpecificData = filteredRows.CopyToDataTable();
+                        else
+                            continue; // Skip table if no matching rows
+                    }
+                }
+
+                // Special row filtering for OrderTransmittal_Notes child table based on uuu_tab_id
+                if (string.Equals(targetTable, "OrderTransmittal_Notes", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (excelData.Columns.Contains("uuu_tab_id"))
+                    {
+                        var filteredRows = excelData.AsEnumerable()
+                            .Where(r => r["uuu_tab_id"]?.ToString() == "0")
+                            .ToList();
+
+                        if (filteredRows.Count > 0)
+                            tableSpecificData = filteredRows.CopyToDataTable();
+                        else
+                            continue; // Skip table if no matching rows
+                    }
+                }
+
+                // Special row filtering for LiquidatedDamage child table based on uuu_tab_id
+                if (string.Equals(targetTable, "LiquidatedDamage", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (excelData.Columns.Contains("uuu_tab_id"))
+                    {
+                        var filteredRows = excelData.AsEnumerable()
+                            .Where(r => r["uuu_tab_id"]?.ToString() == "4")
+                            .ToList();
+
+                        if (filteredRows.Count > 0)
+                            tableSpecificData = filteredRows.CopyToDataTable();
+                        else
+                            continue; // Skip table if no matching rows
+                    }
+                }
+
+                // Special row filtering for BankGuarantee child table based on uuu_tab_id
+                if (string.Equals(targetTable, "BankGuarantee", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (excelData.Columns.Contains("uuu_tab_id"))
+                    {
+                        var filteredRows = excelData.AsEnumerable()
+                            .Where(r => r["uuu_tab_id"]?.ToString() == "6")
                             .ToList();
 
                         if (filteredRows.Count > 0)
@@ -2334,7 +2565,9 @@ public class ExcelMigrationService : IExcelMigrationService
         var response = new UploadResponse();
 
         // Use a separate transaction for each table to ensure isolation
-        var transaction = connection.BeginTransaction();
+        if (connection.State != System.Data.ConnectionState.Open)
+            await connection.OpenAsync(cancellationToken);
+        var transaction = await connection.BeginTransactionAsync(cancellationToken) as SqlTransaction;
         var tempTableName = $"#TMP_{Guid.NewGuid():N}";
 
         try
@@ -2428,7 +2661,7 @@ public class ExcelMigrationService : IExcelMigrationService
                 hasIdentityInExcel,
                 cancellationToken);
 
-            transaction.Commit();
+            await transaction!.CommitAsync(cancellationToken);
 
             response.Success = rowErrors.Count == 0;
             response.RowsInserted = rowsInserted;
@@ -2440,7 +2673,7 @@ public class ExcelMigrationService : IExcelMigrationService
         {
             try
             {
-                transaction.Rollback();
+                await transaction!.RollbackAsync(cancellationToken);
             }
             catch
             {
@@ -2775,6 +3008,13 @@ public class ExcelMigrationService : IExcelMigrationService
             return MatchColumnsForInitialCashFlowPlan(excelData, tableMetadata);
         }
 
+        // Check if this is MonthlyPlanning table - use hardcoded mapping
+        if (string.Equals(tableName, "MonthlyPlanning", StringComparison.OrdinalIgnoreCase) ||
+            tableName.StartsWith("MonthlyPlanning", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForMonthlyPlanning(excelData, tableMetadata);
+        }
+
         // Check if this is MonthlyPlanningLineItem table - use hardcoded mapping
         if (string.Equals(tableName, "MonthlyPlanningLineItem", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(tableName, "MonthlyPlanning_LineItem", StringComparison.OrdinalIgnoreCase) ||
@@ -2843,6 +3083,24 @@ public class ExcelMigrationService : IExcelMigrationService
         if (string.Equals(tableName, "payment_supply", StringComparison.OrdinalIgnoreCase))
         {
             return MatchColumnsForPaymentSupply(excelData, tableMetadata);
+        }
+
+        // Check if this is payment_enc table - use hardcoded mapping
+        if (string.Equals(tableName, "payment_enc", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForPaymentENC(excelData, tableMetadata);
+        }
+
+        // Check if this is OrderTransmittal_Notes table - use hardcoded mapping
+        if (string.Equals(tableName, "OrderTransmittal_Notes", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForOrderTransmittalNotes(excelData, tableMetadata);
+        }
+
+        // Check if this is LiquidatedDamage table - use hardcoded mapping
+        if (string.Equals(tableName, "LiquidatedDamage", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForLiquidatedDamage(excelData, tableMetadata);
         }
 
         // Check if table name starts with "MinutesOfMeeting" or "MOM" - use hardcoded mapping
@@ -3454,6 +3712,144 @@ public class ExcelMigrationService : IExcelMigrationService
         return mappings;
     }
 
+    private List<ColumnMapping> MatchColumnsForPaymentENC(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        var mappings = new List<ColumnMapping>();
+        var excelColumns = excelData.Columns.Cast<DataColumn>().ToList();
+
+        // Create a lookup for SQL column metadata by column name (case-insensitive)
+        var sqlColumnLookup = tableMetadata.ToDictionary(
+            m => m.ColumnName,
+            m => m,
+            StringComparer.OrdinalIgnoreCase);
+
+        // Iterate through the hardcoded mapping dictionary
+        foreach (var mappingEntry in PaymentENCMapping)
+        {
+            var excelColumnName = mappingEntry.Key;
+            var sqlColumnName = mappingEntry.Value;
+
+            // Check if Excel has this column
+            var excelColumn = excelColumns.FirstOrDefault(
+                ec => ec.ColumnName.Equals(excelColumnName, StringComparison.OrdinalIgnoreCase));
+
+            if (excelColumn == null)
+                continue; // Skip if Excel column not found
+
+            // Check if SQL table has the mapped column
+            if (!sqlColumnLookup.TryGetValue(sqlColumnName, out var sqlColumn))
+                continue; // Skip if SQL column not found in metadata
+
+            // Add the mapping
+            mappings.Add(new ColumnMapping
+            {
+                ExcelColumnName = excelColumn.ColumnName,
+                SqlColumnName = sqlColumn.ColumnName,
+                SqlDataType = sqlColumn.DataType,
+                IsIdentity = sqlColumn.IsIdentity,
+                IsNullable = sqlColumn.IsNullable,
+                ForeignKeyTableSchema = sqlColumn.ForeignKeyTableSchema,
+                ForeignKeyTableName = sqlColumn.ForeignKeyTableName,
+                ForeignKeyColumnName = sqlColumn.ForeignKeyColumnName,
+                ForeignKeyLookupColumnName = sqlColumn.ForeignKeyLookupColumnName
+            });
+        }
+
+        return mappings;
+    }
+
+    private List<ColumnMapping> MatchColumnsForOrderTransmittalNotes(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        var mappings = new List<ColumnMapping>();
+        var excelColumns = excelData.Columns.Cast<DataColumn>().ToList();
+
+        // Create a lookup for SQL column metadata by column name (case-insensitive)
+        var sqlColumnLookup = tableMetadata.ToDictionary(
+            m => m.ColumnName,
+            m => m,
+            StringComparer.OrdinalIgnoreCase);
+
+        // Iterate through the hardcoded mapping dictionary
+        foreach (var mappingEntry in OrderTransmittalNotesMapping)
+        {
+            var excelColumnName = mappingEntry.Key;
+            var sqlColumnName = mappingEntry.Value;
+
+            // Check if Excel has this column
+            var excelColumn = excelColumns.FirstOrDefault(
+                ec => ec.ColumnName.Equals(excelColumnName, StringComparison.OrdinalIgnoreCase));
+
+            if (excelColumn == null)
+                continue; // Skip if Excel column not found
+
+            // Check if SQL table has the mapped column
+            if (!sqlColumnLookup.TryGetValue(sqlColumnName, out var sqlColumn))
+                continue; // Skip if SQL column not found in metadata
+
+            // Add the mapping
+            mappings.Add(new ColumnMapping
+            {
+                ExcelColumnName = excelColumn.ColumnName,
+                SqlColumnName = sqlColumn.ColumnName,
+                SqlDataType = sqlColumn.DataType,
+                IsIdentity = sqlColumn.IsIdentity,
+                IsNullable = sqlColumn.IsNullable,
+                ForeignKeyTableSchema = sqlColumn.ForeignKeyTableSchema,
+                ForeignKeyTableName = sqlColumn.ForeignKeyTableName,
+                ForeignKeyColumnName = sqlColumn.ForeignKeyColumnName,
+                ForeignKeyLookupColumnName = sqlColumn.ForeignKeyLookupColumnName
+            });
+        }
+
+        return mappings;
+    }
+
+    private List<ColumnMapping> MatchColumnsForLiquidatedDamage(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        var mappings = new List<ColumnMapping>();
+        var excelColumns = excelData.Columns.Cast<DataColumn>().ToList();
+
+        // Create a lookup for SQL column metadata by column name (case-insensitive)
+        var sqlColumnLookup = tableMetadata.ToDictionary(
+            m => m.ColumnName,
+            m => m,
+            StringComparer.OrdinalIgnoreCase);
+
+        // Iterate through the hardcoded mapping dictionary
+        foreach (var mappingEntry in LiquidatedDamageMapping)
+        {
+            var excelColumnName = mappingEntry.Key;
+            var sqlColumnName = mappingEntry.Value;
+
+            // Check if Excel has this column
+            var excelColumn = excelColumns.FirstOrDefault(
+                ec => ec.ColumnName.Equals(excelColumnName, StringComparison.OrdinalIgnoreCase));
+
+            if (excelColumn == null)
+                continue; // Skip if Excel column not found
+
+            // Check if SQL table has the mapped column
+            if (!sqlColumnLookup.TryGetValue(sqlColumnName, out var sqlColumn))
+                continue; // Skip if SQL column not found in metadata
+
+            // Add the mapping
+            mappings.Add(new ColumnMapping
+            {
+                ExcelColumnName = excelColumn.ColumnName,
+                SqlColumnName = sqlColumn.ColumnName,
+                SqlDataType = sqlColumn.DataType,
+                IsIdentity = sqlColumn.IsIdentity,
+                IsNullable = sqlColumn.IsNullable,
+                ForeignKeyTableSchema = sqlColumn.ForeignKeyTableSchema,
+                ForeignKeyTableName = sqlColumn.ForeignKeyTableName,
+                ForeignKeyColumnName = sqlColumn.ForeignKeyColumnName,
+                ForeignKeyLookupColumnName = sqlColumn.ForeignKeyLookupColumnName
+            });
+        }
+
+        return mappings;
+    }
+
     private List<ColumnMapping> MatchColumnsForLetterOfCorrespondence(DataTable excelData, List<ColumnMetadata> tableMetadata)
     {
         var mappings = new List<ColumnMapping>();
@@ -3507,8 +3903,16 @@ public class ExcelMigrationService : IExcelMigrationService
             m => m,
             StringComparer.OrdinalIgnoreCase);
 
-        // Iterate through the hardcoded mapping dictionary
-        foreach (var mappingEntry in BankGuaranteeMapping)
+        // Select mapping based on whether this is an OT line item or a pure BG view
+        var mappingToUse = BankGuaranteeMapping;
+        if (excelColumns.Any(c => string.Equals(c.ColumnName, "record_id", StringComparison.OrdinalIgnoreCase)) &&
+            excelColumns.Any(c => string.Equals(c.ColumnName, "ot_bg_guarantee_amt_da", StringComparison.OrdinalIgnoreCase)))
+        {
+            mappingToUse = BankGuaranteeOTMapping;
+        }
+
+        // Iterate through the selected mapping dictionary
+        foreach (var mappingEntry in mappingToUse)
         {
             var excelColumnName = mappingEntry.Key;
             var sqlColumnName = mappingEntry.Value;
@@ -3677,6 +4081,48 @@ public class ExcelMigrationService : IExcelMigrationService
 
         // Iterate through the hardcoded mapping dictionary
         foreach (var mappingEntry in MonthlyPlanningLineItemMapping)
+        {
+            var excelColumnName = mappingEntry.Key;
+            var sqlColumnName = mappingEntry.Value;
+
+            // Check if Excel has this column
+            var excelColumn = excelColumns.FirstOrDefault(
+                ec => ec.ColumnName.Equals(excelColumnName, StringComparison.OrdinalIgnoreCase));
+
+            if (excelColumn == null)
+                continue; // Skip if Excel column not found
+
+            // Check if SQL table has the mapped column
+            if (!sqlColumnLookup.TryGetValue(sqlColumnName, out var sqlColumn))
+                continue; // Skip if SQL column not found in metadata
+
+            // Add the mapping
+            mappings.Add(new ColumnMapping
+            {
+                ExcelColumnName = excelColumn.ColumnName,
+                SqlColumnName = sqlColumn.ColumnName,
+                SqlDataType = sqlColumn.DataType,
+                IsIdentity = sqlColumn.IsIdentity,
+                IsNullable = sqlColumn.IsNullable
+            });
+        }
+
+        return mappings;
+    }
+
+    private List<ColumnMapping> MatchColumnsForMonthlyPlanning(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        var mappings = new List<ColumnMapping>();
+        var excelColumns = excelData.Columns.Cast<DataColumn>().ToList();
+
+        // Create a lookup for SQL column metadata by column name (case-insensitive)
+        var sqlColumnLookup = tableMetadata.ToDictionary(
+            m => m.ColumnName,
+            m => m,
+            StringComparer.OrdinalIgnoreCase);
+
+        // Iterate through the hardcoded mapping dictionary
+        foreach (var mappingEntry in MonthlyPlanningMapping)
         {
             var excelColumnName = mappingEntry.Key;
             var sqlColumnName = mappingEntry.Value;
@@ -4544,10 +4990,15 @@ public class ExcelMigrationService : IExcelMigrationService
         var isLCReviewNotesObservation = string.Equals(tableName, "LCReview_NotesObservation", StringComparison.OrdinalIgnoreCase);
         var isInitialCashPlan = string.Equals(tableName, "InitialCashPlan", StringComparison.OrdinalIgnoreCase);
         var isPaymentSupply = string.Equals(tableName, "payment_supply", StringComparison.OrdinalIgnoreCase);
+        var isPaymentENC = string.Equals(tableName, "payment_enc", StringComparison.OrdinalIgnoreCase);
+        var isOrderTransmittalNotes = string.Equals(tableName, "OrderTransmittal_Notes", StringComparison.OrdinalIgnoreCase);
+        var isLiquidatedDamage = string.Equals(tableName, "LiquidatedDamage", StringComparison.OrdinalIgnoreCase);
         var isMonthlyActualCollection = string.Equals(tableName, "MonthlyActualCollection", StringComparison.OrdinalIgnoreCase);
         var isInitialCashFlowPlan = string.Equals(tableName, "InitialCashFlowPlan", StringComparison.OrdinalIgnoreCase);
         var isMonthlyPlanningLineItem = string.Equals(tableName, "MonthlyPlanningLineItem", StringComparison.OrdinalIgnoreCase) ||
                                         string.Equals(tableName, "MonthlyPlanning_LineItem", StringComparison.OrdinalIgnoreCase);
+        var isMonthlyPlanning = string.Equals(tableName, "MonthlyPlanning", StringComparison.OrdinalIgnoreCase) ||
+                                tableName.StartsWith("MonthlyPlanning", StringComparison.OrdinalIgnoreCase);
         var isMonthlyActualCollectionPlanned = string.Equals(tableName, "MonthlyActualCollectionPlanned", StringComparison.OrdinalIgnoreCase);
         var isMonthlyActualUnplannedCollection = string.Equals(tableName, "MonthlyActualUnplannedCollection", StringComparison.OrdinalIgnoreCase);
         var isSpecificationRelease = string.Equals(tableName, "SpecificationRelease", StringComparison.OrdinalIgnoreCase);
@@ -4770,7 +5221,7 @@ public class ExcelMigrationService : IExcelMigrationService
                             if (resolvedProjectId == null)
                             {
                                 // For CommunicationProtocol, OrderTransmittal, BankGuarantee, Turbine, and ElectricalInstrumentationDBO, if ProjectID doesn't exist, set to NULL instead of skipping row
-                                if (isCommunicationProtocol || isOrderTransmittal || isBankGuarantee || isTurbine || isElectricalInstrumentationDBO || isBPAttachments || isMechanicalDBO || isContractClearance || isAdditionalOrderBooking || isMinutesOfMeeting || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isInitialCashFlowPlan || isMonthlyPlanningLineItem || isMonthlyActualCollectionPlanned || isMonthlyActualUnplannedCollection || isSpecificationRelease)
+                                if (isCommunicationProtocol || isOrderTransmittal || isBankGuarantee || isTurbine || isElectricalInstrumentationDBO || isBPAttachments || isMechanicalDBO || isContractClearance || isAdditionalOrderBooking || isMinutesOfMeeting || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isInitialCashFlowPlan || isMonthlyPlanningLineItem || isMonthlyActualCollectionPlanned || isMonthlyActualUnplannedCollection || isSpecificationRelease || isPaymentENC || isOrderTransmittalNotes || isLiquidatedDamage)
                                 {
                                     value = DBNull.Value;
                                 }
@@ -5100,6 +5551,25 @@ public class ExcelMigrationService : IExcelMigrationService
                         }
                     }
 
+                    // Manual conversion for ProjectTypeMasterID labels
+                    if (string.Equals(mapping.SqlColumnName, "ProjectTypeMasterID", StringComparison.OrdinalIgnoreCase) && 
+                        value != DBNull.Value && value != null)
+                    {
+                        var strVal = value.ToString()?.Trim() ?? string.Empty;
+                        if (string.Equals(strVal, "/Triveni Turbines/C Projects", StringComparison.OrdinalIgnoreCase) || 
+                            string.Equals(strVal, "C Projects", StringComparison.OrdinalIgnoreCase))
+                            value = 1;
+                        else if (string.Equals(strVal, "/Triveni Turbines", StringComparison.OrdinalIgnoreCase) ||
+                                 string.Equals(strVal, "Triveni Turbines", StringComparison.OrdinalIgnoreCase))
+                            value = 2;
+                        else if (string.Equals(strVal, "/Triveni Turbines/R Projects", StringComparison.OrdinalIgnoreCase) ||
+                                 string.Equals(strVal, "R Projects", StringComparison.OrdinalIgnoreCase))
+                            value = 3;
+                        else if (string.Equals(strVal, "/Triveni Turbines/S Projects", StringComparison.OrdinalIgnoreCase) ||
+                                 string.Equals(strVal, "S Projects", StringComparison.OrdinalIgnoreCase))
+                            value = 4;
+                    }
+
                     // Special handling for ProjectTypeMasterID column (FK to master.ProjectTypeMaster)
                     // Resolve by ProjectTypeMasterID (numeric) or by ProjectTypeName (string)
                     if (string.Equals(mapping.SqlColumnName, "ProjectTypeMasterID", StringComparison.OrdinalIgnoreCase) &&
@@ -5188,7 +5658,7 @@ public class ExcelMigrationService : IExcelMigrationService
 
                     // Special handling for OrderTransmittalId in ContractClearance or AdditionalOrderBooking (FK to bp.OrderTransmittal)
                     // If the OrderTransmittal doesn't exist, set to NULL instead of failing the migration
-                    if ((isContractClearance || isAdditionalOrderBooking || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isSpecificationRelease) &&
+                    if ((isContractClearance || isAdditionalOrderBooking || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isSpecificationRelease || isPaymentENC || isOrderTransmittalNotes || isLiquidatedDamage || isBankGuarantee) &&
                         string.Equals(mapping.SqlColumnName, "OrderTransmittalId", StringComparison.OrdinalIgnoreCase))
                     {
                         if (IsValueZero(value))
@@ -5273,6 +5743,21 @@ public class ExcelMigrationService : IExcelMigrationService
                             value = longVal;
                     }
 
+                    if (isPaymentENC &&
+                        string.Equals(mapping.SqlColumnName, "TypeOfPayment", StringComparison.OrdinalIgnoreCase) &&
+                        value != DBNull.Value && value != null)
+                    {
+                        var strValue = value.ToString()?.Trim() ?? string.Empty;
+                        if (string.Equals(strValue, "Milestone Advance", StringComparison.OrdinalIgnoreCase))
+                            value = 1;
+                        else if (string.Equals(strValue, "Token", StringComparison.OrdinalIgnoreCase))
+                            value = 2;
+                        else if (string.Equals(strValue, "Final", StringComparison.OrdinalIgnoreCase))
+                            value = 3;
+                        else if (long.TryParse(strValue, out var longVal))
+                            value = longVal;
+                    }
+
                     // Special handling for status column in CustomerMaster
                     if (isCustomerMaster &&
                         string.Equals(mapping.SqlColumnName, "Status", StringComparison.OrdinalIgnoreCase) &&
@@ -5292,6 +5777,14 @@ public class ExcelMigrationService : IExcelMigrationService
                     // Special handling for status column in VendorMaster
                     if (isVendorMaster &&
                         string.Equals(mapping.SqlColumnName, "StatusID", StringComparison.OrdinalIgnoreCase) &&
+                        value != DBNull.Value && value != null)
+                    {
+                        value = TransformStatusValue(value, mapping.IsNullable);
+                    }
+
+                    // Special handling for status column in MonthlyPlanning
+                    if (isMonthlyPlanning &&
+                        string.Equals(mapping.SqlColumnName, "Status", StringComparison.OrdinalIgnoreCase) &&
                         value != DBNull.Value && value != null)
                     {
                         value = TransformStatusValue(value, mapping.IsNullable);
@@ -5766,7 +6259,7 @@ public class ExcelMigrationService : IExcelMigrationService
                         (string.Equals(mapping.SqlColumnName, "OrderTransmittalID", StringComparison.OrdinalIgnoreCase) ||
                          string.Equals(mapping.ExcelColumnName, "k__ot_sel_ot_rec_bpp", StringComparison.OrdinalIgnoreCase) ||
                          string.Equals(mapping.ExcelColumnName, "ot_sel_ot_rec_bpp", StringComparison.OrdinalIgnoreCase) ||
-                         string.Equals(mapping.ExcelColumnName, "id", StringComparison.OrdinalIgnoreCase)))
+                         (isOrderTransmittal && string.Equals(mapping.ExcelColumnName, "id", StringComparison.OrdinalIgnoreCase))))
                     {
                         // If value is NULL or DBNull, keep it as NULL
                         if (value == DBNull.Value || value == null)
@@ -5801,20 +6294,48 @@ public class ExcelMigrationService : IExcelMigrationService
 
                             if (resolvedOrderTransmittalId == null)
                             {
-                                errorColumn = mapping.ExcelColumnName;
-                                errorValue = value;
-                                errorMessage = $"Foreign key constraint violation: OrderTransmittalID '{value}' does not exist in table 'bp.OrderTransmittal'";
-                                skipRow = true;
-                                break;
+                                if (isElectricalInstrumentationDBO)
+                                {
+                                    // For ElectricalInstrumentationDBO: insert NULL instead of skipping the row
+                                    value = DBNull.Value;
+                                }
+                                else
+                                {
+                                    errorColumn = mapping.ExcelColumnName;
+                                    errorValue = value;
+                                    errorMessage = $"Foreign key constraint violation: OrderTransmittalID '{value}' does not exist in table 'bp.OrderTransmittal'";
+                                    skipRow = true;
+                                    break;
+                                }
                             }
-
-                            value = resolvedOrderTransmittalId;
+                            else
+                            {
+                                value = resolvedOrderTransmittalId;
+                            }
                         }
                     }
 
                     // Special handling for ElectricalInstrumentationDBO columns
                     if (isElectricalInstrumentationDBO && value != DBNull.Value && value != null)
                     {
+                        // Normalize whitespace: collapse multiple spaces/tabs into a single space,
+                        // and ensure a space before '(' when one is missing
+                        // e.g. "Aluminium(Std)" → "Aluminium (Std)", "TTL  scope" → "TTL scope"
+                        if (value is string electricalStrVal)
+                        {
+                            // Step 1: collapse multiple spaces/tabs
+                            var normalized = string.Join(" ", electricalStrVal.Trim().Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries));
+                            // Step 2: ensure space before '(' if missing
+                            var sb = new System.Text.StringBuilder(normalized.Length + 4);
+                            for (int ci = 0; ci < normalized.Length; ci++)
+                            {
+                                if (normalized[ci] == '(' && ci > 0 && normalized[ci - 1] != ' ')
+                                    sb.Append(' ');
+                                sb.Append(normalized[ci]);
+                            }
+                            value = sb.ToString();
+                        }
+
                         var colName = mapping.SqlColumnName;
                         if (string.Equals(colName, "Status", StringComparison.OrdinalIgnoreCase))
                         {
@@ -5900,12 +6421,20 @@ public class ExcelMigrationService : IExcelMigrationService
                         {
                             value = TransformElectricalInstrumentationDBOCoolerConfigValue(value, mapping.IsNullable);
                         }
+                        else if (colName.Equals("ACBBusBarMaterialID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOACBBusBarMaterialValue(value, mapping.IsNullable);
+                        }
                         else if (colName.Equals("AlternatorCoolerTubesMocID", StringComparison.OrdinalIgnoreCase) || colName.EndsWith("_MOCID", StringComparison.OrdinalIgnoreCase) || colName.EndsWith("MaterialID", StringComparison.OrdinalIgnoreCase))
                         {
                              if (colName.Contains("BusBar", StringComparison.OrdinalIgnoreCase))
                                 value = TransformElectricalInstrumentationDBOBusBarMocValue(value, mapping.IsNullable);
                              else
                                 value = TransformElectricalInstrumentationDBOMocValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("Avr_IPRatingID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOAvrIPRatingValue(value, mapping.IsNullable);
                         }
                         else if (colName.Contains("IPRatingID", StringComparison.OrdinalIgnoreCase))
                         {
@@ -5951,28 +6480,356 @@ public class ExcelMigrationService : IExcelMigrationService
                         {
                             value = TransformElectricalInstrumentationDBOMccConstTypeValue(value, mapping.IsNullable);
                         }
+
+                        else if (colName.Equals("VMS_VibrationMeasTypeID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOVMSVibrationMeasTypeValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("SyncPQMID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOPqmValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("AVRStandbyExcitationID", StringComparison.OrdinalIgnoreCase) || 
+                                 colName.Equals("RelaySoftwareID", StringComparison.OrdinalIgnoreCase) ||
+                                 colName.EndsWith("RequiredID", StringComparison.OrdinalIgnoreCase) ||
+                                 colName.Equals("LASCPT_PartOfBreakerID", StringComparison.OrdinalIgnoreCase) ||
+                                 colName.Equals("MotorControlRedundantCtrlID", StringComparison.OrdinalIgnoreCase) ||
+                                 colName.Equals("VMS_OverspeedProtectionID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOYessNoRequiredValue(value, mapping.IsNullable);
+                        }
+
+
+                        else if (colName.Equals("BusDuctTypeID", StringComparison.OrdinalIgnoreCase) || 
+                                 colName.Equals("HTPowerCablingTypeID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOBusDuctTypeValue(value, mapping.IsNullable);
+                        }
+
+                        else if (colName.Equals("AVRTypeID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOAVRTypeValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("AVRPanelQtyID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOAVRPanelQtyValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("ACBRatingID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOACBRatingValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("ACBNumberOfBreakersID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOACBNumberOfBreakersValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("ACBNumberOfPolesID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOACBNumberOfPolesValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("ACBRedundantCtPtID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOACBRedundantCtPtValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("RelayRedundantCtPtID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOACBRedundantCtPtValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("RelayAdditionalRelayID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBORelayAdditionalRelayValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("SyncGridID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOSyncGridValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("SyncTypeOfSynchronizerID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOSyncTypeOfSynchronizerValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("SyncNumberOfBreakersID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOSyncNumberOfBreakersValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("SyncMeteringAccuracyID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOSyncMeteringAccuracyValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("TVMMountingID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOTVMMountingValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("TVMAccuracyID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOSyncMeteringAccuracyValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("SyncTransducerQtyID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOSyncTransducerQtyValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("SyncTransducerTypeID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOSyncTransducerTypeValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("SyncLoadSharingScopeID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOSyncLoadSharingScopeValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("SyncMasterModulesID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOSyncMasterModulesValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("SyncSlaveModulesID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOSyncMasterModulesValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("SyncMcsPartOfGRPID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOSyncMcsPartOfGRPValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("SyncHmiSoftwareID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOPqmValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("TransformerTypeOfPanelID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOTransformerTypeOfPanelValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("TransformerDutyRatingID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOTransformerDutyRatingValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("TransformerTempRiseID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOTransformerTempRiseValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("TransformerResistorCapID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOTransformerResistorCapValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("TransformerNeutralIsolatorID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOTransformerNeutralIsolatorValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("TransformerCTID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOTransformerCTValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("TransformerCtAccuracyID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOSyncMeteringAccuracyValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("TransformerFaultRatingID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOTransformerFaultRatingValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("TransformerBusBarMOCID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOTransformerBusBarMOCValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("LASCPT_CTPTID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOSyncMcsPartOfGRPValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("LASCPT_CTPTAccuracyID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOSyncMeteringAccuracyValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("LASCPT_FaultRatingID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOTransformerFaultRatingValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("LASCPT_BusBarMOCID", StringComparison.OrdinalIgnoreCase) || 
+                                 colName.Equals("BusBarMOCID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOTransformerBusBarMOCValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("SwitchGearQtyRatingID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOSwitchGearQtyRatingValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("SwitchGearBreakerTypeID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOSwitchGearBreakerTypeValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("SwitchGearCtPtAccuracyID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOSyncMeteringAccuracyValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("SwitchGear_FaultRatingID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOTransformerFaultRatingValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("SwitchGearBusBarMOCID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOTransformerBusBarMOCValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("MotorControlStandbyExcitID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOMotorControlStandbyExcitValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("MotorControlIncomerQtyID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOMotorControlIncomerQtyValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("MotorControlConstTypeID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOMotorControlConstTypeValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("MotorControlRedundantCtrlID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOPqmValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("MotorControlSpecID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOMotorControlSpecValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("MotorControlIncomerTypeID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOMotorControlIncomerTypeValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("MotorControlBusBarMOCID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOTransformerBusBarMOCValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("MotorControlACDBID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOMotorControlACDBValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("BatteryDCDBID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOBatteryDCDBValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("Battery_VoltageRatingID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOBatteryVoltageRatingValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("Battery_CapacityID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOBatteryCapacityValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("Battery_TypeID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOBatteryTypeValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("Battery_TypeOfChargerID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOBatteryTypeOfChargerValue(value, mapping.IsNullable);
+                        }
                         else if (colName.Equals("TCP_TypeOfControlPanelID", StringComparison.OrdinalIgnoreCase))
                         {
-                            value = TransformElectricalInstrumentationDBOTcpTypeValue(value, mapping.IsNullable);
+                            value = TransformElectricalInstrumentationDBOTCPTypeOfControlPanelValue(value, mapping.IsNullable);
                         }
                         else if (colName.Equals("TCP_RedundancyID", StringComparison.OrdinalIgnoreCase))
                         {
-                            value = TransformElectricalInstrumentationDBOTcpRedundancyValue(value, mapping.IsNullable);
+                            value = TransformElectricalInstrumentationDBOTCPRedundancyValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("TCP_SpecificationID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOTCPSpecificationValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("TCP_IPRatingID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOTCPIPRatingValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("TCP_CommunicationTypeID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOTCPCommunicationTypeValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("TCP_SILRatingID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOTCPSILRatingValue(value, mapping.IsNullable);
                         }
                         else if (colName.Equals("TGP_TypeID", StringComparison.OrdinalIgnoreCase))
                         {
-                            value = TransformElectricalInstrumentationDBOTgpTypeValue(value, mapping.IsNullable);
+                            value = TransformElectricalInstrumentationDBOTGPTypeValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("VMS_VibrationMeasTypeID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("PLCBasedInstrumentsID", StringComparison.OrdinalIgnoreCase))
                         {
-                            value = TransformElectricalInstrumentationDBOVmsVibrValue(value, mapping.IsNullable);
+                            value = TransformElectricalInstrumentationDBOPLCBasedInstrumentsValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AVRStandbyExcitationID", StringComparison.OrdinalIgnoreCase) || 
-                                 colName.Equals("SyncPQMID", StringComparison.OrdinalIgnoreCase) ||
-                                 colName.EndsWith("RequiredID", StringComparison.OrdinalIgnoreCase) ||
-                                 colName.Equals("LASCPT_PartOfBreakerID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("TGP_ImpulseTubeMOCID", StringComparison.OrdinalIgnoreCase))
                         {
-                            value = TransformElectricalInstrumentationDBOYessNoRequiredValue(value, mapping.IsNullable);
+                            value = TransformElectricalInstrumentationDBOTGPImpulseTubeMOCValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("TGP_LogicLevelID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOTGPLogicLevelValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("DC_MotorScopeID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBODCMotorScopeValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("DC_MotorStartPanelID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBODCMotorStartPanelValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("DC_MotorIncomerID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBODCMotorIncomerValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("DC_MotorStepsID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBODCMotorStepsValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("DC_Motor_IPRatingID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBODCMotorIPRatingValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("CablesScopeID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBODCMotorScopeValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("CablesInstrumentCablingID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOCablesInstrumentCablingValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("CablesInstrumentMOCID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOCablesInstrumentMOCValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("EarthingID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOEarthingValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("EarthMOCID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOEarthMOCValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("LTPowerCablingID", StringComparison.OrdinalIgnoreCase) ||
+                                 colName.Equals("ControlCablingID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOLTPowerCablingValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("LTPowerCableMOCID", StringComparison.OrdinalIgnoreCase) ||
+                                 colName.Equals("ControlCableMOCID", StringComparison.OrdinalIgnoreCase) ||
+                                 colName.Equals("HTPowerCableMOCID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOLTPowerCableMOCValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("HTPowerCablingID", StringComparison.OrdinalIgnoreCase) ||
+                                 colName.Equals("BusDuctID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOHTPowerValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("VMS_ScopeID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBODCMotorScopeValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("VMS_NumberOfProbesID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOVMSNumberOfProbesValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("VMS_MakeID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOVMSMakeValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("VMS_AdditionalProbesID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOVMSAdditionalProbesValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("ElectricalDBOtherItemsID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOtherItemsValue(value, mapping.IsNullable);
                         }
                     }
 
@@ -6518,7 +7375,8 @@ public class ExcelMigrationService : IExcelMigrationService
 
                     // Special handling for status column in BankGuarantee
                     if (isBankGuarantee &&
-                        string.Equals(mapping.SqlColumnName, "Status", StringComparison.OrdinalIgnoreCase) &&
+                        (string.Equals(mapping.SqlColumnName, "Status", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "BGStatus", StringComparison.OrdinalIgnoreCase)) &&
                         value != DBNull.Value && value != null)
                     {
                         value = TransformBankGuaranteeStatusValue(value, mapping.IsNullable);
@@ -6530,6 +7388,23 @@ public class ExcelMigrationService : IExcelMigrationService
                         value != DBNull.Value && value != null)
                     {
                         value = TransformOrderTransmittalStatusValue(value, mapping.IsNullable);
+                    }
+
+                    // Special handling for LiquidatedDamageType column in LiquidatedDamage
+                    if (isLiquidatedDamage &&
+                        string.Equals(mapping.SqlColumnName, "LiquidatedDamageType", StringComparison.OrdinalIgnoreCase) &&
+                        value != DBNull.Value && value != null)
+                    {
+                        value = TransformLiquidatedDamageTypeValue(value, mapping.IsNullable);
+                    }
+
+                    // Special handling for Amount/Percentage columns in LiquidatedDamage
+                    if (isLiquidatedDamage &&
+                        (string.Equals(mapping.SqlColumnName, "IsAmountPercent_Minimum", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "IsAmountPercent_Maximum", StringComparison.OrdinalIgnoreCase)) &&
+                        value != DBNull.Value && value != null)
+                    {
+                        value = TransformLiquidatedDamageAmountPercentValue(value, mapping.IsNullable);
                     }
 
                     // Special handling for OrderType column in OrderTransmittal
@@ -7533,6 +8408,10 @@ public class ExcelMigrationService : IExcelMigrationService
         string tableName,
         CancellationToken cancellationToken)
     {
+        var cacheKey = $"{schemaName}.{tableName}";
+        if (_pkCache.TryGetValue(cacheKey, out var cachedPk))
+            return cachedPk;
+
         var query = @"
             SELECT TOP 1 ku.COLUMN_NAME
             FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
@@ -7554,7 +8433,12 @@ public class ExcelMigrationService : IExcelMigrationService
             var result = await command.ExecuteScalarAsync(cancellationToken);
             if (result != null && result != DBNull.Value)
             {
-                return result.ToString();
+                var pkName = result.ToString();
+                if (!string.IsNullOrEmpty(pkName))
+                {
+                    _pkCache[cacheKey] = pkName;
+                }
+                return pkName;
             }
         }
         catch
@@ -9232,7 +10116,15 @@ public class ExcelMigrationService : IExcelMigrationService
 
         // Case-insensitive comparison and transform
         // Mapping: Excel status string → SQL integer value
-        if (string.Equals(statusStr, "Amended", StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(statusStr, "Issued", StringComparison.OrdinalIgnoreCase))
+        {
+            return 0;
+        }
+        else if (string.Equals(statusStr, "To Be Issued", StringComparison.OrdinalIgnoreCase))
+        {
+            return 1;
+        }
+        else if (string.Equals(statusStr, "Amended", StringComparison.OrdinalIgnoreCase))
         {
             return 1;
         }
@@ -9287,6 +10179,82 @@ public class ExcelMigrationService : IExcelMigrationService
         else if (string.Equals(statusStr, "Terminated", StringComparison.OrdinalIgnoreCase))
         {
             return 14;
+        }
+        else
+        {
+            // Default to NULL if column is nullable, otherwise 0
+            return isNullable ? DBNull.Value : 0;
+        }
+    }
+
+    private object TransformLiquidatedDamageTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value)
+            return DBNull.Value;
+
+        // Convert to string and trim
+        var damageTypeStr = value.ToString()?.Trim() ?? string.Empty;
+
+        // Mapping: Excel LiquidatedDamageType string → SQL integer value
+        if (string.Equals(damageTypeStr, "Late Delivery", StringComparison.OrdinalIgnoreCase))
+        {
+            return 1;
+        }
+        else if (string.Equals(damageTypeStr, "Reduced Power", StringComparison.OrdinalIgnoreCase))
+        {
+            return 2;
+        }
+        else if (string.Equals(damageTypeStr, "Increase in Auxiliary Power", StringComparison.OrdinalIgnoreCase))
+        {
+            return 3;
+        }
+        else if (string.Equals(damageTypeStr, "Increase in Steam Consumption", StringComparison.OrdinalIgnoreCase))
+        {
+            return 4;
+        }
+        else if (string.Equals(damageTypeStr, "Heat Rate", StringComparison.OrdinalIgnoreCase))
+        {
+            return 5;
+        }
+        else if (string.Equals(damageTypeStr, "Documentation", StringComparison.OrdinalIgnoreCase))
+        {
+            return 6;
+        }
+        else if (string.Equals(damageTypeStr, "Minimum Availability", StringComparison.OrdinalIgnoreCase))
+        {
+            return 7;
+        }
+        else if (string.Equals(damageTypeStr, "Cumulative Liquidated Damages", StringComparison.OrdinalIgnoreCase))
+        {
+            return 8;
+        }
+        else if (string.Equals(damageTypeStr, "Others", StringComparison.OrdinalIgnoreCase))
+        {
+            return 9;
+        }
+        else
+        {
+            // Default to NULL if column is nullable, otherwise 0
+            return isNullable ? DBNull.Value : 0;
+        }
+    }
+
+    private object TransformLiquidatedDamageAmountPercentValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value)
+            return DBNull.Value;
+
+        // Convert to string and trim
+        var amountPercentStr = value.ToString()?.Trim() ?? string.Empty;
+
+        // Mapping: Excel Amount/Percentage string → SQL integer value
+        if (string.Equals(amountPercentStr, "Amount", StringComparison.OrdinalIgnoreCase))
+        {
+            return 1;
+        }
+        else if (string.Equals(amountPercentStr, "Percentage", StringComparison.OrdinalIgnoreCase))
+        {
+            return 2;
         }
         else
         {
@@ -11899,6 +12867,20 @@ public class ExcelMigrationService : IExcelMigrationService
         else if (string.Equals(str, "IP-52", StringComparison.OrdinalIgnoreCase)) return 2;
         else if (string.Equals(str, "IP-54", StringComparison.OrdinalIgnoreCase)) return 3;
         else if (string.Equals(str, "IP-55", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "Std", StringComparison.OrdinalIgnoreCase)) return 5;
+        else if (string.Equals(str, "Not Applicable", StringComparison.OrdinalIgnoreCase)) return 6;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOAvrIPRatingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "IP-42", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "IP-44", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "IP-52", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "IP-54", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "IP-55", StringComparison.OrdinalIgnoreCase)) return 4;
         else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 5;
         return isNullable ? DBNull.Value : 0;
     }
@@ -11907,9 +12889,9 @@ public class ExcelMigrationService : IExcelMigrationService
     {
         if (value == null || value == DBNull.Value) return DBNull.Value;
         var str = value.ToString()?.Trim() ?? string.Empty;
-        if (string.Equals(str, "PF / KVAR Control", StringComparison.OrdinalIgnoreCase)) return 0;
-        else if (string.Equals(str, "Voltage Control", StringComparison.OrdinalIgnoreCase)) return 1;
-        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        if (string.Equals(str, "1A + 1M", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "2A + 1M", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "2A + 2M", StringComparison.OrdinalIgnoreCase)) return 2;
         return isNullable ? DBNull.Value : 0;
     }
 
@@ -11923,14 +12905,22 @@ public class ExcelMigrationService : IExcelMigrationService
         return isNullable ? DBNull.Value : 0;
     }
 
+    private object TransformElectricalInstrumentationDBOACBBusBarMaterialValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Copper", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Aluminum(Std)", StringComparison.OrdinalIgnoreCase) ||
+                 string.Equals(str, "Aluminium (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
+        return isNullable ? DBNull.Value : 0;
+    }
+
     private object TransformElectricalInstrumentationDBORelayTypeValue(object value, bool isNullable)
     {
         if (value == null || value == DBNull.Value) return DBNull.Value;
         var str = value.ToString()?.Trim() ?? string.Empty;
-        if (string.Equals(str, "Numerical (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
-        else if (string.Equals(str, "Static", StringComparison.OrdinalIgnoreCase)) return 1;
-        else if (string.Equals(str, "Electromagnetic", StringComparison.OrdinalIgnoreCase)) return 2;
-        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        if (string.Equals(str, "Digital(Std for redundant relay)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Digital(Std for non-redundant relay)", StringComparison.OrdinalIgnoreCase)) return 1;
         return isNullable ? DBNull.Value : 0;
     }
 
@@ -11958,9 +12948,9 @@ public class ExcelMigrationService : IExcelMigrationService
     {
         if (value == null || value == DBNull.Value) return DBNull.Value;
         var str = value.ToString()?.Trim() ?? string.Empty;
-        if (string.Equals(str, "DLMS protocol (Std for TEDA)", StringComparison.OrdinalIgnoreCase)) return 0;
-        else if (string.Equals(str, "Non-DLMS protocol", StringComparison.OrdinalIgnoreCase)) return 1;
-        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        if (string.Equals(str, "Non-Sealed type (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Sealed type", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Sealed type with ABT feature", StringComparison.OrdinalIgnoreCase)) return 2;
         return isNullable ? DBNull.Value : 0;
     }
 
@@ -12042,24 +13032,7 @@ public class ExcelMigrationService : IExcelMigrationService
         return isNullable ? DBNull.Value : 0;
     }
 
-    private object TransformElectricalInstrumentationDBOTgpTypeValue(object value, bool isNullable)
-    {
-        if (value == null || value == DBNull.Value) return DBNull.Value;
-        var str = value.ToString()?.Trim() ?? string.Empty;
-        if (string.Equals(str, "Local Gauge Panel (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
-        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 1;
-        return isNullable ? DBNull.Value : 0;
-    }
 
-    private object TransformElectricalInstrumentationDBOVmsVibrValue(object value, bool isNullable)
-    {
-        if (value == null || value == DBNull.Value) return DBNull.Value;
-        var str = value.ToString()?.Trim() ?? string.Empty;
-        if (string.Equals(str, "Contactless (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
-        else if (string.Equals(str, "Contact", StringComparison.OrdinalIgnoreCase)) return 1;
-        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
-        return isNullable ? DBNull.Value : 0;
-    }
 
     private object TransformElectricalInstrumentationDBOYessNoRequiredValue(object value, bool isNullable)
     {
@@ -12067,10 +13040,774 @@ public class ExcelMigrationService : IExcelMigrationService
         var str = value.ToString()?.Trim() ?? string.Empty;
         if (string.Equals(str, "Yes", StringComparison.OrdinalIgnoreCase)) return 0;
         else if (string.Equals(str, "No", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Required", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Not Required", StringComparison.OrdinalIgnoreCase)) return 1;
         else if (string.Equals(str, "Required (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
         else if (string.Equals(str, "Not Required (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
         else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
         return isNullable ? DBNull.Value : 1;
+    }
+
+    private object TransformElectricalInstrumentationDBOLTPowerCablingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL scope for TTL supplied equipments", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Purchaser scope (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+
+
+    private object TransformElectricalInstrumentationDBOLTPowerCableMOCValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Aluminium (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Copper", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOHTPowerValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL scope", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Purchaser scope (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOUOTBBTPDValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = string.Join(" ", (value.ToString() ?? string.Empty).Trim().Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries));
+        if (string.Equals(str, "TTL scope", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Purchaser scope (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Not Applicable", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOUOTTypePDValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "VRLA (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "NI-CD", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "PLANTE", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOUOTTVMMountingPDValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Part MCSP panel (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Part of LASCTP panel (With separate cubical)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Separate panel", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOUOTElectScopePDValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL std", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Customer / Consultant specification", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+
+
+    private object TransformElectricalInstrumentationDBOUOTCommuTypePDValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Modbus (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "RS485", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Profibus", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+
+
+    private object TransformElectricalInstrumentationDBOBusDuctTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "HT cables from Generator to NGR & LAPT", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "HT cables from Generator to NGR & LAPT and NGR/LAPT to Generator VCB", StringComparison.OrdinalIgnoreCase)) return 1;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+
+
+    private object TransformElectricalInstrumentationDBOAVRTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Analog", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Digital", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Machine Mounted Without grid synchronisation", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Machine Mounted (Not applicable for grid synchronisation)", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOAVRPanelQtyValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "1No.s(std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "2No.s", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOACBRatingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Std", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "630", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "800", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "1000", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "1250", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "1600", StringComparison.OrdinalIgnoreCase)) return 5;
+        else if (string.Equals(str, "2000", StringComparison.OrdinalIgnoreCase)) return 6;
+        else if (string.Equals(str, "2500", StringComparison.OrdinalIgnoreCase)) return 7;
+        else if (string.Equals(str, "3200", StringComparison.OrdinalIgnoreCase)) return 8;
+        else if (string.Equals(str, "4000", StringComparison.OrdinalIgnoreCase)) return 9;
+        else if (string.Equals(str, "5000", StringComparison.OrdinalIgnoreCase)) return 10;
+        else if (string.Equals(str, "6000", StringComparison.OrdinalIgnoreCase)) return 11;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 12;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOACBNumberOfBreakersValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "1No.(Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "2No.s", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOACBNumberOfPolesValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "3Poles(Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "4Poles", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOACBRedundantCtPtValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Required(Std for redundant relays", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Not Required(Std for non-redundant relays)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBORelayAdditionalRelayValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Rotor earth fault", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Vector surge relay(dv/dt)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Stand by earth fault", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Overall differential protection", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "Generator transformer protection", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "As per purchase order", StringComparison.OrdinalIgnoreCase)) return 5;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOSyncGridValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "DG set (Momentary)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "DG set (Continuous)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Other TG sets", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOSyncTypeOfSynchronizerValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Auto", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Manual (Std for momentary synchronization)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOSyncNumberOfBreakersValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "1", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "2", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "3", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "4", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "5", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 5;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOSyncMeteringAccuracyValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "0.5 class (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "0.2 class", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "0.2s class", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOTVMMountingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Part MCSP panel (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Part of LASCTP panel (With separate cubical)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Separate panel", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOSyncTransducerQtyValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "1 (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "2", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOSyncTransducerTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Discrete", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Multi Function (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOSyncLoadSharingScopeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL scope", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Purchaser scope", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Existing", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOSyncMasterModulesValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "0", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "1", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "2", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "3", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "4", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "5", StringComparison.OrdinalIgnoreCase)) return 5;
+        else if (string.Equals(str, "6", StringComparison.OrdinalIgnoreCase)) return 6;
+        else if (string.Equals(str, "7", StringComparison.OrdinalIgnoreCase)) return 7;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 8;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOSyncMcsPartOfGRPValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Yes", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "No (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOTransformerTypeOfPanelValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "NGR(Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "NGT", StringComparison.OrdinalIgnoreCase)) return 1;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOTransformerDutyRatingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "10 secs(Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "100%", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "30 secs", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOTransformerTempRiseValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "375 deg.C (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "325 deg.C", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOTransformerResistorCapValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "100 A (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 1;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOTransformerNeutralIsolatorValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Manual (Std if without grid synchronisation)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Motorised (Std if with grid synchronisation)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOTransformerCTValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Non Redundant (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Redundant", StringComparison.OrdinalIgnoreCase)) return 1;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOTransformerFaultRatingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "26 KA (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "40 KA", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOTransformerBusBarMOCValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Aluminium (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Copper", StringComparison.OrdinalIgnoreCase)) return 1;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOSwitchGearQtyRatingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "As per enclosed SLD", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Standard", StringComparison.OrdinalIgnoreCase)) return 1;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOSwitchGearBreakerTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "ACB (Std for LT set)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "VCB (Std) for HT set", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "SF6", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOMotorControlStandbyExcitValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Required (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Not Required", StringComparison.OrdinalIgnoreCase)) return 1;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOMotorControlIncomerQtyValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "1 (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "2", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "2 + Bus Coupler", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOMotorControlConstTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Draw-out type", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Non draw-out type (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOMotorControlSpecValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Std", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Customer Specification", StringComparison.OrdinalIgnoreCase)) return 1;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOMotorControlIncomerTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "MCCB", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "MPCB", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "ACB", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "SFU (Std)", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOMotorControlACDBValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Part of MCC panel (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Separate panel", StringComparison.OrdinalIgnoreCase)) return 1;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOBatteryDCDBValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Part of B&BC Panel (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Separate Panel", StringComparison.OrdinalIgnoreCase)) return 1;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOBatteryVoltageRatingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "24 V (Without EOP)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "110 V (Std with EOP)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "220 V", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOBatteryCapacityValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "100 AH", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "200 AH", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "400 AH", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "600 AH", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "800 AH", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 5;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOBatteryTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "VRLA (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "NI-CD", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "PLANTE", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOBatteryTypeOfChargerValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "1FC + 1FCBC (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "2FCBC", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOTCPTypeOfControlPanelValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TCP (Standalone as per TTL std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "PLC + TCP", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "TCP with motor control (Std for frame without EOP motor)", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOTCPRedundancyValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "CPU", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Communication port", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Power supply module", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Non-Redundant", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 4;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOTCPSpecificationValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL std", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Customer / Consultant specification", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOTCPIPRatingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "IP-42", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "IP-44", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "IP-52", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "IP-54", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "IP-55", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "Std", StringComparison.OrdinalIgnoreCase)) return 5;
+        else if (string.Equals(str, "Not Applicable", StringComparison.OrdinalIgnoreCase)) return 6;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOTCPCommunicationTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Modbus (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "RS485", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Profibus", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOTCPSILRatingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Std", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "SIL-2", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "SIL-3", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOTGPTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Open type (Std for frames without EOP motor)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Enclosed panel type (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOPLCBasedInstrumentsValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Required", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Not Required", StringComparison.OrdinalIgnoreCase)) return 1;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOTGPImpulseTubeMOCValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "SS304 (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "SS316", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOTGPLogicLevelValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "1 OO 1 (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "1 OO 2", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "2 OO 3", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBODCMotorScopeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Customer", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Existing", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Not Applicable", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBODCMotorStartPanelValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "EOP (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "EOP + JOP", StringComparison.OrdinalIgnoreCase)) return 1;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBODCMotorIncomerValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "SFU (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "MPCB", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "MCCB", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBODCMotorStepsValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Two Steps (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Three Steps", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBODCMotorIPRatingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "IP-42", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "IP-44", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "IP-52", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "IP-54", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "IP-55", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "Std", StringComparison.OrdinalIgnoreCase)) return 5;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 6;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOCablesInstrumentCablingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Instrument cables up to JB (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Instrument cables up to JB + JB to PLC/DCS/Marshalling cabinet", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Purchaser Scope", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOCablesInstrumentMOCValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Copper (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Aluminium", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOEarthingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Above ground level for TTL supplied panels (TTL std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Above ground level & below ground level for TTL supplied panels including earth pits", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Purchaser Scope", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOEarthMOCValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "GI Earthing (TTL Standard)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Aluminium", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Copper", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOVMSVibrationMeasTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Casing vibration sensors", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "High speed train", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Full train", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOVMSNumberOfProbesValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "0", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "1", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "2", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "3", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 4;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOVMSMakeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Shinkawa", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Bently Nevada", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Sarayu", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOVMSAdditionalProbesValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Key Phasor(High speed train)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Key Phasor(Low speed)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Casing Expansion", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Differential Expansion", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "As per purchase order", StringComparison.OrdinalIgnoreCase)) return 4;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOtherItemsValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Not Applicable", StringComparison.OrdinalIgnoreCase)) return 0;
+        return isNullable ? DBNull.Value : 0;
     }
 
     private object TransformMOMIsPresentValue(object value, bool isNullable)
@@ -12398,6 +14135,33 @@ public class ExcelMigrationService : IExcelMigrationService
                     cmd2.CommandTimeout = SqlCommandTimeout;
                     await cmd2.ExecuteNonQueryAsync(cancellationToken);
                 }
+            }
+        }
+
+        // Create a clustered index on the temp table's primary key columns to significantly speed up the MERGE join
+        if (primaryKeyColumns.Any())
+        {
+            try
+            {
+                // Filter primaryKeyColumns to only those that exist in mappings (the ones we built selectList from)
+                var availablePkColumns = primaryKeyColumns
+                    .Where(pk => mappings.Any(m => string.Equals(m.SqlColumnName, pk, StringComparison.OrdinalIgnoreCase)))
+                    .ToList();
+
+                if (availablePkColumns.Any())
+                {
+                    var indexColumns = string.Join(", ", availablePkColumns.Select(pk => $"[{pk}]"));
+                    var indexName = $"IX_{tempTableName.Replace("#", "").Replace("-", "_")}";
+                    var createIndexQuery = $"CREATE CLUSTERED INDEX {indexName} ON {tempTableName} ({indexColumns})";
+                    
+                    await using var indexCommand = new SqlCommand(createIndexQuery, connection, transaction);
+                    indexCommand.CommandTimeout = SqlCommandTimeout;
+                    await indexCommand.ExecuteNonQueryAsync(cancellationToken);
+                }
+            }
+            catch
+            {
+                // If index creation fails, proceed without it (not fatal)
             }
         }
 
