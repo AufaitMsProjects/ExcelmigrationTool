@@ -201,6 +201,29 @@ public class ExcelMigrationService : IExcelMigrationService
             { "uot_sd", "CProjectNumber" }
     };
 
+    // Mapping profile for OrderTransmittalLineItemBankGuarantee uploads.
+    // Rows are inserted/updated in the existing BankGuarantee table.
+    private static readonly Dictionary<string, string> OrderTransmittalLineItemBankGuaranteeMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+            { "record_id", "OrderTransmittalID" },
+            { "uuu_li_last_update_date", "UpdatedAt" },
+            { "ubg_type_of_bg_pd", "TypeOfGuarantee" },
+            { "ot_guarantee_against_pd", "GuaranteeAgainst" },
+            { "ot_bg_contractual_term_sldt", "ContractualTerms" },
+            { "ot_bg_guarantee_da", "PercentageOfGuarantee" },
+            { "ot_bg_guarantee_amt_da", "GuaranteeAmountINR" },
+            { "ot_guarantee_amt_da", "GuaranteeAmount" },
+            { "uot_cur1_pd", "Currency" },
+            { "ot_exchange_rate_da", "ExchangeRate" },
+            { "ubg_guarantee_num_sdt250", "BankGuaranteeNo" },
+            { "ot_bg_stat_pd", "BGStatus" },
+            { "ot_issued_date_dop", "IssuedDate" },
+            { "ot_expiry_date_dop", "ExpiryDate" },
+            { "ubg_bank_name_sdt250", "IssuingBank" },
+            { "project_id", "Projectid" },
+            { "id", "BankGuaranteeID" }
+    };
+
 
     private static readonly Dictionary<string, string> LetterOfCorrespondenceMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
@@ -1460,6 +1483,16 @@ public class ExcelMigrationService : IExcelMigrationService
             return await MigrateToOrderTransmittalTablesAsync(connectionString, schemaName, tableName, excelData, cancellationToken);
         }
 
+        if (string.Equals(tableName, "OTBankGuarantee", StringComparison.OrdinalIgnoreCase))
+        {
+            return await MigrateOrderTransmittalLineItemBankGuaranteeAsync(
+                connectionString,
+                schemaName,
+                excelData,
+                attachmentRecordType,
+                cancellationToken);
+        }
+
         // Check if this is UserList table - use single table migration
         if (string.Equals(tableName, "UserList", StringComparison.OrdinalIgnoreCase))
         {
@@ -2300,7 +2333,8 @@ public class ExcelMigrationService : IExcelMigrationService
         string tableName,
         DataTable excelData,
         string? attachmentRecordType = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        string? mappingTableName = null)
     {
         var response = new UploadResponse();
 
@@ -2321,7 +2355,7 @@ public class ExcelMigrationService : IExcelMigrationService
             }
 
             // Step 2: Match Excel columns to SQL columns
-            var columnMappings = MatchColumns(excelData, tableMetadata, tableName, attachmentRecordType);
+            var columnMappings = MatchColumns(excelData, tableMetadata, mappingTableName ?? tableName, attachmentRecordType);
 
             // SPECIAL RULE: Ensure the first Excel column is mapped to the Primary Key
             // This supports the requirement: "use the value from the first column of the Excel sheet as the primary key"
@@ -2711,6 +2745,41 @@ public class ExcelMigrationService : IExcelMigrationService
         return filteredData;
     }
 
+    private async Task<UploadResponse> MigrateOrderTransmittalLineItemBankGuaranteeAsync(
+        string connectionString,
+        string schemaName,
+        DataTable excelData,
+        string? attachmentRecordType = null,
+        CancellationToken cancellationToken = default)
+    {
+        var response = new UploadResponse();
+
+        if (!excelData.Columns.Contains("uuu_tab_id"))
+        {
+            response.ErrorMessages.Add("Column 'uuu_tab_id' is required for OrderTransmittalLineItemBankGuarantee migration.");
+            return response;
+        }
+
+        var filteredData = FilterExcelDataByTabId(excelData, "uuu_tab_id", "6");
+        if (filteredData.Rows.Count == 0)
+        {
+            response.ErrorMessages.Add("No rows found with uuu_tab_id = 6 for OrderTransmittalLineItemBankGuarantee migration.");
+            return response;
+        }
+
+        await using var connection = new SqlConnection(connectionString);
+        await connection.OpenAsync(cancellationToken);
+
+        return await MigrateToSingleTableAsync(
+            connection,
+            schemaName,
+            "BankGuarantee",
+            filteredData,
+            attachmentRecordType,
+            cancellationToken,
+            "OTBankGuarantee");
+    }
+
     private List<ColumnMapping> MatchColumns(DataTable excelData, List<ColumnMetadata> tableMetadata, string tableName, string? attachmentRecordType = null)
     {
         var mappings = new List<ColumnMapping>();
@@ -2725,6 +2794,11 @@ public class ExcelMigrationService : IExcelMigrationService
         if (string.Equals(tableName, "BankGuarantee", StringComparison.OrdinalIgnoreCase))
         {
             return MatchColumnsForBankGuarantee(excelData, tableMetadata);
+        }
+
+        if (string.Equals(tableName, "OTBankGuarantee", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForOrderTransmittalLineItemBankGuarantee(excelData, tableMetadata);
         }
 
         // Check if this is UserList table - use hardcoded mapping
@@ -3496,6 +3570,78 @@ public class ExcelMigrationService : IExcelMigrationService
                 continue; // Skip if SQL column not found in metadata
 
             // Add the mapping
+            mappings.Add(new ColumnMapping
+            {
+                ExcelColumnName = excelColumn.ColumnName,
+                SqlColumnName = sqlColumn.ColumnName,
+                SqlDataType = sqlColumn.DataType,
+                IsIdentity = sqlColumn.IsIdentity,
+                IsNullable = sqlColumn.IsNullable
+            });
+        }
+
+        return mappings;
+    }
+
+    private List<ColumnMapping> MatchColumnsForOrderTransmittalLineItemBankGuarantee(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        var mappings = new List<ColumnMapping>();
+        var excelColumns = excelData.Columns.Cast<DataColumn>().ToList();
+
+        var sqlColumnLookup = tableMetadata.ToDictionary(
+            m => m.ColumnName,
+            m => m,
+            StringComparer.OrdinalIgnoreCase);
+
+        void AddMappingsFromDictionary(Dictionary<string, string> sourceMapping)
+        {
+            foreach (var mappingEntry in sourceMapping)
+            {
+                var excelColumn = excelColumns.FirstOrDefault(
+                    ec => ec.ColumnName.Equals(mappingEntry.Key, StringComparison.OrdinalIgnoreCase));
+
+                if (excelColumn == null)
+                    continue;
+
+                if (!sqlColumnLookup.TryGetValue(mappingEntry.Value, out var sqlColumn))
+                    continue;
+
+                var alreadyMapped = mappings.Any(m =>
+                    m.ExcelColumnName.Equals(excelColumn.ColumnName, StringComparison.OrdinalIgnoreCase) &&
+                    m.SqlColumnName.Equals(sqlColumn.ColumnName, StringComparison.OrdinalIgnoreCase));
+
+                if (alreadyMapped)
+                    continue;
+
+                mappings.Add(new ColumnMapping
+                {
+                    ExcelColumnName = excelColumn.ColumnName,
+                    SqlColumnName = sqlColumn.ColumnName,
+                    SqlDataType = sqlColumn.DataType,
+                    IsIdentity = sqlColumn.IsIdentity,
+                    IsNullable = sqlColumn.IsNullable
+                });
+            }
+        }
+
+        // Use line-item specific mapping profile.
+        AddMappingsFromDictionary(OrderTransmittalLineItemBankGuaranteeMapping);
+
+        // Fallback for files that already use SQL-friendly headers.
+        foreach (var sqlColumn in tableMetadata)
+        {
+            var isAlreadyMapped = mappings.Any(m =>
+                m.SqlColumnName.Equals(sqlColumn.ColumnName, StringComparison.OrdinalIgnoreCase));
+
+            if (isAlreadyMapped)
+                continue;
+
+            var excelColumn = excelColumns.FirstOrDefault(
+                ec => ec.ColumnName.Equals(sqlColumn.ColumnName, StringComparison.OrdinalIgnoreCase));
+
+            if (excelColumn == null)
+                continue;
+
             mappings.Add(new ColumnMapping
             {
                 ExcelColumnName = excelColumn.ColumnName,
@@ -6495,6 +6641,14 @@ public class ExcelMigrationService : IExcelMigrationService
                         value = TransformBankGuaranteeStatusValue(value, mapping.IsNullable);
                     }
 
+                    // Special handling for BGStatus column in OrderTransmittalLineItemBankGuarantee -> BankGuarantee migration
+                    if (isBankGuarantee &&
+                        string.Equals(mapping.SqlColumnName, "BGStatus", StringComparison.OrdinalIgnoreCase) &&
+                        value != DBNull.Value && value != null)
+                    {
+                        value = TransformOrderTransmittalLineItemBankGuaranteeStatusValue(value, mapping.IsNullable);
+                    }
+
                     // Special handling for status column in OrderTransmittal
                     if (isOrderTransmittal &&
                         string.Equals(mapping.SqlColumnName, "Status", StringComparison.OrdinalIgnoreCase) &&
@@ -9262,6 +9416,34 @@ public class ExcelMigrationService : IExcelMigrationService
         else
         {
             // Default to NULL if column is nullable, otherwise 0
+            return isNullable ? DBNull.Value : 0;
+        }
+    }
+
+    private object TransformOrderTransmittalLineItemBankGuaranteeStatusValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value)
+            return isNullable ? DBNull.Value : 0;
+
+        // If the value is already numeric (0/1), keep it.
+        if (int.TryParse(value.ToString()?.Trim(), out var numericStatus))
+        {
+            if (numericStatus == 0 || numericStatus == 1)
+                return numericStatus;
+        }
+
+        var statusStr = value.ToString()?.Trim() ?? string.Empty;
+
+        if (string.Equals(statusStr, "Issued", StringComparison.OrdinalIgnoreCase))
+        {
+            return 0;
+        }
+        else if (string.Equals(statusStr, "To Be Issued", StringComparison.OrdinalIgnoreCase))
+        {
+            return 1;
+        }
+        else
+        {
             return isNullable ? DBNull.Value : 0;
         }
     }
