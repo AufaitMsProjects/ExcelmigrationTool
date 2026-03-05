@@ -21,7 +21,7 @@ namespace ExcelMigrationTool.Services
         private readonly string _clientSecret = Environment.GetEnvironmentVariable("AZURE_CLIENT_SECRET")
             ?? throw new InvalidOperationException("Missing required environment variable: AZURE_CLIENT_SECRET");
         private readonly ILogger<AzureGraphService> _logger;
-
+       
         public AzureGraphService(ILogger<AzureGraphService> logger)
         {
             _logger = logger;
