@@ -6,6 +6,8 @@ using System.Text;
 
 namespace ExcelMigrationTool.Services;
 
+//Excel migration service
+
 public class ExcelMigrationService : IExcelMigrationService
 {
     // SQL Command timeout in seconds (10 minutes for large datasets)
@@ -197,6 +199,29 @@ public class ExcelMigrationService : IExcelMigrationService
             { "ubg_remarks_ldt", "InitiatorReviewRemarks" },
 
             { "uot_sd", "CProjectNumber" }
+    };
+
+    // Mapping profile for OrderTransmittalLineItemBankGuarantee uploads.
+    // Rows are inserted/updated in the existing BankGuarantee table.
+    private static readonly Dictionary<string, string> OrderTransmittalLineItemBankGuaranteeMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+            { "record_id", "OrderTransmittalID" },
+            { "uuu_li_last_update_date", "UpdatedAt" },
+            { "ubg_type_of_bg_pd", "TypeOfGuarantee" },
+            { "ot_guarantee_against_pd", "GuaranteeAgainst" },
+            { "ot_bg_contractual_term_sldt", "ContractualTerms" },
+            { "ot_bg_guarantee_da", "PercentageOfGuarantee" },
+            { "ot_bg_guarantee_amt_da", "GuaranteeAmountINR" },
+            { "ot_guarantee_amt_da", "GuaranteeAmount" },
+            { "uot_cur1_pd", "Currency" },
+            { "ot_exchange_rate_da", "ExchangeRate" },
+            { "ubg_guarantee_num_sdt250", "BankGuaranteeNo" },
+            { "ot_bg_stat_pd", "BGStatus" },
+            { "ot_issued_date_dop", "IssuedDate" },
+            { "ot_expiry_date_dop", "ExpiryDate" },
+            { "ubg_bank_name_sdt250", "IssuingBank" },
+            { "project_id", "Projectid" },
+            { "id", "BankGuaranteeID" }
     };
 
 
@@ -1472,6 +1497,16 @@ public class ExcelMigrationService : IExcelMigrationService
             return await MigrateToOrderTransmittalTablesAsync(connectionString, schemaName, tableName, excelData, cancellationToken);
         }
 
+        if (string.Equals(tableName, "OTBankGuarantee", StringComparison.OrdinalIgnoreCase))
+        {
+            return await MigrateOrderTransmittalLineItemBankGuaranteeAsync(
+                connectionString,
+                schemaName,
+                excelData,
+                attachmentRecordType,
+                cancellationToken);
+        }
+
         // Check if this is UserList table - use single table migration
         if (string.Equals(tableName, "UserList", StringComparison.OrdinalIgnoreCase))
         {
@@ -2319,7 +2354,8 @@ public class ExcelMigrationService : IExcelMigrationService
         string tableName,
         DataTable excelData,
         string? attachmentRecordType = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        string? mappingTableName = null)
     {
         var response = new UploadResponse();
 
@@ -2340,7 +2376,7 @@ public class ExcelMigrationService : IExcelMigrationService
             }
 
             // Step 2: Match Excel columns to SQL columns
-            var columnMappings = MatchColumns(excelData, tableMetadata, tableName, attachmentRecordType);
+            var columnMappings = MatchColumns(excelData, tableMetadata, mappingTableName ?? tableName, attachmentRecordType);
 
             // SPECIAL RULE: Ensure the first Excel column is mapped to the Primary Key
             // This supports the requirement: "use the value from the first column of the Excel sheet as the primary key"
@@ -2730,6 +2766,41 @@ public class ExcelMigrationService : IExcelMigrationService
         return filteredData;
     }
 
+    private async Task<UploadResponse> MigrateOrderTransmittalLineItemBankGuaranteeAsync(
+        string connectionString,
+        string schemaName,
+        DataTable excelData,
+        string? attachmentRecordType = null,
+        CancellationToken cancellationToken = default)
+    {
+        var response = new UploadResponse();
+
+        if (!excelData.Columns.Contains("uuu_tab_id"))
+        {
+            response.ErrorMessages.Add("Column 'uuu_tab_id' is required for OrderTransmittalLineItemBankGuarantee migration.");
+            return response;
+        }
+
+        var filteredData = FilterExcelDataByTabId(excelData, "uuu_tab_id", "6");
+        if (filteredData.Rows.Count == 0)
+        {
+            response.ErrorMessages.Add("No rows found with uuu_tab_id = 6 for OrderTransmittalLineItemBankGuarantee migration.");
+            return response;
+        }
+
+        await using var connection = new SqlConnection(connectionString);
+        await connection.OpenAsync(cancellationToken);
+
+        return await MigrateToSingleTableAsync(
+            connection,
+            schemaName,
+            "BankGuarantee",
+            filteredData,
+            attachmentRecordType,
+            cancellationToken,
+            "OTBankGuarantee");
+    }
+
     private List<ColumnMapping> MatchColumns(DataTable excelData, List<ColumnMetadata> tableMetadata, string tableName, string? attachmentRecordType = null)
     {
         var mappings = new List<ColumnMapping>();
@@ -2744,6 +2815,11 @@ public class ExcelMigrationService : IExcelMigrationService
         if (string.Equals(tableName, "BankGuarantee", StringComparison.OrdinalIgnoreCase))
         {
             return MatchColumnsForBankGuarantee(excelData, tableMetadata);
+        }
+
+        if (string.Equals(tableName, "OTBankGuarantee", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForOrderTransmittalLineItemBankGuarantee(excelData, tableMetadata);
         }
 
         // Check if this is UserList table - use hardcoded mapping
@@ -3515,6 +3591,78 @@ public class ExcelMigrationService : IExcelMigrationService
                 continue; // Skip if SQL column not found in metadata
 
             // Add the mapping
+            mappings.Add(new ColumnMapping
+            {
+                ExcelColumnName = excelColumn.ColumnName,
+                SqlColumnName = sqlColumn.ColumnName,
+                SqlDataType = sqlColumn.DataType,
+                IsIdentity = sqlColumn.IsIdentity,
+                IsNullable = sqlColumn.IsNullable
+            });
+        }
+
+        return mappings;
+    }
+
+    private List<ColumnMapping> MatchColumnsForOrderTransmittalLineItemBankGuarantee(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        var mappings = new List<ColumnMapping>();
+        var excelColumns = excelData.Columns.Cast<DataColumn>().ToList();
+
+        var sqlColumnLookup = tableMetadata.ToDictionary(
+            m => m.ColumnName,
+            m => m,
+            StringComparer.OrdinalIgnoreCase);
+
+        void AddMappingsFromDictionary(Dictionary<string, string> sourceMapping)
+        {
+            foreach (var mappingEntry in sourceMapping)
+            {
+                var excelColumn = excelColumns.FirstOrDefault(
+                    ec => ec.ColumnName.Equals(mappingEntry.Key, StringComparison.OrdinalIgnoreCase));
+
+                if (excelColumn == null)
+                    continue;
+
+                if (!sqlColumnLookup.TryGetValue(mappingEntry.Value, out var sqlColumn))
+                    continue;
+
+                var alreadyMapped = mappings.Any(m =>
+                    m.ExcelColumnName.Equals(excelColumn.ColumnName, StringComparison.OrdinalIgnoreCase) &&
+                    m.SqlColumnName.Equals(sqlColumn.ColumnName, StringComparison.OrdinalIgnoreCase));
+
+                if (alreadyMapped)
+                    continue;
+
+                mappings.Add(new ColumnMapping
+                {
+                    ExcelColumnName = excelColumn.ColumnName,
+                    SqlColumnName = sqlColumn.ColumnName,
+                    SqlDataType = sqlColumn.DataType,
+                    IsIdentity = sqlColumn.IsIdentity,
+                    IsNullable = sqlColumn.IsNullable
+                });
+            }
+        }
+
+        // Use line-item specific mapping profile.
+        AddMappingsFromDictionary(OrderTransmittalLineItemBankGuaranteeMapping);
+
+        // Fallback for files that already use SQL-friendly headers.
+        foreach (var sqlColumn in tableMetadata)
+        {
+            var isAlreadyMapped = mappings.Any(m =>
+                m.SqlColumnName.Equals(sqlColumn.ColumnName, StringComparison.OrdinalIgnoreCase));
+
+            if (isAlreadyMapped)
+                continue;
+
+            var excelColumn = excelColumns.FirstOrDefault(
+                ec => ec.ColumnName.Equals(sqlColumn.ColumnName, StringComparison.OrdinalIgnoreCase));
+
+            if (excelColumn == null)
+                continue;
+
             mappings.Add(new ColumnMapping
             {
                 ExcelColumnName = excelColumn.ColumnName,
@@ -6555,6 +6703,14 @@ public class ExcelMigrationService : IExcelMigrationService
                         value = TransformBankGuaranteeStatusValue(value, mapping.IsNullable);
                     }
 
+                    // Special handling for BGStatus column in OrderTransmittalLineItemBankGuarantee -> BankGuarantee migration
+                    if (isBankGuarantee &&
+                        string.Equals(mapping.SqlColumnName, "BGStatus", StringComparison.OrdinalIgnoreCase) &&
+                        value != DBNull.Value && value != null)
+                    {
+                        value = TransformOrderTransmittalLineItemBankGuaranteeStatusValue(value, mapping.IsNullable);
+                    }
+
                     // Special handling for status column in OrderTransmittal
                     if (isOrderTransmittal &&
                         string.Equals(mapping.SqlColumnName, "Status", StringComparison.OrdinalIgnoreCase) &&
@@ -9322,6 +9478,34 @@ public class ExcelMigrationService : IExcelMigrationService
         else
         {
             // Default to NULL if column is nullable, otherwise 0
+            return isNullable ? DBNull.Value : 0;
+        }
+    }
+
+    private object TransformOrderTransmittalLineItemBankGuaranteeStatusValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value)
+            return isNullable ? DBNull.Value : 0;
+
+        // If the value is already numeric (0/1), keep it.
+        if (int.TryParse(value.ToString()?.Trim(), out var numericStatus))
+        {
+            if (numericStatus == 0 || numericStatus == 1)
+                return numericStatus;
+        }
+
+        var statusStr = value.ToString()?.Trim() ?? string.Empty;
+
+        if (string.Equals(statusStr, "Issued", StringComparison.OrdinalIgnoreCase))
+        {
+            return 0;
+        }
+        else if (string.Equals(statusStr, "To Be Issued", StringComparison.OrdinalIgnoreCase))
+        {
+            return 1;
+        }
+        else
+        {
             return isNullable ? DBNull.Value : 0;
         }
     }
@@ -12102,6 +12286,1106 @@ public class ExcelMigrationService : IExcelMigrationService
         else if (string.Equals(str, "Not Required (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
         else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
         return isNullable ? DBNull.Value : 1;
+    }
+
+
+
+    //Nithya ELDBO
+
+    private object TransformElectricalDBOScopeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Customer", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Existing", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Not Applicable", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOMakeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TDPS", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "WEG", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "BHEL", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "LEROYSOMER", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "CUMMINS", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "CGL", StringComparison.OrdinalIgnoreCase)) return 5;
+        else if (string.Equals(str, "Marelli Motori", StringComparison.OrdinalIgnoreCase)) return 6;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 7;
+        else if (string.Equals(str, "As per Vendor List", StringComparison.OrdinalIgnoreCase)) return 8;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOStandardValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "IEC60034(Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "API546", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Not Applicable", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOVoltageAlternatorValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "High Voltage Alternator", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Low Voltage Alternator", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOEnclosureValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "IP23(Std for LT SPD)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "IP23(Std for HT SPD)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "IP 54(Std for HT/LT CACW)", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBODesignTemperatureInDegCValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "40°C", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "45°C", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "50°C", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBORatedPfValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "0.8(Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "0.9", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "0.85", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "0.95", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3; // Note: ID 3 is reused in JSON for Others, but 0.95 is also 3? Check JSON.
+        // JSON Says: { id: 3, label: '0.95', ... }, { id: 3, label: 'Others', ... }
+        // This looks like a typo in JSON, but I must follow the IDs provided if they are what the DB expects.
+        // Wait, if both map to 3, how do I distinguish?
+        // Assuming the DB stores the ID. I should return 3 for both.
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOTemperatureRiseValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Class H(Std for SDPD", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Class B(Std for HT/LT CACW)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOInsulationClassValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Class H(Std for SDPD)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Class F(Std for HT/LT CACW)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOTerminalBoxToSuitValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Cable", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Bus Duct", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOAlternatorCertificationValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "CE", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "GOST-R", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Not Required(TTL Standards)", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBONeutralCtStarFormationValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "NGR Panel(Std for HV set)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "AB Panel(Std for LV set)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Alternator Terminal Box", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Bus Duct", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOPhaseSideCtLocationValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "LAPT Panel(Std for HV set)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "ACB Panel(Std for LV set)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Alternator TB", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Bus Duct", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOContinuousOverloadValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "0%(Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "5%", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "10%", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBONoiseLevelValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "80dBA(Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "85dBA", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "90dBA(Std for HV&LV alternator with CACA/CACW cooler)", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "109dBA(Std for LV SDPD alternator)", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 4;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOSlipRingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Required (tender/enquiry requirements)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Not Required (Std for below 15MW)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Vendor standard for 15 MW & above", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOPmgValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Required (tender/enquiry requirements)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Not Required (Std for below 15MW)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Vendor standard for 15 MW & above", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOTestsValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Routine Tests (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Routine + Type tests", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOCoolingMethodValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "CACA", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "SDPD", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOCoolerConfigurationValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Single Cooler", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Double Cooler", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOCoolerTubesMocValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "SS 304", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "SS 316", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "SS 316 L", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Admiralty Brass", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "Cupro Nickel", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "Titanium", StringComparison.OrdinalIgnoreCase)) return 5;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 6;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOCoolerMountingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Side", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Bottom", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Top", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOCoolerCertificationValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "PED", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Ustamping", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Not Required(TTL Standards)", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+    private object TransformElectricalDBOAvrPanelScopeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Customer", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Existing", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Not Applicable", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOAvrTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Analog", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Digital", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Machine Mounted Without grid synchronisation", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Machine Mounted (Not applicable for grid synchronisation)", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOIpRatingAvrValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "IP-42", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "IP-44", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "IP-52", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "IP-54", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "IP-55", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 5;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOControlModeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "1A + 1M", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "2A + 1M", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "2A + 2M", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOPanelQtyValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "1No.s(std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "2No.s", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOStandbyExcitationValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Required", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Not Required", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOAcbPanelScopeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Customer", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Existing", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Not Applicable", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOBusBarMaterialAcbValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Copper", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Aluminum(Std)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOAcbRatingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Std", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "630", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "800", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "1000", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "1250", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "1600", StringComparison.OrdinalIgnoreCase)) return 5;
+        else if (string.Equals(str, "2000", StringComparison.OrdinalIgnoreCase)) return 6;
+        else if (string.Equals(str, "2500", StringComparison.OrdinalIgnoreCase)) return 7;
+        else if (string.Equals(str, "3200", StringComparison.OrdinalIgnoreCase)) return 8;
+        else if (string.Equals(str, "4000", StringComparison.OrdinalIgnoreCase)) return 9;
+        else if (string.Equals(str, "5000", StringComparison.OrdinalIgnoreCase)) return 10;
+        else if (string.Equals(str, "6000", StringComparison.OrdinalIgnoreCase)) return 11;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 12;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBONumberOfBreakersValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "1No.(Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "2No.s", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBONumberOfPolesValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "3Poles(Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "4Poles", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOIpRatingAcbValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "IP-42", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "IP-44", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "IP-52", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "IP-54", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "IP-55", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "Std", StringComparison.OrdinalIgnoreCase)) return 5;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBORedundantCtPtProtectionAcbValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Required(Std for redundant relays", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Not Required(Std for non-redundant relays)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOGeneratorRelayPanelScopeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Customer", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Existing", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Not Applicable", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBORedundantCtPtProtectionGrpValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Required(Std for redundant relays", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Not Required(Std for non-redundant relays)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBORelayTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Digital(Std for redundant relay)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Digital(Std for non-redundant relay)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOIpRatingGrpValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "IP-42", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "IP-44", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "IP-52", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "IP-54", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "IP-55", StringComparison.OrdinalIgnoreCase)) return 4;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOAdditionalRelayValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Rotor earth fault", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Vector surge relay(dv/dt)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Stand by earth fault", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Overall differential protection", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "Generator transformer protection", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "As per purchase order", StringComparison.OrdinalIgnoreCase)) return 5;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOSoftwareGrpValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Required", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Not Required", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOMeteringSyncPanelScopeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Customer", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Existing", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Not Applicable", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOSynchronizationGridValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "DG set (Momentary)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "DG set (Continuous)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Other TG sets", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOTypeOfSynchronizerValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Auto", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Manual (Std for momentary synchronization)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBONumberOfBreakerForSynchValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "1", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "2", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "3", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "4", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "5", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 5;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOMeteringAccuracyValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "0.5 class (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "0.2 class", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "0.2s class", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOIpRatingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "IP-42", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "IP-44", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "IP-52", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "IP-54", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "IP-55", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "Std", StringComparison.OrdinalIgnoreCase)) return 5;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOTvmTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Non-Sealed type (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Sealed type", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Sealed type with ABT feature", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOTvmMountingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Part MCSP panel (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Part of LASCTP panel (With separate cubical)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Separate panel", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOTvmAccuracyValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "0.5 class (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "0.2 class", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "0.2s class", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOPqmValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Required", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Not Required (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOTransducerQuantityValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "1 (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "2", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOTransducerTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Discrete", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Multi Function (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOLoadSharingModulesScopeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL scope", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Purchaser scope", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Existing", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBONumberOfMasterModulesValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+
+        // This mapping has values 0 to 8, but they correspond to '0', '1', '2'... '7', 'Others'
+        if (string.Equals(str, "0", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "1", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "2", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "3", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "4", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "5", StringComparison.OrdinalIgnoreCase)) return 5;
+        else if (string.Equals(str, "6", StringComparison.OrdinalIgnoreCase)) return 6;
+        else if (string.Equals(str, "7", StringComparison.OrdinalIgnoreCase)) return 7;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 8;
+        else return isNullable ? DBNull.Value : 0;
+    }
+    private object TransformElectricalDBONumberOfSlaveModulesValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "0", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "1", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "2", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "3", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "4", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "5", StringComparison.OrdinalIgnoreCase)) return 5;
+        else if (string.Equals(str, "6", StringComparison.OrdinalIgnoreCase)) return 6;
+        else if (string.Equals(str, "7", StringComparison.OrdinalIgnoreCase)) return 7;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 8;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOMcsPanelPartOfGRPValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Yes", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "No (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOHmiSoftwareLoadSharingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Required", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Not Required (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    // NGR/NGT Panel Options
+    private object TransformElectricalDBONgrNgtPanelScopeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Customer", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Existing", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Not Applicable", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOTypeOfPanelValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "NGR(Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "NGT", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBODutyRatingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "10 secs(Std)", StringComparison.OrdinalIgnoreCase)) return 0; // Note: Label in JSON says "10 secs(Std)", Value: "100%" - Wait, check JSON carefully. JSON: { id: 0, label: '10 secs(Std)', value: '100%' }? Typo in JSON value? Assuming mapping based on string equality to Label or Value. Usually we check against the string in Excel. Assuming Excel has "10 secs(Std)" or similar.
+        // Actually, looking at JSON: { id: 0, label: '10 secs(Std)', value: '100%' } -> This looks like a mistake in the JSON structure provided by user. "100%" seems wrong for Duty Rating.
+        // However, if the Excel contains "10 secs(Std)", it maps to 0.
+        // If Excel contains "100%", it might also map to 0?
+        // I will match against "10 secs(Std)" and "100%" just in case.
+        if (string.Equals(str, "10 secs(Std)", StringComparison.OrdinalIgnoreCase) || string.Equals(str, "100%", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "30 secs", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOTemperatureRaiseValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "375 deg.C (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "325 deg.C", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOResistorCurrentLimitingCapacityValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "100 A (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBONeutralIsolatorValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Manual (Std if without grid synchronisation)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Motorised (Std if with grid synchronisation)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOCtValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Non Redundant (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Redundant", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOIpRatingNGRTValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "IP-42", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "IP-44", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "IP-52", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "IP-54", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "IP-55", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "Std", StringComparison.OrdinalIgnoreCase)) return 5;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOMeteringCtAccuracyValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "0.5 class (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "0.2 class", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "0.2S class", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOFaultRatingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "26 KA (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "40 KA", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOBusBarMaterialValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Aluminium (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Copper", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    // LASC/PT Panel Options
+    private object TransformElectricalDBOLascptPanelScopeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Customer", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Existing", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Not Applicable", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOCtPtValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Yes", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "No (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOCtPtAccuracyValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "0.5 class (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "0.2 class", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "0.2S class", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOFaultRatingLascptValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "26 KA (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "40 KA", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOIpRatingLascptValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "IP-42", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "IP-44", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "IP-52", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "IP-54", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "IP-55", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "Std", StringComparison.OrdinalIgnoreCase)) return 5;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOBusBarMaterialLascptValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Aluminium (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Copper", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOLighteningArrestorSurgeCapacitorPtPanelPartOfBreakerPanelValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Yes", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "No (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+    // Switch Gear Panel Options
+    private object TransformElectricalDBOSwitchGearPanelScopeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Customer", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Existing", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Not Applicable", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOQuantityAndRatingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "As per enclosed SLD", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Standard", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOBreakerTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "ACB (Std for LT set)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "VCB (Std) for HT set", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "SF6", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOMeteringCtPtAccuracyValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "0.5 class (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "0.2 class", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "0.2s class", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOFaultRatingSgValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "26 KA (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "40 KA", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOIpRatingSgValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "IP-42", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "IP-44", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "IP-52", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "IP-54", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "IP-55", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "Std", StringComparison.OrdinalIgnoreCase)) return 5;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOBusBarMaterialSgValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Aluminium (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Copper", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    // MCC Panel Options
+    private object TransformElectricalDBOMccScopeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Customer", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Existing", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Not Applicable", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOStandByExcitationTfValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Required (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Not Required", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOIncomerQtyValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "1 (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "2", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "2 + Bus Coupler", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOTypeOfConstructionValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Draw-out type", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Non draw-out type (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBORedundantControlTfValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Required", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Not Required (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOSpecificationValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Std", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Customer Specification", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOIncomerTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "MCCB", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "MPCB", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "ACB", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "SFU (Std)", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOBusBarMaterialMccValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Aluminium (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Copper", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOIpRatingMccValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "IP-42", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "IP-44", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "IP-52", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "IP-54", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "IP-55", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "Std", StringComparison.OrdinalIgnoreCase)) return 5;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOAcdbValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Part of MCC panel (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Separate panel", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    // Battery Charger Panel Options
+    private object TransformElectricalDBOBatteryChargerPanelScopeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Customer", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Existing", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Not Applicable", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBODcdbValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Part of B&BC Panel (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Separate Panel", StringComparison.OrdinalIgnoreCase)) return 1;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOVoltageRatingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "24 V (Without EOP)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "110 V (Std with EOP)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "220 V", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOCapacityValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "100 AH", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "200 AH", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "400 AH", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "600 AH", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "800 AH", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 5;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOBatteryTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "VRLA (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "NI-CD", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "PLANTE", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOChargerTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "1FC + 1FCBC (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "2FCBC", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        else return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalDBOIpRatingBatteryValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "IP-42", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "IP-44", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "IP-52", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "IP-54", StringComparison.OrdinalIgnoreCase)) return 3;
+        else if (string.Equals(str, "IP-55", StringComparison.OrdinalIgnoreCase)) return 4;
+        else if (string.Equals(str, "Std", StringComparison.OrdinalIgnoreCase)) return 5;
+        else return isNullable ? DBNull.Value : 0;
     }
 
     private object TransformMOMIsPresentValue(object value, bool isNullable)
