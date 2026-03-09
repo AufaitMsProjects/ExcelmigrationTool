@@ -2358,6 +2358,8 @@ public class ExcelMigrationService : IExcelMigrationService
         string? mappingTableName = null)
     {
         var response = new UploadResponse();
+        var isOtBankGuaranteeMigration =
+            string.Equals(mappingTableName, "OTBankGuarantee", StringComparison.OrdinalIgnoreCase);
 
         // Use a separate transaction for each table to ensure isolation
         var transaction = connection.BeginTransaction();
@@ -2425,6 +2427,29 @@ public class ExcelMigrationService : IExcelMigrationService
             // Step 5: Prepare DataTable with only matched columns
             var (mappedDataTable, rowErrors) = await PrepareMappedDataTableAsync(connection, transaction, excelData, columnMappings, tableName, schemaName, tableMetadata, cancellationToken);
 
+            // OTBankGuarantee-specific behavior:
+            // - Do not upsert
+            // - Always generate sequential PK values from current table MAX(PK)
+            if (isOtBankGuaranteeMigration && mappedDataTable.Rows.Count > 0)
+            {
+                var primaryKeyColumn = tableMetadata.FirstOrDefault(m => m.IsPrimaryKey);
+                if (primaryKeyColumn == null)
+                {
+                    response.ErrorMessages.Add($"Primary key column not found for table '{schemaName}.{tableName}'.");
+                    transaction.Rollback();
+                    return response;
+                }
+
+                await AssignSequentialPrimaryKeysAsync(
+                    connection,
+                    transaction,
+                    schemaName,
+                    tableName,
+                    primaryKeyColumn.ColumnName,
+                    mappedDataTable,
+                    cancellationToken);
+            }
+
             // Add row errors to response
             response.RowErrors.AddRange(rowErrors);
 
@@ -2441,18 +2466,40 @@ public class ExcelMigrationService : IExcelMigrationService
             // Step 7: Get primary key columns
             var primaryKeyColumns = tableMetadata.Where(m => m.IsPrimaryKey).Select(m => m.ColumnName).ToList();
 
-            // Step 8: Upsert from temp table to target table using MERGE
-            var (rowsInserted, rowsUpdated) = await MergeFromTempToTargetAsync(
-                connection,
-                transaction,
-                schemaName,
-                tableName,
-                tempTableName,
-                columnMappings,
-                primaryKeyColumns,
-                identityColumn,
-                hasIdentityInExcel,
-                cancellationToken);
+            int rowsInserted;
+            int rowsUpdated;
+
+            // Step 8:
+            // - OTBankGuarantee: insert-only
+            // - Other tables: regular upsert (MERGE)
+            if (isOtBankGuaranteeMigration)
+            {
+                rowsInserted = await InsertFromTempToTargetAsync(
+                    connection,
+                    transaction,
+                    schemaName,
+                    tableName,
+                    tempTableName,
+                    columnMappings,
+                    identityColumn,
+                    hasIdentityInExcel,
+                    cancellationToken);
+                rowsUpdated = 0;
+            }
+            else
+            {
+                (rowsInserted, rowsUpdated) = await MergeFromTempToTargetAsync(
+                    connection,
+                    transaction,
+                    schemaName,
+                    tableName,
+                    tempTableName,
+                    columnMappings,
+                    primaryKeyColumns,
+                    identityColumn,
+                    hasIdentityInExcel,
+                    cancellationToken);
+            }
 
             transaction.Commit();
 
@@ -2493,6 +2540,36 @@ public class ExcelMigrationService : IExcelMigrationService
         }
 
         return response;
+    }
+
+    private async Task AssignSequentialPrimaryKeysAsync(
+        SqlConnection connection,
+        SqlTransaction transaction,
+        string schemaName,
+        string tableName,
+        string primaryKeyColumnName,
+        DataTable mappedDataTable,
+        CancellationToken cancellationToken)
+    {
+        if (!mappedDataTable.Columns.Contains(primaryKeyColumnName))
+        {
+            throw new InvalidOperationException($"Mapped data does not contain primary key column '{primaryKeyColumnName}'.");
+        }
+
+        var getMaxIdQuery = $@"
+            SELECT ISNULL(MAX([{primaryKeyColumnName}]), 0)
+            FROM [{schemaName}].[{tableName}] WITH (UPDLOCK, HOLDLOCK)";
+
+        await using var command = new SqlCommand(getMaxIdQuery, connection, transaction);
+        command.CommandTimeout = SqlCommandTimeout;
+        var currentMaxObj = await command.ExecuteScalarAsync(cancellationToken);
+        var currentMax = currentMaxObj == null || currentMaxObj == DBNull.Value ? 0L : Convert.ToInt64(currentMaxObj);
+
+        foreach (DataRow row in mappedDataTable.Rows)
+        {
+            currentMax++;
+            row[primaryKeyColumnName] = currentMax;
+        }
     }
 
     private async Task<List<ColumnMetadata>> GetTableMetadataAsync(
@@ -13608,6 +13685,61 @@ public class ExcelMigrationService : IExcelMigrationService
         await bulkCopy.WriteToServerAsync(dataTable, cancellationToken);
 
         return dataTable.Rows.Count;
+    }
+
+    private async Task<int> InsertFromTempToTargetAsync(
+        SqlConnection connection,
+        SqlTransaction transaction,
+        string schemaName,
+        string tableName,
+        string tempTableName,
+        List<ColumnMapping> mappings,
+        ColumnMetadata? identityColumn,
+        bool hasIdentityInExcel,
+        CancellationToken cancellationToken)
+    {
+        var hasIsDeletedColumn = await CheckColumnExistsAsync(connection, transaction, schemaName, tableName, "IsDeleted", cancellationToken);
+        var enableIdentityInsert = hasIdentityInExcel && identityColumn != null;
+
+        var insertMappings = mappings
+            .Where(m => !string.Equals(m.SqlColumnName, "IsDeleted", StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        var columnList = string.Join(", ", insertMappings.Select(m => $"[{m.SqlColumnName}]"));
+        var selectList = string.Join(", ", insertMappings.Select(m => $"source.[{m.SqlColumnName}]"));
+
+        if (hasIsDeletedColumn)
+        {
+            columnList = columnList + ", [IsDeleted]";
+            selectList = selectList + ", 0";
+        }
+
+        var insertQuery = $"INSERT INTO [{schemaName}].[{tableName}] ({columnList}) SELECT {selectList} FROM {tempTableName} AS source";
+
+        try
+        {
+            if (enableIdentityInsert)
+            {
+                var enableIdentityCmd = $"SET IDENTITY_INSERT [{schemaName}].[{tableName}] ON";
+                await using var cmd1 = new SqlCommand(enableIdentityCmd, connection, transaction);
+                cmd1.CommandTimeout = SqlCommandTimeout;
+                await cmd1.ExecuteNonQueryAsync(cancellationToken);
+            }
+
+            await using var command = new SqlCommand(insertQuery, connection, transaction);
+            command.CommandTimeout = SqlCommandTimeout;
+            return await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+        finally
+        {
+            if (enableIdentityInsert)
+            {
+                var disableIdentityCmd = $"SET IDENTITY_INSERT [{schemaName}].[{tableName}] OFF";
+                await using var cmd2 = new SqlCommand(disableIdentityCmd, connection, transaction);
+                cmd2.CommandTimeout = SqlCommandTimeout;
+                await cmd2.ExecuteNonQueryAsync(cancellationToken);
+            }
+        }
     }
 
     private async Task<(int rowsInserted, int rowsUpdated)> MergeFromTempToTargetAsync(
