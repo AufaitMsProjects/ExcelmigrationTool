@@ -1440,7 +1440,7 @@ public class ExcelMigrationService : IExcelMigrationService
      { "process_source_id", "CompanyId" },
      { "process_project_id", "ProjectID" },
      { "task_round", "SequenceNumber" },
-     { "name", "StepName" },
+     { "task_name", "StepName" },
      { "assignee_id", "ApproverUserId" },
      { "action_name", "ActionName" },
      { "status", "StatusID" },
