@@ -26,11 +26,11 @@ public class ExcelMigrationController : ControllerBase
     }
 
     /// <summary>
-    /// Uploads an Excel file and migrates its data to a SQL Server table
+    /// Uploads an Excel or CSV file and migrates its data to a SQL Server table
     /// </summary>
     /// <param name="targetSchema">SQL Server schema name (e.g., master, dbo)</param>
     /// <param name="targetTable">SQL Server table name (without schema)</param>
-    /// <param name="excelFile">Excel file (.xlsx) to upload</param>
+    /// <param name="excelFile">Excel or CSV file (.xlsx, .xls, .csv) to upload</param>
     /// <param name="userId">User ID for tracking</param>
     /// <param name="attachmentRecordType">Attachment record type for BPAttachments table (e.g., Comment, OrderTransmittal)</param>
     /// <returns>Migration result with success/failure counts and error messages</returns>
@@ -61,13 +61,13 @@ public class ExcelMigrationController : ControllerBase
 
             if (excelFile == null || excelFile.Length == 0)
             {
-                response.ErrorMessages.Add("Excel file is required.");
+                response.ErrorMessages.Add("Upload file is required.");
                 return BadRequest(response);
             }
 
-            var allowedExtensions = new[] { ".xlsx", ".xls" };
+            var allowedExtensions = new[] { ".xlsx", ".xls", ".csv" };
             var fileExtension = Path.GetExtension(excelFile.FileName).ToLowerInvariant();
-            
+
             if (!allowedExtensions.Contains(fileExtension))
             {
                 response.ErrorMessages.Add($"Invalid file type. Only {string.Join(", ", allowedExtensions)} files are allowed.");
@@ -82,20 +82,20 @@ public class ExcelMigrationController : ControllerBase
                 return BadRequest(response);
             }
 
-            // Read Excel file
+            // Read upload file (Excel/CSV)
             DataTable excelData;
             try
             {
-                _logger.LogInformation("Reading Excel file: {FileName}", excelFile.FileName);
+                _logger.LogInformation("Reading upload file: {FileName}", excelFile.FileName);
                 await using var stream = excelFile.OpenReadStream();
-                excelData = ExcelReaderHelper.ReadExcelToDataTable(stream, excelFile.FileName);
-                _logger.LogInformation("Excel file read successfully. Rows: {RowCount}, Columns: {ColumnCount}", 
+                excelData = ExcelReaderHelper.ReadFileToDataTable(stream, excelFile.FileName);
+                _logger.LogInformation("Upload file read successfully. Rows: {RowCount}, Columns: {ColumnCount}",
                     excelData.Rows.Count, excelData.Columns.Count);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error reading Excel file: {FileName}", excelFile.FileName);
-                response.ErrorMessages.Add($"Error reading Excel file: {ex.Message}");
+                _logger.LogError(ex, "Error reading upload file: {FileName}", excelFile.FileName);
+                response.ErrorMessages.Add($"Error reading upload file: {ex.Message}");
                 return BadRequest(response);
             }
 
