@@ -36,18 +36,18 @@ public class ExcelMigrationService : IExcelMigrationService
             {"shellnumber" ,"Shellnumber"},
             { "shell_last_modified_date", "UpdatedAt" },
             { "uuu_record_last_update_user", "UpdatedName" },
-            { "k__uuu_record_last_update_user", "UpdatedBy" },
+            { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
 
             { "process_status", "ProcessStatus" },
             { "status", "Status" },
 
             { "creator_id", "CreatedName" },
-            { "k__creator_id", "CreatedBy" },
+            { "k__creator_id", "PrimaveraCreatedId" },
 
             { "uot_c_number_sdt120", "CNumber" },
 
             { "ucp_pm_smn", "ManagerName" },
-            { "k__ci_project_manager_upk", "ManagerID" },
+            { "k__ci_project_manager_upk", "PrimeveraManagerID" },
 
             { "description", "Description" },
 
@@ -69,23 +69,24 @@ public class ExcelMigrationService : IExcelMigrationService
 
 { "uuu_record_last_update_date", "UpdatedAt" },
 { "uuu_record_last_update_user", "UpdatedName" },
-{ "k__uuu_record_last_update_user", "UpdatedBy" },
+{ "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
 
 { "process_status", "ProcessStatus" },
 { "status", "Status" },
+        {"k__uot_sold_party_dp","CustomerId" },
 { "creator_id", "CreatedName" },
-{ "k__creator_id", "CreatedBy" },
+{ "k__creator_id", "PrimaveraCreatedId" },
 
 { "project_id", "ProjectID" },
 
 { "uot_copies_to_be_sent_to_dp", "ICHeadName" },
-{ "k__uot_copies_to_be_sent_to_dp", "ICHeadID" },
+{ "k__uot_copies_to_be_sent_to_dp", "ICHeadPrimaveraId" },
 
 { "phone_number11", "ICHeadPhoneNumber" },
 
 { "email_id11", "ICHeadEmail" },
 { "uot_project_lead_dp", "ProjectLeaderName" },
-{ "k__uot_project_lead_dp", "ProjectLeaderID" },
+{ "k__uot_project_lead_dp", "ProjectLeaderPrimaveraId" },
 { "phone_number51", "ProjectLeaderPhoneNumber" },
 { "email_id51", "ProjectLeaderEmail" },
 { "mobile_number_headofdept", "HODMobileNumber" },
@@ -95,7 +96,7 @@ public class ExcelMigrationService : IExcelMigrationService
 { "uuu_user_fax", "Address_Fax" },
 { "postal_address", "PostalAddress" },
 { "uot_project_co_ordinator_dp", "ProjectManagerName" },
-{ "k__uot_project_co_ordinator_dp", "ProjectManagerID" },
+{ "k__uot_project_co_ordinator_dp", "ProjectManagerPrimaveraId" },
 { "uuu_creation_date", "CreatedAt" },
 { "phone_number21", "HOSSPhoneNumber" },
 { "uot_phone1_sdt50", "Phone" },
@@ -105,7 +106,7 @@ public class ExcelMigrationService : IExcelMigrationService
 { "uot_email1tb120", "Email" },
 { "ucpt_kindly_attn_sdt120", "KindlyAttn" },
 { "uot_mails_to_be_sent_to_dp", "ZonalHeadName" },
-{ "k__uot_mails_to_be_sent_to_dp", "ZonalHeadID" },
+{ "k__uot_mails_to_be_sent_to_dp", "ZonalHeadPrimaveraId" },
 { "email_id61", "ZonalHeadEmail" },
 { "mobile_number0", "InchargeMobileNumber" },
 { "cp_email_id_dc", "DocumentControllerEmail" },
@@ -120,7 +121,7 @@ public class ExcelMigrationService : IExcelMigrationService
 { "cp_extension_dc", "DocumentControllerExtension" },
 { "mobile_number11", "ICHeadMobileNumber" },
 { "uot_head_spares_and_service", "HOSSName" },
-{ "k__uot_head_spares_and_service", "HOSSID" },
+{ "k__uot_head_spares_and_service", "HOSSPrimaveraId" },
 { "extention11", "ICHeadExtension" },
 { "extention51", "ProjectLeaderExtension" },
 { "uot_purchase_add_sdt120", "Address1" },
@@ -131,15 +132,15 @@ public class ExcelMigrationService : IExcelMigrationService
 { "phone_number002", "WorkPhone" },
 { "email_id41", "InchargeEmail" },
 { "uot_incharge_exports_dp", "InchargeName" },
-{ "k__uot_incharge_exports_dp", "InchargeID" },
+{ "k__uot_incharge_exports_dp", "InchargePrimaveraId" },
 { "mobile_number_mails", "ZonalHeadMobileNumber" },
 { "extention0", "HODExtension" },
 { "fax1", "Fax" },
 { "uot_head_of_department", "HODName" },
-{ "k__uot_head_of_department", "HODId" },
+{ "k__uot_head_of_department", "HODPrimaveraId" },
 { "extention21", "HOSSExtension" },
 { "cp_document_manager_dc", "DocumentControllerName" },
-{ "k__cp_document_manager_dc", "DocumentControllerID" },
+{ "k__cp_document_manager_dc", "DocumentControllerPrimaveraId" },
 { "ucp_cp_250", "CommunicationProtocolFormat" },
 { "uot_comp_name3_sdt250", "SoldToParty" },
 { "cp_mobile_number_dc", "DocumentControllerMobileNumber" },
@@ -161,7 +162,7 @@ public class ExcelMigrationService : IExcelMigrationService
             { "ubg_others01_sdt250", "TypeOfGuaranteeOthers" },
 
             { "uuu_creation_date", "CreatedAt" },
-            { "k__creator_id", "CreatedBy" },
+            { "k__creator_id", "PrimaveraCreatedId" },
             { "creator_id", "CreatedName" },
 
             { "ubg_claim_period_01dop", "ClaimPeriodDate" },
@@ -231,7 +232,7 @@ public class ExcelMigrationService : IExcelMigrationService
             { "ucpt_kindly_attn_sdt120", "KindlyAttention" },
             { "status", "Status" },
             { "uuu_record_last_update_date", "UpdatedAt" },
-            { "creator_id", "CreatedBy" },
+            { "creator_id", "PrimaveraCreatedId" },
             { "project_id", "ProjectId" },
             { "uuu_user_email", "EmployeeEmail" },
             { "uuu_creation_date", "CreatedAt" },
@@ -245,7 +246,7 @@ public class ExcelMigrationService : IExcelMigrationService
             { "uloc_our_reference_sdt255", "OurReference" },
             { "loc_creator_name_smn", "CreatedName" },
             { "loc_creator_title_smn", "CreatorTitle" },
-            { "uuu_record_last_update_user", "UpdatedBy" },
+            { "uuu_record_last_update_user", "PrimaveraUpdatedId" },
             { "id", "LetterOfCorrespondenceId" },
             { "employee_bpk", "EmployeeId" },
             { "loc_reference_sdt120", "Reference" },
@@ -257,7 +258,10 @@ public class ExcelMigrationService : IExcelMigrationService
             { "record_no", "RecordNo" },
             { "status", "Status" },
             { "creator_id", "CreatedName" },
-            { "k__creator_id", "CreatedBy" },
+            { "k__creator_id", "PrimaveraCreatedId" },
+        //{"uuu_record_last_update_date","UpdatedAt" },
+        {"uuu_record_last_update_user" ,"UpdatedName"},
+        {"k__uuu_record_last_update_user","PrimaveraUpdatedId" },
             { "uot_turbine_pd", "TypeofTurbine" },
             { "uot_contract_clnce_sdt120", "ContractClearanceFormat" },
             { "type_of_warranty_pd", "TypeOfWarranty" },
@@ -301,10 +305,10 @@ public class ExcelMigrationService : IExcelMigrationService
         { "ao_saving_value_dec", "SavingValueINR" },
         { "record_no", "RecordNo" },
         { "uuu_creation_date", "CreatedAt" },
-        { "k__creator_id", "CreatedBy" },
+        { "k__creator_id", "PrimaveraCreatedId" },
         { "creator_id", "CreatedName" },
         { "uuu_record_last_update_date", "UpdatedAt" },
-        { "k__uuu_record_last_update_user", "UpdatedBy" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
         { "uuu_record_last_update_user", "UpdatedName" },
         { "id", "AdditionalOrderBookingId" },
         { "project_id", "ProjectId" },
@@ -329,7 +333,7 @@ public class ExcelMigrationService : IExcelMigrationService
         { "cr_reason_for_hold_cancel", "ReasonForHold" },
         { "id", "ContractOnHoldId" },
         { "ordertransmittalid", "OrderTransmittalId" },
-        { "k__creator_id", "createdby" },
+        { "k__creator_id", "PrimaveraCreatedId" },
         {"creator_id" ,"CreatedName"},
         { "cr_project_leader_remarks", "ProjectLeaderRemarks" },
         { "cr_project_hod_remarks", "ProjectHODRemarks" },
@@ -357,10 +361,10 @@ public class ExcelMigrationService : IExcelMigrationService
         { "lcr_curncy_pd", "Currency" },
         { "uot_incoterms_pd", "INCOTerms" },
         { "uuu_creation_date", "CreatedAt" },
-        { "k__creator_id", "CreatedBy" },
+        { "k__creator_id", "PrimaveraCreatedId" },
         { "creator_id", "CreatedName" },
         { "uuu_record_last_update_date", "UpdatedAt" },
-        { "k__uuu_record_last_update_user", "UpdatedBy" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
         { "uuu_record_last_update_user", "UpdatedName" },
         { "ordertransmittalid", "OrderTransmittalId" },
         { "project_id", "ProjectId" },
@@ -392,10 +396,10 @@ public class ExcelMigrationService : IExcelMigrationService
         { "ci_tot_net_payable_da", "TotalNetPayableAmountINR" },
         { "ci_tcs_da", "TCSPercent" },
         { "uuu_creation_date", "CreatedAt" },
-        { "k__creator_id", "CreatedBy" },
+        { "k__creator_id", "PrimaveraCreatedId" },
         { "creator_id", "CreatedName" },
         { "uuu_record_last_update_date", "UpdatedAt" },
-        { "k__uuu_record_last_update_user", "UpdatedBy" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
         { "uuu_record_last_update_user", "UpdatedName" },
         { "cf_icp_for_rb", "InitialCashFlowPlanFor" }
     };
@@ -407,16 +411,16 @@ public class ExcelMigrationService : IExcelMigrationService
         { "project_id", "ProjectID" },
         { "uuu_record_last_update_date", "UpdatedAt" },
         { "uuu_record_last_update_user", "UpdatedName" },
-        { "k__uuu_record_last_update_user", "UpdatedBy" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
         { "status", "status" },
         { "process_status", "ProcessStatus" },
         { "creator_id", "CreatedName" },
-        { "k__creator_id", "CreatedBy" },
+        { "k__creator_id", "PrimaveraCreatedId" },
         { "uuu_creation_date", "CreatedAt" },
         { "ugenmeetlctnnametxt120", "MeetingLocationName" },
         { "ugenmeetdatestrttimedp", "MeetingDateTime" },
         { "ugenmeetminsupk", "MeetingCoordinatorName" },
-        { "k__ugenmeetminsupk", "MeetingCoordinatorID" },
+        { "k__ugenmeetminsupk", "MeetingCoordinatorPrimaveraId" },
         { "ugenmeettypemmpd", "MeetingType" },
         { "ugensbjctssdt32", "Subject" }
     };
@@ -454,6 +458,38 @@ public class ExcelMigrationService : IExcelMigrationService
         { "project_id", "Projectid" }
     };
 
+    // Hardcoded column mapping for LiquidatedDamage table
+    private static readonly Dictionary<string, string> LiquidatedDamageMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "ot_ldclse_sdt500", "LDClause" },
+        { "ot_type_ld_pd", "LiquidatedDamageType" },
+        { "ot_ld_max_pd", "IsAmountPercent_Maximum" },
+        { "ot_ld_min_pd", "IsAmountPercent_Minimum" },
+        { "ot_min_amout_dec", "MinimumAmount_INRofPercent" },
+        { "ot_max_amount_dec", "MaximumAmount_INRofPercent" },
+        { "ot_min_1_dec", "MinimumPercent" },
+        { "ot_max_5_dec", "MaximumPercent" },
+        { "ot_ld_min_da", "MinimumAmountINR" },
+        { "ot_ld_max_da", "MaximumAmountINR" },
+        { "uuu_li_last_update_date", "UpdatedAt" },
+        { "others", "LiquidatedDamageOthersSpecify" },
+        { "record_id", "OrderTransmittalID" },
+        { "id", "LiquidatedDamageID" },
+        { "Projectid", "ProjectID" }
+    };
+
+    // Hardcoded column mapping for PaymentENC table
+    private static readonly Dictionary<string, string> PaymentENCMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "ot_pay_per_da", "PaymentInPercent" },
+        { "ot_milestone_pd", "TypeOfPayment" },
+        { "ot_payment_sdt500", "PaymentTerms" },
+        { "total_amount_da_ot", "TotalAmountINR" },
+        { "record_id", "OrderTransmittalID" },
+        { "id", "PaymentENCID" },
+        { "Projectid", "ProjectID" }
+    };
+
     // Hardcoded column mapping for UserList table
     private static readonly Dictionary<string, string> UserListMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
@@ -473,10 +509,10 @@ public class ExcelMigrationService : IExcelMigrationService
         { "id", "MonthlyActualCollectionId" },
         { "status", "Status" },
         { "creator_id", "CreatedName" },
-        { "k__creator_id", "CreatedBy" },
+        { "k__creator_id", "PrimaveraCreatedId" },
         { "uuu_creation_date", "CreatedAt" },
         { "uuu_record_last_update_date", "UpdatedAt" },
-        { "k__uuu_record_last_update_user", "UpdatedBy" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
         { "uuu_record_last_update_user", "UpdatedName" }
     };
 
@@ -499,6 +535,22 @@ public class ExcelMigrationService : IExcelMigrationService
         { "ci_tot_net_payable_da", "TotalNetPayableAmountINR" },
         { "otid", "OrderTransmittalId" },
         { "projectid", "ProjectId" }
+    };
+
+    // Hardcoded column mapping for MonthlyPlanning table
+    private static readonly Dictionary<string, string> MonthlyPlanningMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "record_no", "RecordNo" },
+        { "status", "Status" },
+        { "amount", "TotalEquivalentAmountINR" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "k__creator_id", "PrimaveraCreatedId" },
+        { "creator_id", "CreatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "uuu_record_last_update_user", "UpdatedName" },
+        { "id", "MonthlyPlanningId" },
+        { "project_id", "ProjectId" }
     };
 
     // Hardcoded column mapping for MonthlyPlanningLineItem table (child of MonthlyPlanning)
@@ -717,9 +769,9 @@ public class ExcelMigrationService : IExcelMigrationService
 { "uot_scopepd", "ScopeForCivil" },
 { "uuu_creation_date", "CreatedAt" },
 { "creator_id", "CreatedName" },
- {"k__creator_id","CreatedBy" },
+ {"k__creator_id","PrimaveraCreatedId" },
 
-{ "k__uuu_record_last_update_user", "UpdatedBy" },
+{ "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
 { "uuu_record_last_update_date", "UpdatedAt" },
 { "uuu_record_last_update_user", "UpdatedName" },
     };
@@ -731,12 +783,12 @@ public class ExcelMigrationService : IExcelMigrationService
             { "record_no", "RecordNo" },
 
             { "uuu_record_last_update_date", "UpdatedAt" },
-            { "k__uuu_record_last_update_user", "UpdatedBy" },
+            { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
             {"uuu_record_last_update_user","UpdatedName" },
 
             { "status", "Status" },
 
-            { "k__creator_id", "CreatedBy" },
+            { "k__creator_id", "PrimaveraCreatedId" },
              { "creator_id", "CreatedName" },
             { "uuu_creation_date", "CreatedAt" },
 
@@ -775,7 +827,7 @@ public class ExcelMigrationService : IExcelMigrationService
             { "title", "Title" },
 
             { "uuu_record_last_update_date", "UpdatedAt" },
-            { "k__creator_id", "CreatedBy" },
+            { "k__creator_id", "PrimaveraCreatedId" },
             { "uuu_creation_date", "CreatedAt" },
 
             { "uircntctfstnmtb", "ContactName" },
@@ -808,14 +860,14 @@ public class ExcelMigrationService : IExcelMigrationService
             { "record_no", "RecordNo" },
 
             { "uuu_record_last_update_date", "UpdatedAt" },
-            { "uuu_record_last_update_user", "UpdatedByName" },
-            { "k__uuu_record_last_update_user", "UpdatedBy" },
+            { "uuu_record_last_update_user", "PrimaveraUpdatedIdName" },
+            { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
 
             { "process_status", "ProcessStatus" },
             { "status", "StatusID" },
 
-            { "creator_id", "CreatedByName" },
-            { "k__creator_id", "CreatedBy" },
+            { "creator_id", "PrimaveraCreatedIdName" },
+            { "k__creator_id", "PrimaveraCreatedId" },
 
             { "vendor_master_vendor", "VendorName" },
             { "vendor_master_con_person", "ContactPerson" },
@@ -943,7 +995,7 @@ public class ExcelMigrationService : IExcelMigrationService
         { "file_name", "FileName" },   // Note: file_name maps to both FileName and FilePath (handled in MatchColumnsForBPAttachments)
        // { "parent_id", "OrderTransmittalRecordID" },  // Conditionally mapped based on parent_type (only when parent_type = 'uxot2')
         { "upload_date", "CreatedAt" },
-        { "upload_by", "CreatedBy" },
+        { "upload_by", "PrimaveraCreatedId" },
         {"parent_id","UnifierAttchmentID" }
     };
     // Hardcoded column mapping for BPAttachments when AttachmentRecordType = "Comment"
@@ -955,7 +1007,7 @@ public class ExcelMigrationService : IExcelMigrationService
         { "file_name", "FileName" },   // Note: file_name maps to both FileName and FilePath (handled in MatchColumnsForBPAttachments)
         //{ "parent_id", "BPCommentRecordID" },  // For Comment type, parent_id maps to BPCommentRecordID
         { "upload_date", "CreatedAt" },
-        { "upload_by", "CreatedBy" },
+        { "upload_by", "PrimaveraCreatedId" },
          {"parent_id","UnifierAttchmentID" }
 
     };
@@ -969,7 +1021,7 @@ public class ExcelMigrationService : IExcelMigrationService
         { "file_name", "FileName" },   // Note: file_name maps to both FileName and FilePath (handled in MatchColumnsForBPAttachments)
         { "parent_id", "OrderTransmittalRecordID" },  // For OrderTransmittal type, parent_id maps to OrderTransmittalRecordID
         { "upload_date", "CreatedAt" },
-        { "upload_by", "CreatedBy" }
+        { "upload_by", "PrimaveraCreatedId" }
     };
 
     // Hardcoded column mapping for BPComments table
@@ -979,7 +1031,7 @@ public class ExcelMigrationService : IExcelMigrationService
         { "project_id", "ProjectID" },
         { "file_name", "CompanyID" },
         { "content", "Comments" },
-        { "creatorid", "CreatedBy" },
+        { "creatorid", "PrimaveraCreatedId" },
         { "upload_by", "UserName" },
         //{ "parent_object_id", "" },
         { "lastmodified", "UpdatedAt" },
@@ -992,7 +1044,7 @@ public class ExcelMigrationService : IExcelMigrationService
         { "project_id", "ProjectID" },
         { "file_name", "CompanyID" },
         { "content", "Comments" },
-        { "creatorid", "CreatedBy" },
+        { "creatorid", "PrimaveraCreatedId" },
         { "upload_by", "UserName" },
         { "parent_object_id", "OrderTransmittalRecordID" },
         { "lastmodified", "UpdatedAt" },
@@ -1009,13 +1061,13 @@ public class ExcelMigrationService : IExcelMigrationService
             { "end_date", "EndDate" },
 
             { "uuu_record_last_update_date", "UpdatedAt" },
-            { "k__uuu_record_last_update_user", "UpdatedBy" },
+            { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
             { "uuu_record_last_update_user", "UpdatedName" },
 
             { "process_status", "ProcessStatus" },
             { "status", "StatusId" },
 
-            { "k__creator_id", "CreatedBy" },
+            { "k__creator_id", "PrimaveraCreatedId" },
             { "creator_id", "CreatedName" },
 
             { "project_id", "ProjectId" },
@@ -1188,10 +1240,10 @@ public class ExcelMigrationService : IExcelMigrationService
             { "project_id", "ProjectId" },
             { "process_status", "ProcessStatus" },
             { "status", "Status" },
-            { "creator_id", "CreatedBy" },
+            { "creator_id", "PrimaveraCreatedId" },
             { "uuu_creation_date", "CreatedAt" },
             { "uuu_record_last_update_date", "UpdatedAt" },
-            { "uuu_record_last_update_user", "UpdatedBy" },
+            { "uuu_record_last_update_user", "PrimaveraUpdatedId" },
 
             // ---- Alternator Options ----
             { "uot_alternator_scope", "AlternatorScopeID" },
@@ -1451,10 +1503,10 @@ public class ExcelMigrationService : IExcelMigrationService
         { "sr_spec_comm_sdt2000",      "AnySpecialComment" },
         { "record_no",                 "RecordNo" },
         { "uuu_creation_date",         "CreatedAt" },
-        { "k__creator_id",             "CreatedBy" },
+        { "k__creator_id",             "PrimaveraCreatedId" },
         { "creator_id",                "CreatedName" },
         { "uuu_record_last_update_date",      "UpdatedAt" },
-        { "k__uuu_record_last_update_user",   "UpdatedBy" },
+        { "k__uuu_record_last_update_user",   "PrimaveraUpdatedId" },
         { "uuu_record_last_update_user",      "UpdatedName" },
     };
 
@@ -1489,10 +1541,14 @@ public class ExcelMigrationService : IExcelMigrationService
             return response;
         }
 
-        // Check if table name starts with "OrderTransmittal" OR is "Payment_Supply" - migrate to all matching tables
+        // Check if table name starts with "OrderTransmittal" OR is "Payment_Supply" OR "LiquidatedDamage" OR "Payment_ENC" - migrate to all matching tables
         if (tableName.StartsWith("OrderTransmittal", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(tableName, "Payment_Supply", StringComparison.OrdinalIgnoreCase) ||
-            string.Equals(tableName, "payment_supply", StringComparison.OrdinalIgnoreCase))
+            string.Equals(tableName, "payment_supply", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(tableName, "LiquidatedDamage", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(tableName, "liquidated_damage", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(tableName, "Payment_ENC", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(tableName, "payment_enc", StringComparison.OrdinalIgnoreCase))
         {
             return await MigrateToOrderTransmittalTablesAsync(connectionString, schemaName, tableName, excelData, cancellationToken);
         }
@@ -1531,6 +1587,14 @@ public class ExcelMigrationService : IExcelMigrationService
             await using var icfpConnection = new SqlConnection(connectionString);
             await icfpConnection.OpenAsync(cancellationToken);
             return await MigrateToSingleTableAsync(icfpConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        // Check if this is MonthlyPlanning table - use single table migration
+        if (string.Equals(tableName, "MonthlyPlanning", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var mpConnection = new SqlConnection(connectionString);
+            await mpConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(mpConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
         }
 
         // Check if this is MonthlyPlanningLineItem table - use single table migration
@@ -1765,6 +1829,22 @@ public class ExcelMigrationService : IExcelMigrationService
                 var paymentSupplyTables = await GetTablesWithPrefixAsync(connection, schemaName, "payment_supply", cancellationToken);
                 matchingTables.AddRange(paymentSupplyTables);
             }
+            else if (string.Equals(tableNamePrefix, "Payment_ENC", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(tableNamePrefix, "payment_enc", StringComparison.OrdinalIgnoreCase))
+            {
+                var paymentEncTables = await GetTablesWithPrefixAsync(connection, schemaName, "payment_enc", cancellationToken);
+                matchingTables.AddRange(paymentEncTables);
+            }
+            else if (string.Equals(tableNamePrefix, "LiquidatedDamage", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(tableNamePrefix, "liquidated_damage", StringComparison.OrdinalIgnoreCase))
+            {
+                var liquidatedDamageTables = await GetTablesWithPrefixAsync(connection, schemaName, "LiquidatedDamage", cancellationToken);
+                if (liquidatedDamageTables.Count == 0)
+                {
+                    liquidatedDamageTables = await GetTablesWithPrefixAsync(connection, schemaName, "liquidated_damage", cancellationToken);
+                }
+                matchingTables.AddRange(liquidatedDamageTables);
+            }
             else
             {
                 // Default behavior: Migrate OrderTransmittal ONLY
@@ -1799,11 +1879,18 @@ public class ExcelMigrationService : IExcelMigrationService
             foreach (var targetTable in orderedTables)
             {
                 DataTable tableSpecificData = excelData;
-                bool isPaymentSupplyData = excelData.Columns.Contains("uuu_tab_id") && 
-                                           excelData.AsEnumerable().Any(r => r["uuu_tab_id"]?.ToString() == "11");
+                var uuuTabIdColumn = excelData.Columns.Cast<DataColumn>()
+                    .FirstOrDefault(c => c.ColumnName.Trim().Equals("uuu_tab_id", StringComparison.OrdinalIgnoreCase))?.ColumnName;
+
+                bool isPaymentSupplyData = uuuTabIdColumn != null && 
+                                           excelData.AsEnumerable().Any(r => { var v = r[uuuTabIdColumn]?.ToString()?.Trim(); return v == "11" || v == "11.0"; });
+                bool isLiquidatedDamageData = uuuTabIdColumn != null && 
+                                              excelData.AsEnumerable().Any(r => { var v = r[uuuTabIdColumn]?.ToString()?.Trim(); return v == "4" || v == "4.0"; });
+                bool isPaymentEncData = uuuTabIdColumn != null && 
+                                        excelData.AsEnumerable().Any(r => { var v = r[uuuTabIdColumn]?.ToString()?.Trim(); return v == "12" || v == "12.0"; });
                 
-                // If the Excel data is for payment_supply (uuu_tab_id=11), SKIP the main OrderTransmittal table
-                if (isPaymentSupplyData && string.Equals(targetTable, "OrderTransmittal", StringComparison.OrdinalIgnoreCase))
+                // If the Excel data is for payment_supply (uuu_tab_id=11), LiquidatedDamage (4), or payment_enc (12), SKIP the main OrderTransmittal table
+                if ((isPaymentSupplyData || isLiquidatedDamageData || isPaymentEncData) && string.Equals(targetTable, "OrderTransmittal", StringComparison.OrdinalIgnoreCase))
                 {
                     continue;
                 }
@@ -1811,16 +1898,72 @@ public class ExcelMigrationService : IExcelMigrationService
                 // Special row filtering for payment_supply child table based on uuu_tab_id
                 if (string.Equals(targetTable, "payment_supply", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (excelData.Columns.Contains("uuu_tab_id"))
+                    if (uuuTabIdColumn != null)
                     {
                         var filteredRows = excelData.AsEnumerable()
-                            .Where(r => r["uuu_tab_id"]?.ToString() == "11")
+                            .Where(r => { var v = r[uuuTabIdColumn]?.ToString()?.Trim(); return v == "11" || v == "11.0"; })
                             .ToList();
 
                         if (filteredRows.Count > 0)
+                        {
                             tableSpecificData = filteredRows.CopyToDataTable();
+                        }
                         else
-                            continue; // Skip table if no matching rows
+                        {
+                            continue; // No matching rows for payment_supply
+                        }
+                    }
+                    else
+                    {
+                        continue; // Column missing
+                    }
+                }
+
+                // Special row filtering for LiquidatedDamage child table based on uuu_tab_id
+                if (string.Equals(targetTable, "LiquidatedDamage", StringComparison.OrdinalIgnoreCase) || string.Equals(targetTable, "liquidated_damage", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (uuuTabIdColumn != null)
+                    {
+                        var filteredRows = excelData.AsEnumerable()
+                            .Where(r => { var v = r[uuuTabIdColumn]?.ToString()?.Trim(); return v == "4" || v == "4.0"; })
+                            .ToList();
+
+                        if (filteredRows.Count > 0)
+                        {
+                            tableSpecificData = filteredRows.CopyToDataTable();
+                        }
+                        else
+                        {
+                            continue; // No matching rows for LiquidatedDamage
+                        }
+                    }
+                    else
+                    {
+                        continue; // Column missing
+                    }
+                }
+
+                // Special row filtering for payment_enc child table based on uuu_tab_id
+                if (string.Equals(targetTable, "payment_enc", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (uuuTabIdColumn != null)
+                    {
+                        var filteredRows = excelData.AsEnumerable()
+                            .Where(r => { var v = r[uuuTabIdColumn]?.ToString()?.Trim(); return v == "12" || v == "12.0"; })
+                            .ToList();
+
+                        if (filteredRows.Count > 0)
+                        {
+                            tableSpecificData = filteredRows.CopyToDataTable();
+                        }
+                        else
+                        {
+                            continue; // No matching rows for payment_enc
+                        }
+                    }
+                    else
+                    {
+                        continue; // Column missing
                     }
                 }
 
@@ -2267,6 +2410,7 @@ public class ExcelMigrationService : IExcelMigrationService
                         else
                             continue; // Skip table if no matching rows
                     }
+                    else continue;
                 }
 
                 var tableResponse = await MigrateToSingleTableAsync(
@@ -2918,6 +3062,12 @@ public class ExcelMigrationService : IExcelMigrationService
             return MatchColumnsForInitialCashFlowPlan(excelData, tableMetadata);
         }
 
+        // Check if this is MonthlyPlanning table - use hardcoded mapping
+        if (string.Equals(tableName, "MonthlyPlanning", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForMonthlyPlanning(excelData, tableMetadata);
+        }
+
         // Check if this is MonthlyPlanningLineItem table - use hardcoded mapping
         if (string.Equals(tableName, "MonthlyPlanningLineItem", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(tableName, "MonthlyPlanning_LineItem", StringComparison.OrdinalIgnoreCase) ||
@@ -2986,6 +3136,18 @@ public class ExcelMigrationService : IExcelMigrationService
         if (string.Equals(tableName, "payment_supply", StringComparison.OrdinalIgnoreCase))
         {
             return MatchColumnsForPaymentSupply(excelData, tableMetadata);
+        }
+
+        // Check if this is payment_enc table - use hardcoded mapping
+        if (string.Equals(tableName, "payment_enc", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForPaymentENC(excelData, tableMetadata);
+        }
+
+        // Check if this is LiquidatedDamage table - use hardcoded mapping
+        if (string.Equals(tableName, "LiquidatedDamage", StringComparison.OrdinalIgnoreCase) || string.Equals(tableName, "liquidated_damage", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForLiquidatedDamage(excelData, tableMetadata);
         }
 
         // Check if table name starts with "MinutesOfMeeting" or "MOM" - use hardcoded mapping
@@ -3597,6 +3759,98 @@ public class ExcelMigrationService : IExcelMigrationService
         return mappings;
     }
 
+    private List<ColumnMapping> MatchColumnsForLiquidatedDamage(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        var mappings = new List<ColumnMapping>();
+        var excelColumns = excelData.Columns.Cast<DataColumn>().ToList();
+
+        // Create a lookup for SQL column metadata by column name (case-insensitive)
+        var sqlColumnLookup = tableMetadata.ToDictionary(
+            m => m.ColumnName,
+            m => m,
+            StringComparer.OrdinalIgnoreCase);
+
+        // Iterate through the hardcoded mapping dictionary
+        foreach (var mappingEntry in LiquidatedDamageMapping)
+        {
+            var excelColumnName = mappingEntry.Key;
+            var sqlColumnName = mappingEntry.Value;
+
+            // Check if Excel has this column
+            var excelColumn = excelColumns.FirstOrDefault(
+                ec => ec.ColumnName.Equals(excelColumnName, StringComparison.OrdinalIgnoreCase));
+
+            if (excelColumn == null)
+                continue; // Skip if Excel column not found
+
+            // Check if SQL table has the mapped column
+            if (!sqlColumnLookup.TryGetValue(sqlColumnName, out var sqlColumn))
+                continue; // Skip if SQL column not found in metadata
+
+            // Add the mapping
+            mappings.Add(new ColumnMapping
+            {
+                ExcelColumnName = excelColumn.ColumnName,
+                SqlColumnName = sqlColumn.ColumnName,
+                SqlDataType = sqlColumn.DataType,
+                IsIdentity = sqlColumn.IsIdentity,
+                IsNullable = sqlColumn.IsNullable,
+                ForeignKeyTableSchema = sqlColumn.ForeignKeyTableSchema,
+                ForeignKeyTableName = sqlColumn.ForeignKeyTableName,
+                ForeignKeyColumnName = sqlColumn.ForeignKeyColumnName,
+                ForeignKeyLookupColumnName = sqlColumn.ForeignKeyLookupColumnName
+            });
+        }
+
+        return mappings;
+    }
+
+    private List<ColumnMapping> MatchColumnsForPaymentENC(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        var mappings = new List<ColumnMapping>();
+        var excelColumns = excelData.Columns.Cast<DataColumn>().ToList();
+
+        // Create a lookup for SQL column metadata by column name (case-insensitive)
+        var sqlColumnLookup = tableMetadata.ToDictionary(
+            m => m.ColumnName,
+            m => m,
+            StringComparer.OrdinalIgnoreCase);
+
+        // Iterate through the hardcoded mapping dictionary
+        foreach (var mappingEntry in PaymentENCMapping)
+        {
+            var excelColumnName = mappingEntry.Key;
+            var sqlColumnName = mappingEntry.Value;
+
+            // Check if Excel has this column
+            var excelColumn = excelColumns.FirstOrDefault(
+                ec => ec.ColumnName.Equals(excelColumnName, StringComparison.OrdinalIgnoreCase));
+
+            if (excelColumn == null)
+                continue; // Skip if Excel column not found
+
+            // Check if SQL table has the mapped column
+            if (!sqlColumnLookup.TryGetValue(sqlColumnName, out var sqlColumn))
+                continue; // Skip if SQL column not found in metadata
+
+            // Add the mapping
+            mappings.Add(new ColumnMapping
+            {
+                ExcelColumnName = excelColumn.ColumnName,
+                SqlColumnName = sqlColumn.ColumnName,
+                SqlDataType = sqlColumn.DataType,
+                IsIdentity = sqlColumn.IsIdentity,
+                IsNullable = sqlColumn.IsNullable,
+                ForeignKeyTableSchema = sqlColumn.ForeignKeyTableSchema,
+                ForeignKeyTableName = sqlColumn.ForeignKeyTableName,
+                ForeignKeyColumnName = sqlColumn.ForeignKeyColumnName,
+                ForeignKeyLookupColumnName = sqlColumn.ForeignKeyLookupColumnName
+            });
+        }
+
+        return mappings;
+    }
+
     private List<ColumnMapping> MatchColumnsForLetterOfCorrespondence(DataTable excelData, List<ColumnMetadata> tableMetadata)
     {
         var mappings = new List<ColumnMapping>();
@@ -3873,6 +4127,52 @@ public class ExcelMigrationService : IExcelMigrationService
                 SqlDataType = sqlColumn.DataType,
                 IsIdentity = sqlColumn.IsIdentity,
                 IsNullable = sqlColumn.IsNullable
+            });
+        }
+
+        return mappings;
+    }
+
+    private List<ColumnMapping> MatchColumnsForMonthlyPlanning(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        var mappings = new List<ColumnMapping>();
+        var excelColumns = excelData.Columns.Cast<DataColumn>().ToList();
+
+        // Create a lookup for SQL column metadata by column name (case-insensitive)
+        var sqlColumnLookup = tableMetadata.ToDictionary(
+            m => m.ColumnName,
+            m => m,
+            StringComparer.OrdinalIgnoreCase);
+
+        // Iterate through the hardcoded mapping dictionary
+        foreach (var mappingEntry in MonthlyPlanningMapping)
+        {
+            var excelColumnName = mappingEntry.Key;
+            var sqlColumnName = mappingEntry.Value;
+
+            // Check if Excel has this column
+            var excelColumn = excelColumns.FirstOrDefault(
+                ec => ec.ColumnName.Equals(excelColumnName, StringComparison.OrdinalIgnoreCase));
+
+            if (excelColumn == null)
+                continue; // Skip if Excel column not found
+
+            // Check if SQL table has the mapped column
+            if (!sqlColumnLookup.TryGetValue(sqlColumnName, out var sqlColumn))
+                continue; // Skip if SQL column not found in metadata
+
+            // Add the mapping
+            mappings.Add(new ColumnMapping
+            {
+                ExcelColumnName = excelColumn.ColumnName,
+                SqlColumnName = sqlColumn.ColumnName,
+                SqlDataType = sqlColumn.DataType,
+                IsIdentity = sqlColumn.IsIdentity,
+                IsNullable = sqlColumn.IsNullable,
+                ForeignKeyTableSchema = sqlColumn.ForeignKeyTableSchema,
+                ForeignKeyTableName = sqlColumn.ForeignKeyTableName,
+                ForeignKeyColumnName = sqlColumn.ForeignKeyColumnName,
+                ForeignKeyLookupColumnName = sqlColumn.ForeignKeyLookupColumnName
             });
         }
 
@@ -4800,8 +5100,11 @@ public class ExcelMigrationService : IExcelMigrationService
         var isLCReviewNotesObservation = string.Equals(tableName, "LCReview_NotesObservation", StringComparison.OrdinalIgnoreCase);
         var isInitialCashPlan = string.Equals(tableName, "InitialCashPlan", StringComparison.OrdinalIgnoreCase);
         var isPaymentSupply = string.Equals(tableName, "payment_supply", StringComparison.OrdinalIgnoreCase);
+        var isLiquidatedDamage = string.Equals(tableName, "LiquidatedDamage", StringComparison.OrdinalIgnoreCase) || string.Equals(tableName, "liquidated_damage", StringComparison.OrdinalIgnoreCase);
+        var isPaymentENC = string.Equals(tableName, "payment_enc", StringComparison.OrdinalIgnoreCase);
         var isMonthlyActualCollection = string.Equals(tableName, "MonthlyActualCollection", StringComparison.OrdinalIgnoreCase);
         var isInitialCashFlowPlan = string.Equals(tableName, "InitialCashFlowPlan", StringComparison.OrdinalIgnoreCase);
+        var isMonthlyPlanning = string.Equals(tableName, "MonthlyPlanning", StringComparison.OrdinalIgnoreCase);
         var isMonthlyPlanningLineItem = string.Equals(tableName, "MonthlyPlanningLineItem", StringComparison.OrdinalIgnoreCase) ||
                                         string.Equals(tableName, "MonthlyPlanning_LineItem", StringComparison.OrdinalIgnoreCase);
         var isMonthlyActualCollectionPlanned = string.Equals(tableName, "MonthlyActualCollectionPlanned", StringComparison.OrdinalIgnoreCase);
@@ -5026,7 +5329,7 @@ public class ExcelMigrationService : IExcelMigrationService
                             if (resolvedProjectId == null)
                             {
                                 // For CommunicationProtocol, OrderTransmittal, BankGuarantee, Turbine, and ElectricalInstrumentationDBO, if ProjectID doesn't exist, set to NULL instead of skipping row
-                                if (isCommunicationProtocol || isOrderTransmittal || isBankGuarantee || isTurbine || isElectricalInstrumentationDBO || isBPAttachments || isMechanicalDBO || isContractClearance || isAdditionalOrderBooking || isMinutesOfMeeting || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isInitialCashFlowPlan || isMonthlyPlanningLineItem || isMonthlyActualCollectionPlanned || isMonthlyActualUnplannedCollection || isSpecificationRelease)
+                                if (isCommunicationProtocol || isOrderTransmittal || isBankGuarantee || isTurbine || isElectricalInstrumentationDBO || isBPAttachments || isMechanicalDBO || isContractClearance || isAdditionalOrderBooking || isMinutesOfMeeting || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isInitialCashFlowPlan || isMonthlyPlanning || isMonthlyPlanningLineItem || isMonthlyActualCollectionPlanned || isMonthlyActualUnplannedCollection || isSpecificationRelease)
                                 {
                                     value = DBNull.Value;
                                 }
@@ -5361,13 +5664,14 @@ public class ExcelMigrationService : IExcelMigrationService
                     if (string.Equals(mapping.SqlColumnName, "ProjectTypeMasterID", StringComparison.OrdinalIgnoreCase) &&
                         value != DBNull.Value && value != null)
                     {
-                        if (long.TryParse(value.ToString()?.Trim(), out var projectTypeNumeric) && projectTypeNumeric == 0)
+                        var valueStr = value.ToString()?.Trim() ?? string.Empty;
+                        if (string.IsNullOrEmpty(valueStr) || (long.TryParse(valueStr, out var projectTypeNumeric) && projectTypeNumeric == 0))
                         {
                             value = DBNull.Value;
                         }
                         else
                         {
-                            var valueKey = value.ToString()?.Trim() ?? string.Empty;
+                            var valueKey = valueStr;
 
                             // Check cache first
                             if (!projectTypeMasterIdCache.TryGetValue(valueKey, out var resolvedProjectTypeMasterId))
@@ -5399,12 +5703,12 @@ public class ExcelMigrationService : IExcelMigrationService
                         }
                     }
 
-                    // Special handling for CustomerMasterID and EndUserID in ContractClearance (FK to master.CustomerMaster)
+                    // Special handling for CustomerMasterID and EndUserID in ContractClearance (FK to master.CustomerMaster) 
+                    // Special handling for CustomerId in CommunicationProtocol (FK to master.CustomerMaster)
                     // If the customer doesn't exist, set to NULL instead of failing the migration
-                    if (isContractClearance &&
-                        (string.Equals(mapping.SqlColumnName, "CustomerMasterID", StringComparison.OrdinalIgnoreCase) ||
-                         string.Equals(mapping.SqlColumnName, "EndUserID", StringComparison.OrdinalIgnoreCase)) &&
-                        value != DBNull.Value && value != null)
+                    if ( ((isContractClearance && (string.Equals(mapping.SqlColumnName, "CustomerMasterID", StringComparison.OrdinalIgnoreCase) || string.Equals(mapping.SqlColumnName, "EndUserID", StringComparison.OrdinalIgnoreCase))) ||
+                          (isCommunicationProtocol && string.Equals(mapping.SqlColumnName, "CustomerId", StringComparison.OrdinalIgnoreCase))) &&
+                         value != DBNull.Value && value != null )
                     {
                         var valueKey = value.ToString()?.Trim() ?? string.Empty;
 
@@ -5444,7 +5748,7 @@ public class ExcelMigrationService : IExcelMigrationService
 
                     // Special handling for OrderTransmittalId in ContractClearance or AdditionalOrderBooking (FK to bp.OrderTransmittal)
                     // If the OrderTransmittal doesn't exist, set to NULL instead of failing the migration
-                    if ((isContractClearance || isAdditionalOrderBooking || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isSpecificationRelease) &&
+                    if ((isContractClearance || isAdditionalOrderBooking || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isSpecificationRelease) &&
                         string.Equals(mapping.SqlColumnName, "OrderTransmittalId", StringComparison.OrdinalIgnoreCase))
                     {
                         if (IsValueZero(value))
@@ -5527,6 +5831,49 @@ public class ExcelMigrationService : IExcelMigrationService
                             value = 1;
                         else if (long.TryParse(strValue, out var longVal))
                             value = longVal;
+                    }
+
+                    if (isPaymentENC &&
+                        string.Equals(mapping.SqlColumnName, "TypeOfPayment", StringComparison.OrdinalIgnoreCase) &&
+                        value != DBNull.Value && value != null)
+                    {
+                        var strValue = value.ToString()?.Trim() ?? string.Empty;
+                        if (string.Equals(strValue, "Milestone Advance", StringComparison.OrdinalIgnoreCase))
+                            value = 1;
+                        else if (string.Equals(strValue, "Token", StringComparison.OrdinalIgnoreCase))
+                            value = 2;
+                        else if (string.Equals(strValue, "Final", StringComparison.OrdinalIgnoreCase))
+                            value = 3;
+                        else if (long.TryParse(strValue, out var longVal))
+                            value = longVal;
+                    }
+
+                    if (isLiquidatedDamage &&
+                        string.Equals(mapping.SqlColumnName, "LiquidatedDamageType", StringComparison.OrdinalIgnoreCase) &&
+                        value != DBNull.Value && value != null)
+                    {
+                        var strValue = value.ToString()?.Trim() ?? string.Empty;
+                        if (string.Equals(strValue, "Late Delivery", StringComparison.OrdinalIgnoreCase)) value = 1;
+                        else if (string.Equals(strValue, "Reduced Power", StringComparison.OrdinalIgnoreCase)) value = 2;
+                        else if (string.Equals(strValue, "Increase in Auxiliary Power", StringComparison.OrdinalIgnoreCase)) value = 3;
+                        else if (string.Equals(strValue, "Increase in Steam Consumption", StringComparison.OrdinalIgnoreCase)) value = 4;
+                        else if (string.Equals(strValue, "Heat Rate", StringComparison.OrdinalIgnoreCase)) value = 5;
+                        else if (string.Equals(strValue, "Documentation", StringComparison.OrdinalIgnoreCase)) value = 6;
+                        else if (string.Equals(strValue, "Minimum Availability", StringComparison.OrdinalIgnoreCase)) value = 7;
+                        else if (string.Equals(strValue, "Cumulative Liquidated Damages", StringComparison.OrdinalIgnoreCase)) value = 8;
+                        else if (string.Equals(strValue, "Others", StringComparison.OrdinalIgnoreCase)) value = 9;
+                        else if (long.TryParse(strValue, out var longVal)) value = longVal;
+                    }
+
+                    if (isLiquidatedDamage &&
+                        (string.Equals(mapping.SqlColumnName, "IsAmountPercent_Maximum", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "IsAmountPercent_Minimum", StringComparison.OrdinalIgnoreCase)) &&
+                        value != DBNull.Value && value != null)
+                    {
+                        var strValue = value.ToString()?.Trim() ?? string.Empty;
+                        if (string.Equals(strValue, "Amount", StringComparison.OrdinalIgnoreCase)) value = 1;
+                        else if (string.Equals(strValue, "Percentage", StringComparison.OrdinalIgnoreCase)) value = 2;
+                        else if (long.TryParse(strValue, out var longVal)) value = longVal;
                     }
 
                     // Special handling for status column in CustomerMaster
