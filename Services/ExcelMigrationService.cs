@@ -54,9 +54,9 @@ public class ExcelMigrationService : IExcelMigrationService
             { "uuu_shell_template_picker", "ProjectTemplateID" },
             { "uuu_shell_location", "ProjectTypeMasterID" },
 
-            { "ugenprojectname", "ProjectName" },
+            { "shellname", "ProjectName" },
 
-            { "uuu_creation_date", "CreatedAt" }
+            { "shell_createdate", "CreatedAt" }
         };
 
 
@@ -350,6 +350,8 @@ public class ExcelMigrationService : IExcelMigrationService
     private static readonly Dictionary<string, string> LCReviewMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
         { "lcr_rev_no_da", "CurrentRevision" },
+        {"record_no","RecordNo" },
+        {"status","Status" },
         { "lcr_log_remarks_sdt2000", "LogisticsRemarks" },
         { "lcr_pm_rmks", "PMRemarks" },
         { "lcr_intor_rmks", "InitiatorRemarks" },
@@ -3230,7 +3232,10 @@ public class ExcelMigrationService : IExcelMigrationService
         {
             return MatchColumnsForElectricalInstrumentationDBO(excelData, tableMetadata);
         }
-
+        if (tableName.StartsWith("ApprovalLog", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForApprovalLog(excelData, tableMetadata);
+        }
         // For other tables, use existing dynamic matching logic
         var excelColumns = excelData.Columns.Cast<DataColumn>().ToList();
 
