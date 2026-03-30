@@ -39,7 +39,7 @@ public class ExcelMigrationService : IExcelMigrationService
             { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
 
             { "process_status", "ProcessStatus" },
-            { "status", "Status" },
+            { "order_status", "Status" },
 
             { "creator_id", "CreatedName" },
             { "k__creator_id", "PrimaveraCreatedId" },
@@ -62,92 +62,113 @@ public class ExcelMigrationService : IExcelMigrationService
 
     // Hardcoded column mapping for CommunicationProtocol table
     private static readonly Dictionary<string, string> CommunicationProtocolColumnMapping = new(StringComparer.OrdinalIgnoreCase)
-    {
+{
+    { "id", "CommunicationProtocolID" },
+    { "record_no", "RecordNo" },
+    { "project_id", "ProjectID" },
 
-{ "id", "CommunicationProtocolID" },
-{ "record_no", "RecordNo" },
+    { "status", "Status" },
+    { "process_status", "ProcessStatus" },
 
-{ "uuu_record_last_update_date", "UpdatedAt" },
-{ "uuu_record_last_update_user", "UpdatedName" },
-{ "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+    { "ucp_cp_250", "CommunicationProtocolFormat" },
+    { "ucp_format_sdt120", "CPFormat" },
+    { "ucpt_kindly_attn_sdt120", "KindlyAttn" },
 
-{ "process_status", "ProcessStatus" },
-{ "status", "Status" },
-        {"k__uot_sold_party_dp","CustomerId" },
-{ "creator_id", "CreatedName" },
-{ "k__creator_id", "PrimaveraCreatedId" },
+    { "uot_comp_name3_sdt250", "SoldToParty" },
 
-{ "project_id", "ProjectID" },
+    { "uot_purchase_add_sdt120", "Address1" },
+    { "uot_purchase_add2_sdt120", "Address2" },
+    { "uot_purchase_add3_sdt120", "Address3" },
 
-{ "uot_copies_to_be_sent_to_dp", "ICHeadName" },
-{ "k__uot_copies_to_be_sent_to_dp", "ICHeadPrimaveraId" },
+    { "uot_pur_citytxt50", "City" },
+    { "uot_india_states_pd", "StateProvince" },
+    { "uot_pur_countrypd", "Country" },
+    { "uot_state", "StateProvinceOtherThanIndia" },
 
-{ "phone_number11", "ICHeadPhoneNumber" },
+    { "uot_email1tb120", "Email" },
+    { "uuu_user_fax", "Fax" },
+    { "uot_phone1_sdt50", "Phone" },
+    { "phone_number002", "WorkPhone" },
 
-{ "email_id11", "ICHeadEmail" },
-{ "uot_project_lead_dp", "ProjectLeaderName" },
-{ "k__uot_project_lead_dp", "ProjectLeaderPrimaveraId" },
-{ "phone_number51", "ProjectLeaderPhoneNumber" },
-{ "email_id51", "ProjectLeaderEmail" },
-{ "mobile_number_headofdept", "HODMobileNumber" },
-{ "mobile_number_headspares", "HOSSMobileNumber" },
-{ "extention31", "ProjectManagerExtension" },
-{ "uot_pur_countrypd", "Country" },
-{ "uuu_user_fax", "Address_Fax" },
-{ "postal_address", "PostalAddress" },
-{ "uot_project_co_ordinator_dp", "ProjectManagerName" },
-{ "k__uot_project_co_ordinator_dp", "ProjectManagerPrimaveraId" },
-{ "uuu_creation_date", "CreatedAt" },
-{ "phone_number21", "HOSSPhoneNumber" },
-{ "uot_phone1_sdt50", "Phone" },
-{ "phone_number61", "ZonalHeadPhoneNumber" },
-{ "uot_purchase_add3_sdt120", "Address3" },
-{ "phone_number0", "HODPhoneNumber" },
-{ "uot_email1tb120", "Email" },
-{ "ucpt_kindly_attn_sdt120", "KindlyAttn" },
-{ "uot_mails_to_be_sent_to_dp", "ZonalHeadName" },
-{ "k__uot_mails_to_be_sent_to_dp", "ZonalHeadPrimaveraId" },
-{ "email_id61", "ZonalHeadEmail" },
-{ "mobile_number0", "InchargeMobileNumber" },
-{ "cp_email_id_dc", "DocumentControllerEmail" },
-{ "mobile_number21", "ProjectLeaderMobileNumber" },
-{ "uot_pur_citytxt50", "City" },
-{ "extention41", "InchargeExtension" },
-{ "phone_number31", "ProjectManagerPhoneNumber" },
-{ "ucp_pm_smn", "ProjectManagerName.1" },
-{ "email_id31", "ProjectManagerEmail" },
-{ "uot_state", "StateProvinceOtherThanIndia" },
-{ "uot_india_states_pd", "StateProvince" },
-{ "cp_extension_dc", "DocumentControllerExtension" },
-{ "mobile_number11", "ICHeadMobileNumber" },
-{ "uot_head_spares_and_service", "HOSSName" },
-{ "k__uot_head_spares_and_service", "HOSSPrimaveraId" },
-{ "extention11", "ICHeadExtension" },
-{ "extention51", "ProjectLeaderExtension" },
-{ "uot_purchase_add_sdt120", "Address1" },
-{ "uot_purchase_add2_sdt120", "Address2" },
-{ "cp_phone_number_dc", "DocumentControllerPhoneNumber" },
-{ "phone_number41", "InchargePhoneNumber" },
-{ "email_id0", "HODEmail" },
-{ "phone_number002", "WorkPhone" },
-{ "email_id41", "InchargeEmail" },
-{ "uot_incharge_exports_dp", "InchargeName" },
-{ "k__uot_incharge_exports_dp", "InchargePrimaveraId" },
-{ "mobile_number_mails", "ZonalHeadMobileNumber" },
-{ "extention0", "HODExtension" },
-{ "fax1", "Fax" },
-{ "uot_head_of_department", "HODName" },
-{ "k__uot_head_of_department", "HODPrimaveraId" },
-{ "extention21", "HOSSExtension" },
-{ "cp_document_manager_dc", "DocumentControllerName" },
-{ "k__cp_document_manager_dc", "DocumentControllerPrimaveraId" },
-{ "ucp_cp_250", "CommunicationProtocolFormat" },
-{ "uot_comp_name3_sdt250", "SoldToParty" },
-{ "cp_mobile_number_dc", "DocumentControllerMobileNumber" },
-{ "extention61", "ZonalHeadExtension" },
-{ "ucp_boarline_sdt120", "BoardLine" },
-{ "ucp_format_sdt120", "CPFormat" }
-    };
+    // Project Leader
+    { "k__uot_project_lead_dp", "ProjectLeaderPrimaveraId" },
+    { "uot_project_lead_dp", "ProjectLeaderName" },
+    { "email_id0", "ProjectLeaderEmail" },
+    { "phone_number0", "ProjectLeaderPhoneNumber" },
+    { "mobile_number0", "ProjectLeaderMobileNumber" },
+    { "extention0", "ProjectLeaderExtension" },
+
+    // Project Manager
+    { "k__uot_project_co_ordinator_dp", "ProjectManagerPrimaveraId" },
+    { "uot_project_co_ordinator_dp", "ProjectManagerName" },
+    { "cp_email_id_dc", "ProjectManagerEmail" },
+    { "cp_mobile_number_dc", "ProjectManagerMobileNumber" },
+    { "cp_extension_dc", "ProjectManagerExtension" },
+
+    // Document Controller
+    { "k__cp_document_manager_dc", "DocumentControllerPrimaveraId" },
+    { "cp_document_manager_dc", "DocumentControllerName" },
+    { "email_id11", "DocumentControllerEmail" },
+    { "phone_number11", "DocumentControllerPhoneNumber" },
+    { "extention11", "DocumentControllerExtension" },
+    { "mobile_number11", "DocumentControllerMobileNumber" },
+
+    // Zonal Head
+    { "k__uot_mails_to_be_sent_to_dp", "ZonalHeadPrimaveraId" },
+    { "uot_mails_to_be_sent_to_dp", "ZonalHeadName" },
+    { "email_id21", "ZonalHeadEmail" },
+    { "phone_number21", "ZonalHeadPhoneNumber" },
+    { "extention21", "ZonalHeadExtension" },
+    { "mobile_number21", "ZonalHeadMobileNumber" },
+
+    // IC Head
+    { "k__uot_copies_to_be_sent_to_dp", "ICHeadPrimaveraId" },
+    { "uot_copies_to_be_sent_to_dp", "ICHeadName" },
+    { "email_id31", "ICHeadEmail" },
+    { "phone_number31", "ICHeadPhoneNumber" },
+    { "extention31", "ICHeadExtension" },
+    { "mobile_number_copies", "ICHeadMobileNumber" },
+
+    // HOD
+    { "k__uot_head_of_department", "HODPrimaveraId" },
+    { "ucp_hop_sdt120", "HODName" },
+    { "email_id41", "HODEmail" },
+    { "phone_number41", "HODPhoneNumber" },
+    { "extention41", "HODExtension" },
+    { "mobile_number_headofdept", "HODMobileNumber" },
+
+    // Incharge
+    { "k__uot_incharge_exports_dp", "InchargePrimaveraId" },
+    { "uot_incharge_exports_dp", "InchargeName" },
+    { "email_id51", "InchargeEmail" },
+    { "phone_number51", "InchargePhoneNumber" },
+    { "extention51", "InchargeExtension" },
+    //{ "mobile_number_headspares", "InchargeMobileNumber" },
+
+    // HOSS
+    { "k__uot_head_spares_and_service", "HOSSPrimaveraId" },
+    { "uot_head_spares_and_service", "HOSSName" },
+    { "email_id61", "HOSSEmail" },
+    { "phone_number61", "HOSSPhoneNumber" },
+    { "extention61", "HOSSExtension" },
+    //{ "mobile_number_headspares", "HOSSMobileNumber" },
+
+    // Misc
+    { "postal_address", "PostalAddress" },
+    { "ucp_boarline_sdt120", "BoardLine" },
+    { "fax1", "Address_Fax" },
+
+    // Audit fields
+    { "uuu_creation_date", "CreatedAt" },
+    { "k__creator_id", "PrimaveraCreatedId" },
+    { "creator_id", "CreatedName" },
+
+    { "uuu_record_last_update_date", "UpdatedAt" },
+    { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+    { "uuu_record_last_update_user", "UpdatedName" },
+
+    { "k__uot_sold_party_dp", "CustomerId" }
+};
 
     private static readonly Dictionary<string, string> BankGuaranteeMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
@@ -831,6 +852,7 @@ public class ExcelMigrationService : IExcelMigrationService
             { "uuu_record_last_update_date", "UpdatedAt" },
             { "k__creator_id", "PrimaveraCreatedId" },
             { "uuu_creation_date", "CreatedAt" },
+        { "creator_id","CreatedName"},
 
             { "uircntctfstnmtb", "ContactName" },
             { "k__uot_sold_party_dp", "CustomerID" },
@@ -998,7 +1020,9 @@ public class ExcelMigrationService : IExcelMigrationService
        // { "parent_id", "OrderTransmittalRecordID" },  // Conditionally mapped based on parent_type (only when parent_type = 'uxot2')
         { "upload_date", "CreatedAt" },
         { "upload_by", "PrimaveraCreatedId" },
-        {"parent_id","UnifierAttchmentID" }
+        {"parent_id","UnifierAttchmentID" },
+        {"version","version" },
+        {"doc_id","doc_id" }
     };
     // Hardcoded column mapping for BPAttachments when AttachmentRecordType = "Comment"
     private static readonly Dictionary<string, string> BPAttachmentCommentMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -9811,6 +9835,10 @@ public class ExcelMigrationService : IExcelMigrationService
         {
             return 1;
         }
+        else if (string.Equals(statusStr, "Created", StringComparison.OrdinalIgnoreCase))
+        {
+            return 2;
+        }
         else
         {
             // Default to NULL if column is nullable, otherwise 0
@@ -10012,24 +10040,24 @@ public class ExcelMigrationService : IExcelMigrationService
         // Mapping: Excel order type string → SQL integer value
         if (string.Equals(orderTypeStr, "Domestic", StringComparison.OrdinalIgnoreCase))
         {
-            return 1;
+            return 0;
         }
         else if (string.Equals(orderTypeStr, "Export", StringComparison.OrdinalIgnoreCase))
         {
-            return 2;
+            return 1;
         }
         else if (string.Equals(orderTypeStr, "Deemed Export", StringComparison.OrdinalIgnoreCase))
         {
-            return 3;
+            return 2;
         }
         else if (string.Equals(orderTypeStr, "Third Party Export", StringComparison.OrdinalIgnoreCase))
         {
-            return 4;
+            return 3;
         }
         else
         {
             // Default to NULL if column is nullable, otherwise 0
-            return isNullable ? DBNull.Value : 0;
+            return isNullable ? DBNull.Value : 6;
         }
     }
 
@@ -10045,11 +10073,11 @@ public class ExcelMigrationService : IExcelMigrationService
         // Mapping: Excel frequency string → SQL integer value
         if (string.Equals(frequencyStr, "50 Hz", StringComparison.OrdinalIgnoreCase))
         {
-            return 1;
+            return 0;
         }
         else if (string.Equals(frequencyStr, "60 Hz", StringComparison.OrdinalIgnoreCase))
         {
-            return 2;
+            return 1;
         }
         else
         {
@@ -10070,20 +10098,20 @@ public class ExcelMigrationService : IExcelMigrationService
         // Mapping: Excel service type string → SQL integer value
         if (string.Equals(serviceTypeStr, "Turnkey", StringComparison.OrdinalIgnoreCase))
         {
-            return 1;
+            return 0;
         }
         else if (string.Equals(serviceTypeStr, "Supervision", StringComparison.OrdinalIgnoreCase))
         {
-            return 2;
+            return 1;
         }
         else if (string.Equals(serviceTypeStr, "Third party supervision", StringComparison.OrdinalIgnoreCase))
         {
-            return 3;
+            return 2;
         }
         else
         {
             // Default to NULL if column is nullable, otherwise 0
-            return isNullable ? DBNull.Value : 0;
+            return isNullable ? DBNull.Value : 6;
         }
     }
 
@@ -10148,7 +10176,7 @@ public class ExcelMigrationService : IExcelMigrationService
         else
         {
             // Default to NULL if column is nullable, otherwise 0
-            return isNullable ? DBNull.Value : 0;
+            return isNullable ? DBNull.Value : 20;
         }
     }
 
@@ -10177,7 +10205,7 @@ public class ExcelMigrationService : IExcelMigrationService
         else
         {
             // Default to NULL if column is nullable, otherwise 0
-            return isNullable ? DBNull.Value : 0;
+            return isNullable ? DBNull.Value : 20;
         }
     }
 
@@ -10206,7 +10234,7 @@ public class ExcelMigrationService : IExcelMigrationService
         else
         {
             // Default to NULL if column is nullable, otherwise 0
-            return isNullable ? DBNull.Value : 0;
+            return isNullable ? DBNull.Value : 20;
         }
     }
 
@@ -10235,7 +10263,7 @@ public class ExcelMigrationService : IExcelMigrationService
         else
         {
             // Default to NULL if column is nullable, otherwise 0
-            return isNullable ? DBNull.Value : 0;
+            return isNullable ? DBNull.Value : 20;
         }
     }
 
@@ -10322,7 +10350,7 @@ public class ExcelMigrationService : IExcelMigrationService
         else
         {
             // Default to NULL if column is nullable, otherwise 0
-            return isNullable ? DBNull.Value : 0;
+            return isNullable ? DBNull.Value : 20;
         }
     }
 
@@ -10351,7 +10379,7 @@ public class ExcelMigrationService : IExcelMigrationService
         else
         {
             // Default to NULL if column is nullable, otherwise 0
-            return isNullable ? DBNull.Value : 0;
+            return isNullable ? DBNull.Value : 20;
         }
     }
 
@@ -10405,7 +10433,7 @@ public class ExcelMigrationService : IExcelMigrationService
         else
         {
             // Default to NULL if column is nullable, otherwise 0
-            return isNullable ? DBNull.Value : 0;
+            return isNullable ? DBNull.Value : 20;
         }
     }
 
@@ -10438,7 +10466,7 @@ public class ExcelMigrationService : IExcelMigrationService
         else
         {
             // Default to NULL if column is nullable, otherwise 0
-            return isNullable ? DBNull.Value : 0;
+            return isNullable ? DBNull.Value : 20;
         }
     }
 
@@ -10523,7 +10551,7 @@ public class ExcelMigrationService : IExcelMigrationService
         else
         {
             // Default to NULL if column is nullable, otherwise 0
-            return isNullable ? DBNull.Value : 0;
+            return isNullable ? DBNull.Value : 20;
         }
     }
 
@@ -10548,7 +10576,7 @@ public class ExcelMigrationService : IExcelMigrationService
         else
         {
             // Default to NULL if column is nullable, otherwise 0
-            return isNullable ? DBNull.Value : 0;
+            return isNullable ? DBNull.Value : 20;
         }
     }
 
@@ -10573,7 +10601,7 @@ public class ExcelMigrationService : IExcelMigrationService
         else
         {
             // Default to NULL if column is nullable, otherwise 0
-            return isNullable ? DBNull.Value : 0;
+            return isNullable ? DBNull.Value : 20;
         }
     }
 
@@ -10606,7 +10634,7 @@ public class ExcelMigrationService : IExcelMigrationService
         else
         {
             // Default to NULL if column is nullable, otherwise 0
-            return isNullable ? DBNull.Value : 0;
+            return isNullable ? DBNull.Value : 20;
         }
     }
 
@@ -10635,7 +10663,7 @@ public class ExcelMigrationService : IExcelMigrationService
         else
         {
             // Default to NULL if column is nullable, otherwise 0
-            return isNullable ? DBNull.Value : 0;
+            return isNullable ? DBNull.Value : 20;
         }
     }
 
@@ -11297,13 +11325,13 @@ public class ExcelMigrationService : IExcelMigrationService
 
         var str = value.ToString()?.Trim() ?? string.Empty;
 
-        if (string.Equals(str, "INR", StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(str, "INR", StringComparison.OrdinalIgnoreCase) || str == "₹")
             return 0;
-        else if (string.Equals(str, "USD", StringComparison.OrdinalIgnoreCase))
+        else if (string.Equals(str, "USD", StringComparison.OrdinalIgnoreCase) || str == "$")
             return 1;
-        else if (string.Equals(str, "EUR", StringComparison.OrdinalIgnoreCase))
+        else if (string.Equals(str, "EUR", StringComparison.OrdinalIgnoreCase) || str == "€")
             return 2;
-        else if (string.Equals(str, "GBP", StringComparison.OrdinalIgnoreCase))
+        else if (string.Equals(str, "GBP", StringComparison.OrdinalIgnoreCase) || str == "£")
             return 3;
         else if (string.Equals(str, "AUD", StringComparison.OrdinalIgnoreCase))
             return 4;
@@ -11337,12 +11365,12 @@ public class ExcelMigrationService : IExcelMigrationService
         }
         else if (string.Equals(eotCraneFacilityEandCStr, "Not Available", StringComparison.OrdinalIgnoreCase))
         {
-            return 2;
+            return 0;
         }
         else
         {
             // Default to NULL if column is nullable, otherwise 0
-            return isNullable ? DBNull.Value : 0;
+            return isNullable ? DBNull.Value : 10;
         }
     }
 
