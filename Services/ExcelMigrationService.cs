@@ -1013,15 +1013,16 @@ public class ExcelMigrationService : IExcelMigrationService
     // Hardcoded column mapping for BPAttachments table
     private static readonly Dictionary<string, string> BPAttachmentMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
-        //{ "id", "BPAttachmentID" },
+        { "id", "BPAttachmentID" },
         { "parent_type", "RecordNo" },
         { "project_id", "ProjectID" },
-        { "file_name", "FileName" },   // Note: file_name maps to both FileName and FilePath (handled in MatchColumnsForBPAttachments)
+        { "file_name", "FileName" },   // file_name maps to FileName; FilePath is handled via node_path below
        // { "parent_id", "OrderTransmittalRecordID" },  // Conditionally mapped based on parent_type (only when parent_type = 'uxot2')
-        { "upload_date", "CreatedAt" },
-        { "upload_by", "PrimaveraCreatedId" },
+        { "create_date", "CreatedAt" },
+        { "create_by", "PrimaveraCreatedId" },
         {"parent_id","UnifierAttchmentID" },
         {"version","version" },
+        { "node_path","FilePath"},   // node_path maps to FilePath (prevents duplicate when file_name also present)
         {"doc_id","doc_id" }
     };
     // Hardcoded column mapping for BPAttachments when AttachmentRecordType = "Comment"
@@ -4746,17 +4747,18 @@ public class ExcelMigrationService : IExcelMigrationService
         // Check if Excel has parent_type column (needed for conditional mapping)
         var hasParentTypeColumn = excelColumns.Any(ec =>
             ec.ColumnName.Equals("parent_type", StringComparison.OrdinalIgnoreCase));
-
+        
         // Iterate through the selected hardcoded mapping dictionary
         foreach (var mappingEntry in selectedMapping)
         {
             var excelColumnName = mappingEntry.Key;
             var sqlColumnName = mappingEntry.Value;
 
-            // Handle file_name mapping to both FileName and FilePath
+            // Handle file_name → FileName only.
+            // FilePath is exclusively populated by node_path in the regular mapping path below.
+            // Rows where node_path is NULL will insert with FilePath = NULL (no rows are skipped).
             if (excelColumnName.Equals("file_name", StringComparison.OrdinalIgnoreCase))
             {
-                // Map to FileName
                 if (sqlColumnLookup.TryGetValue("FileName", out var fileNameColumn))
                 {
                     var excelColumn = excelColumns.FirstOrDefault(
@@ -4770,24 +4772,6 @@ public class ExcelMigrationService : IExcelMigrationService
                             SqlDataType = fileNameColumn.DataType,
                             IsIdentity = fileNameColumn.IsIdentity,
                             IsNullable = fileNameColumn.IsNullable
-                        });
-                    }
-                }
-
-                // Map to FilePath
-                if (sqlColumnLookup.TryGetValue("FilePath", out var filePathColumn))
-                {
-                    var excelColumn = excelColumns.FirstOrDefault(
-                        ec => ec.ColumnName.Equals(excelColumnName, StringComparison.OrdinalIgnoreCase));
-                    if (excelColumn != null)
-                    {
-                        mappings.Add(new ColumnMapping
-                        {
-                            ExcelColumnName = excelColumn.ColumnName,
-                            SqlColumnName = filePathColumn.ColumnName,
-                            SqlDataType = filePathColumn.DataType,
-                            IsIdentity = filePathColumn.IsIdentity,
-                            IsNullable = filePathColumn.IsNullable
                         });
                     }
                 }
@@ -4816,7 +4800,11 @@ public class ExcelMigrationService : IExcelMigrationService
                 SqlColumnName = sqlColumnRegular.ColumnName,
                 SqlDataType = sqlColumnRegular.DataType,
                 IsIdentity = sqlColumnRegular.IsIdentity,
-                IsNullable = sqlColumnRegular.IsNullable
+                // Force FilePath to be nullable in BPAttachments: rows where node_path is NULL
+                // must still be inserted (with FilePath = NULL), even if the SQL schema says NOT NULL.
+                IsNullable = sqlColumnName.Equals("FilePath", StringComparison.OrdinalIgnoreCase)
+                             ? true
+                             : sqlColumnRegular.IsNullable
             });
         }
 
