@@ -1537,6 +1537,395 @@ public class ExcelMigrationService : IExcelMigrationService
         { "uuu_record_last_update_user",      "UpdatedName" },
     };
 
+    // Hardcoded column mapping for SparesOrderTransmittal table
+    private static readonly Dictionary<string, string> SparesOrderTransmittalMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "SparesOrderTransmittalID" },
+        { "record_no", "RecordNo" },
+        { "project_id", "ProjectID" },
+        { "usot_ot_type_sdt250", "TransmittalType" },
+        { "status", "Status" },
+        { "uprot_bpk", "SparesProvisionalOrderReference" },
+        { "uexot_de_bp", "XOTRef" },
+        { "order_type_spares_pd", "SparesOrderType" },
+        { "loi_or_order_for_tb", "LOIorOrderfor" },
+        { "turbine_model_and_s_no", "TurbineModelAndSNo" },
+        { "spares_quotation_ref", "SAPQuotationReference" },
+        { "quotation_reference_date", "QuotationReferenceDate" },
+        { "customer_poref", "CustomerPOReference" },
+        { "customer_poref_date", "CustomerPOReferenceDate" },
+        { "po_receipt_at_ttl", "POReceiptAtTTIL" },
+        { "basic_quoted_price", "BasicQuotedPrice" },
+        { "final_po_value_accepted", "FinalPOValueAcceptedForSupplyPart" },
+        { "discount_accepted_for_suppl", "DiscountAcceptedForSupplyPart" },
+        { "discount_accepted_for_job", "DiscountAcceptedForJobWork" },
+        { "price_basis", "PriceBasis" },
+        { "spares_contractual_delivery", "ContractualDeliveryForSupplyPart" },
+        { "contractual_delivery_explai", "ContractualDeliveryExplanation" },
+        { "contractual_delivery_for_si", "ScopeOfSiteWork" },
+        { "final_price_accepted_for_si", "FinalPriceAcceptedForSiteWork" },
+        { "ld_clause_accepted_if_any", "LDClauseAcceptedPercent" },
+        { "discount_accepted_for_site_", "DiscountAcceptedForSiteWork" },
+        { "transportation_mode", "TransportationMode" },
+        { "remarks_regarding_site_work", "RemarksRegardingSiteWork" },
+        { "transportation_charges", "TransportationCharges" },
+        { "packing_and_forwarding_new", "PackingAndForwardingChargesAcce" },
+        { "insurance_charges", "InsuranceCharges" },
+        { "taxes_duties", "TaxesAndDuties" },
+        { "payment_remarks_tb", "PaymentTermsAcceptedWithCusto" },
+        { "rsc_required_delivery_date", "RSCRequiredDeliveryDate" },
+        { "delivery_sensitivity_as_per", "DeliverySensitivityAsPerRSC" },
+        { "udo_dop", "DeliveryDateAsPerPO" },
+        { "ucrd_dop", "CustomerRequiredDelivery" },
+        { "ucdd_dop", "CustomerDelightDate" },
+        { "ursc_dop", "RSCDelightDate" },
+        { "uadd_dop", "AchievedDeliveryDate" },
+        { "submitters_request_pd", "SubmittersRequest" },
+        { "remarks_ot10", "Remarks" },
+        { "k__uot_sold_party_dp", "CustomerID" },
+        //{ "k__customer_contacts_dp1", "CustomerContactID" },
+        { "k__uot_ship_to_party_dp", "EndUserID" },
+        //{ "k__customer_contacts_dp3", "EndUserContactID" },
+        //{ "k__customer_contacts_dp2", "CustomerContactID2" },
+        //{ "k__customer_contacts_dp4", "EndUserContactID2" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "creator_id", "CreatedName" },
+        { "k__creator_id", "PrimaveraCreatedId" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "uuu_record_last_update_user", "UpdatedName" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" }
+    };
+
+    // Hardcoded column mapping for SparesOrderTransmittalLineItem table
+    private static readonly Dictionary<string, string> SparesOrderTransmittalLineItemMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+            { "id", "SparesOrderTransmittalLineItemId" },
+            { "record_id", "SparesOrderTransmittalID" },
+            { "uuu_file_repo_name", "Name" },
+            { "mandatory_documents_new_pd", "MandatoryDocuments" },
+            { "manddatory_comments", "Comments" },
+            { "group_type", "IsGroupType" },
+            { "k__creator_id", "PrimaveraCreatedId" },
+            { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+            { "uuu_li_last_update_date", "UpdatedAt" }
+    };
+
+
+    // Hardcoded column mapping for OrderReceiptAcknowledgement table
+    private static readonly Dictionary<string, string> OrderReceiptAcknowledgementMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "record_no", "RecordNo" },
+        { "status", "Status" },
+        { "ora_sec_sdt250", "SteamEndCasing" },
+        { "ora_eec_sdt250", "ExhaustEndCasing" },
+        { "ora_nc_sdt250", "NozzleChest" },
+        { "ora_gbc_sdt250", "GBC" },
+        { "ora_pedestal_sdt250", "Pedestal" },
+        { "gear_box", "GearBox" },
+        { "ora_bf_sdt250", "BladeForging" },
+        { "ora_ppc_del_date_dop", "PPCDeliveryDate" },
+        { "ora_marketing_fore_ynpd", "MarketingForecast" },
+        { "ora_mfdate_dop", "MarketingForecastDate" },
+        { "ora_riskdes_mtb4000", "RiskDescription" },
+        { "ora_riskcons_mtb4000", "RiskConsequences" },
+        { "agreed_sms", "AgreedSMS" },
+        { "risk_of_ld", "RiskOfLD" },
+        { "exesum_remarks_mtb4000", "InitiatorRemarks" },
+        { "exesum_remarks2_mtb4000", "PPCRemarks" },
+        { "exesum_remarks3_mtb4000", "PMRemarks" },
+        { "exesum_remarks4_mtb4000", "AcknowledgementRemarks" },
+        //{ "k__pp_select_frame_dpk", "SelectFrame" },
+        { "ora_framenew_ynpd", "FrameNew" },
+        { "ora_sel_lead_pd", "SelectLeadTime" },
+        { "ora_sdt_w_rm_da", "TurbineDeliveryWithAvailableRMWeeks" },
+        { "ora_sdt_wo_rm_da", "TurbineDeliveryWithProcurementWeeks" },
+        { "ora_sdt_wo_rm_new_da", "TurbineDeliveryNewDevelopmentWeeks" },
+        { "pp_lead_time_cc_da", "LeadTimeAsPerCCWeeks" },
+        { "ora_rf_sdt250", "RotorForging" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "k__creator_id", "CreatedBy" },
+        { "creator_id", "CreatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "k__uuu_record_last_update_user", "UpdatedBy" },
+        { "uuu_record_last_update_user", "UpdatedName" },
+        { "id", "OrderReceiptAcknowledgementId" },
+        { "k__pp_select_frame_dpk", "FrameMasterID" },
+        { "project_id", "ProjectID" },
+        { "ordertransmittalid", "OrderTransmittalID" }
+    };
+
+    private static readonly Dictionary<string, string> AuditActionMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "AuditActionId" },
+        { "record_no", "RecordNo" },
+        { "status", "Status" },
+        { "ia_correction_done_df", "CorrectionDone" },
+        { "ia_actual_corr_com_date_df", "ActualCorrectionCompletionDate" },
+        { "ia_verification_decision_df", "VerificationDecision" },
+        { "ia_veri_deci_date_df", "VerificationDecisionDate" },
+        { "ia_reason_for_ver_dec_df", "ReasonForVerificationDecision" },
+        { "ia_root_cause_analysis_df", "RootCauseAnalysis" },
+        { "ia_actual_cor_act_com_date_df", "ActualCorrectiveActionCompletionDate" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "creator_id", "CreatedName" },
+        { "k__creator_id", "PrimaveraCreatedId" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "uuu_record_last_update_user_name", "UpdatedName" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "k__ia_sel_obs_blip", "InternalAudit_ObservationDetail" },
+        { "k__ia_sel_audit_rec_bpp", "InternalAuditId" },
+        { "project_id", "ProjectID" },
+        { "ia_corrective_action_tak_df", "CorrectiveActionTaken" }
+    };
+
+    private static readonly Dictionary<string, string> RCCAMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+            { "id", "RCCAId" },
+            { "sqdcm_rcca_required_pd", "IsRCCARequired" },
+            { "rcca_rcca_lead", "RCCALead" },
+            { "rcca_lead_department", "LeadDepartment" },
+            { "vendor_select_dp", "SelectSupplier" },
+            { "rcca_sec_department_pd", "SecondaryDepartment" },
+            { "rcca_why1_sdt250", "Why1" },
+            { "rcca_why2_sdt250", "Why2" },
+            { "rcca_why3_sdt250", "Why3" },
+            { "rcca_why4_sdt250", "Why4" },
+            { "rcca_why5_sdt250", "Why5" },
+            { "rcca_root_cause", "RootCause" },
+            { "rcca_rca_satisfactory", "RCASatisfactory" },
+            { "rcca_remarks", "Remarks" },
+            { "rcca_rca_ok", "IsRCAOk" },
+            { "rcca_corrective_action", "CorrectiveAction" },
+            { "rcca_proposed_date_of_imple", "ProposedDateOfImplementation" },
+            { "rcca_imple_responsible", "ImplementationResponsible1" },
+            { "rcca_imple_responsible1", "ImplementationResponsible2" },
+            { "rcca_imple_responsible2", "ImplementationResponsible3" },
+            { "rcca_imple_responsible3", "ImplementationResponsible4" },
+            { "rcca_imple_responsible4", "ImplementationResponsible5" },
+            { "rcca_imple_responsible5", "ImplementationResponsible6" },
+            { "rcca_imple_responsible6", "ImplementationResponsible7" },
+            { "rcca_imple_responsible7", "ImplementationResponsible8" },
+            { "rcca_imple_responsible8", "ImplementationResponsible9" },
+            { "rcca_imple_responsible9", "ImplementationResponsible10" },
+            { "rcca_date_of_imple", "DateOfImplementation" },
+            { "rcca_implem_corre_action", "ImplementedCorrectiveAction" },
+            { "rcca_corrective_action_lead", "CorrectiveActionLead" },
+            { "rcca_corre_action_lead_depa", "CorrectiveActionLeadDepartment" },
+            { "rcca_pam_ynpd", "IsProActiveMeasuresRequired" },
+            { "project_id", "ProjectID" },
+            { "ordertransmittalid", "OrderTransmittalID" },
+            { "status", "Status" },
+            { "record_no", "RecordNo" },
+            { "com_comp_rec_smn", "ComplaintRecordNo" },
+            { "dev_rec_smn", "DeviationRequestNo" },
+            { "creator_id", "CreatedName" },
+            { "uuu_creation_date", "CreatedAt" },
+            { "uuu_record_last_update_user", "UpdatedName" },
+            { "uuu_record_last_update_date", "UpdatedAt" },
+            { "k__creator_id", "PrimaveraCreatedId" },
+            { "k__uuu_record_last_update_us", "PrimaveraUpdatedId" }
+    };
+
+    private static readonly Dictionary<string, string> RCCA_StandardLIMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+            { "id", "RCCA_StandardID" },
+            { "record_id", "RCCAId" },
+            { "notes", "Notes" },
+            { "uuu_li_last_update_date", "UpdatedAt" }
+    };
+
+    private static readonly Dictionary<string, string> RCCA_SelectTeamMembersLIMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+            { "id", "RCCA_SelectTeamMemberID" },
+            { "rcca_select_team_members_up", "SelectTeamMembers" },
+            { "rcca_departments_df", "Departments" },
+            { "record_id", "RCCAId" },
+            { "uuu_li_last_update_date", "UpdatedAt" }
+    };
+
+    // Hardcoded column mapping for MonthlyProgressReport table
+    private static readonly Dictionary<string, string> MonthlyProgressReportMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "record_no", "RecordNo" },
+        { "status", "Status" },
+        { "k__bp_creator_n", "BpCreator" },
+        { "mpr_title_sdt120", "ProjectName" }, // Also maps to Title, handled in MatchColumns
+        { "ec_m_proj_loc_sdt250", "ProjectLocation" },
+        { "mpr_subtitle_sdt250", "Subtitle" },
+        { "uot_ratiing_ia", "TurbineRating" },
+        { "uot_nonstandard_pd", "SpecifyIfNonStandard" },
+        { "mpr_scope_trans_pd", "ScopeOfTransportation" },
+        { "mpr_scope_insurance_pd", "ScopeOfInsurance" },
+        { "mpr_scope_services_pd", "ScopeOfServices" },
+        { "mpr_services_type_pd", "ServicesType" },
+        { "project_leader", "ProjectLeader" },
+        { "udc_cur_amount_pd", "Currency" },
+        { "mpr_ttl_pm_smn", "TTLsProjectManager" },
+        { "uec_contact_no", "TTLsProjectManagerContactNo" },
+        { "mpr_client_pm_smn", "ClientsProjectManager" },
+        { "uec_contact_no1", "ClientsProjectManagerContactNo" },
+        { "mpr_image1_ipk", "Image1" },
+        { "mpr_image_desc_sdt120", "Image1Description" },
+        { "mpr_image2_ipk", "Image2" },
+        { "mpr_image_desc2_sdt120", "Image2Description" },
+        { "mpr_image3_ipk", "Image3" },
+        { "mpr_image_desc3_sdt120", "Image3Description" },
+        { "mpr_image4_ipk", "Image4" },
+        { "mpr_image_desc4_sdt120", "Image4Description" },
+        { "mpr_image5_ipk", "Image5" },
+        { "mpr_image_desc5_sdt120", "Image5Description" },
+        { "mpr_image6_ipk", "Image6" },
+        { "mpr_image_desc6_sdt120", "Image6Description" },
+        { "mpr_image7_ipk", "Image7" },
+        { "mpr_image_desc7_sdt120", "Image7Description" },
+        { "mpr_image8_ipk", "Image8" },
+        { "mpr_image_desc8_sdt120", "Image8Description" },
+        { "mpr_image9_ipk", "Image9" },
+        { "mpr_image_desc9_sdt120", "Image9Description" },
+        { "mpr_image10_ipk", "Image10" },
+        { "mpr_image_desc10_sdt120", "Image10Description" },
+        { "mpr_image11_ipk", "Image11" },
+        { "mpr_image_desc11_sdt120", "Image11Description" },
+        { "mpr_image12_ipk", "Image12" },
+        { "mpr_image_desc12_sdt120", "Image12Description" },
+        { "mpr_image13_ipk", "Image13" },
+        { "mpr_image_desc13_sdt120", "Image13Description" },
+        { "mpr_image14_ipk", "Image14" },
+        { "mpr_image_desc14_sdt120", "Image14Description" },
+        { "mpr_image15_ipk", "Image15" },
+        { "mpr_image_desc15_sdt120", "Image15Description" },
+        { "mpr_image16_ipk", "Image16" },
+        { "mpr_image_desc16_sdt120", "Image16Description" },
+        { "project_id", "ProjectID" },
+        { "ordertransmittalid", "OrderTransmittalID" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "creator_id", "CreatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "uuu_record_last_update_user", "UpdatedName" },
+        { "k__creator_id", "PrimeveraCreatedId" },
+        { "k__uuu_record_last_update_user", "PrimeveraUpdatedId" }
+    };
+
+    // Hardcoded column mapping for MonthlyProgressReport_MajorMilestoneLI table
+    private static readonly Dictionary<string, string> MonthlyProgressReport_MajorMilestoneLIMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "MPR_MajorMilestoneID" },
+        { "record_id", "MonthlyProgressReportID" },
+        { "mpr_milestone_desc_sdt250", "MilestoneDescription" },
+        { "mpr_date_comp_dop", "DateOfCompletion" },
+        { "mpr_status_pd", "Status" }
+    };
+
+    // Hardcoded column mapping for MonthlyProgressReport_ScopeOfSupplyLI table
+    private static readonly Dictionary<string, string> MonthlyProgressReport_ScopeOfSupplyLIMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "MPR_ScopeOfSupplyID" },
+        { "record_id", "MonthlyProgressReportID" },
+        { "mpr_sr_no_da", "No" },
+        { "mpr_type_pd", "Type" },
+        { "mpr_item_desc_sdt250", "ItemDescription" },
+        { "mpr_unit_of_mat_pd", "UnitOfMaterial" },
+        { "mpr_quantity_da", "Quantity" }
+    };
+
+    // Hardcoded column mapping for MonthlyProgressReport_ProcurementProgressofBoughtOutsItemLI table
+    private static readonly Dictionary<string, string> MonthlyProgressReport_ProcurementProgressofBoughtOutsItemLIMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "MPR_ProcurementProgressofBoughtOutsItemID" },
+        { "record_id", "MonthlyProgressReportID" },
+        { "mpr_sr_no_da", "No" },
+        { "mpr_type_pp_pd", "Type" },
+        { "mpr_item_desc_sdt250", "ItemDescription" },
+        { "mpr_po_date_dop", "PurchaseOrderDate" },
+        { "mpr_expect_del_dop", "ExpectedDeliveryDate" },
+        { "vendor_master_vendor", "Vendor" },
+        { "mpr_current_stat_sdt250", "CurrentStatus" }
+    };
+
+    // Hardcoded column mapping for MonthlyProgressReport_TurbineManufacturingProgressLI table
+    private static readonly Dictionary<string, string> MonthlyProgressReport_TurbineManufacturingProgressLIMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "MPR_TurbineManufacturingProgressID" },
+        { "record_id", "MonthlyProgressReportID" },
+        { "mpr_item_desc_sdt250", "ItemDescription" },
+        { "mpr_current_stat_sdt250", "CurrentStatus" },
+        { "mpr_expec_date_com_dop", "ExpectedDateOfCompletion" }
+    };
+
+    // Hardcoded column mapping for MonthlyProgressReport_InspectionDispatchPlanLI table
+    private static readonly Dictionary<string, string> MonthlyProgressReport_InspectionDispatchPlanLIMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "MPR_InspectionDispatchPlanID" },
+        { "record_id", "MonthlyProgressReportID" },
+        { "mpr_item_desc_sdt250", "ItemDescription" },
+        { "mpr_point_witness_sdt250", "PointOfWitness" },
+        { "mpr_place_inspec_sdt250", "PlaceOfInspection" },
+        { "mpr_inspec_date_dop", "InspectionDate" },
+        { "mpr_dispatch_date_dop", "DispatchDate" }
+    };
+
+    // Hardcoded column mapping for MonthlyProgressReport_CashInFlowPlanLI table
+    private static readonly Dictionary<string, string> MonthlyProgressReport_CashInFlowPlanLIMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "MPR_CashInFlowPlanID" },
+        { "k__ci_sel_ini_cf_plan_dpk", "InitialCashPlanId" },
+        { "k__mpr_sel_month_lidp", "InitialCashFlowPlanId" },
+        { "uec_payment_terms", "PaymentTerms" },
+        { "ci_mil_per_da", "MilestonePercentage" },
+        { "ci_tot_net_payable_da", "TotalNetPayableAmount" },
+        { "ci_planned_monthh_dp", "PlannedMonth" },
+        { "mpr_act_date_rec_dop", "ActualDateOfReceipt" },
+        { "record_id", "MonthlyProgressReportID" }
+    };
+
+    // Hardcoded column mapping for MonthlyProgressReport_LookAheadTaskforNext30DaysLI table
+    private static readonly Dictionary<string, string> MonthlyProgressReport_LookAheadTaskforNext30DaysLIMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "MPR_LookAheadTaskforNext30DaysID" },
+        { "record_id", "MonthlyProgressReportID" },
+        { "mpr_task_desc_sdt250", "TaskDescription" },
+        { "mpr_date_comp_dop", "DateOfCompletion" }
+    };
+
+    // Hardcoded column mapping for MonthlyProgressReport_EngineeringProgressLI table
+    private static readonly Dictionary<string, string> MonthlyProgressReport_EngineeringProgressLIMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "MPR_EngineeringProgressID" },
+        { "record_id", "MonthlyProgressReportID" },
+        { "mpr_area_pd", "Area" },
+        { "remarks_ot1", "Remarks" }
+    };
+
+    // Hardcoded column mapping for MonthlyProgressReport_InputsRequiredFromCustomerLI table
+    private static readonly Dictionary<string, string> MonthlyProgressReport_InputsRequiredFromCustomerLIMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "MPR_InputsRequiredFromCustomerID" },
+        { "record_id", "MonthlyProgressReportID" },
+        { "mpr_areas_concern_mtb4000", "InputsRequiredFromCustomer" }
+    };
+
+    // Hardcoded column mapping for MonthlyProgressReport_DBOSummarizeSheetLI table
+    private static readonly Dictionary<string, string> MonthlyProgressReport_DBOSummarizeSheetLIMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "MPR_DBOSummarizeSheetID" },
+        { "record_id", "MonthlyProgressReportID" },
+        { "mpr_type_pd", "Type" },
+        { "mpr_scope_rb", "IsScopeOfSupply" },
+        { "mpr_procurement_rb", "IsProcurementProgressBOI" },
+        { "mpr_inspection_rb", "IsInspectionDispatchPlan" },
+        { "mpr_item_desc_sdt250", "ItemDescription" },
+        { "mpr_unit_of_mat_pd", "UnitOfMaterial" },
+        { "mpr_quantity_da", "Quantity" },
+        { "vendor_master_vendor", "Vendor" },
+        { "mpr_po_no_sdt50", "PurchaseOrderNo" },
+        { "mpr_po_date_dop", "PurchaseOrderDate" },
+        { "mpr_point_witness_sdt250", "PointOfWitness" },
+        { "mpr_place_inspec_sdt250", "PlaceOfInspection" },
+        { "mpr_inspec_date_dop", "InspectionDate" },
+        { "mpr_dispatch_date_dop", "DispatchDate" },
+        { "mpr_current_stat_pd", "CurrentStatus" }
+    };
+
     // Hardcoded column mapping for ApprovalLog table
     private static readonly Dictionary<string, string> ApprovalLogColumnMapping = new(StringComparer.OrdinalIgnoreCase)
 {
@@ -1545,9 +1934,9 @@ public class ExcelMigrationService : IExcelMigrationService
      { "process_project_id", "ProjectID" },
      { "task_round", "SequenceNumber" },
      { "task_name", "StepName" },
-     { "assignee_id", "ApproverUserId" },
+     { "assignee_id", "ApproverUserPrimaveraId" },
      { "action_name", "ActionName" },
-     { "status", "StatusID" },
+     { "task_status", "StatusID" },
      { "source_modelname", "ApprovalUrl" },
      { "task_start_date", "CreatedAt" },
      { "task_end_date", "end_date" }
@@ -1649,6 +2038,68 @@ public class ExcelMigrationService : IExcelMigrationService
             await using var maupConnection = new SqlConnection(connectionString);
             await maupConnection.OpenAsync(cancellationToken);
             return await MigrateToSingleTableAsync(maupConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        // Check if this is SparesOrderTransmittal table - use single table migration
+        if (string.Equals(tableName, "SparesOrderTransmittal", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var sotConnection = new SqlConnection(connectionString);
+            await sotConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(sotConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "SparesOrderTransmittalLineItem", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var sotliConnection = new SqlConnection(connectionString);
+            await sotliConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(sotliConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+
+
+        if (string.Equals(tableName, "OrderReceiptAcknowledgement", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var oraConnection = new SqlConnection(connectionString);
+            await oraConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(oraConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "AuditAction", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var aaConnection = new SqlConnection(connectionString);
+            await aaConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(aaConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        // Check if table name is "RCCA_StandardLI" - specialized LI migration
+        if (string.Equals(tableName, "RCCA_StandardLI", StringComparison.OrdinalIgnoreCase))
+        {
+            return await MigrateToRCCALineItemsAsync(connectionString, schemaName, tableName, excelData, cancellationToken);
+        }
+
+        // Check if table name is "RCCA_SelectTeamMembersLI" - specialized LI migration
+        if (string.Equals(tableName, "RCCA_SelectTeamMembersLI", StringComparison.OrdinalIgnoreCase))
+        {
+            return await MigrateToRCCALineItemsAsync(connectionString, schemaName, tableName, excelData, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "RCCA", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var rccaConnection = new SqlConnection(connectionString);
+            await rccaConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(rccaConnection, schemaName, tableName, excelData, null, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "MonthlyProgressReport", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var mprConnection = new SqlConnection(connectionString);
+            await mprConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(mprConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (tableName.StartsWith("MonthlyProgressReport_", StringComparison.OrdinalIgnoreCase))
+        {
+            return await MigrateToMonthlyProgressReportLineItemsAsync(connectionString, schemaName, tableName, excelData, cancellationToken);
         }
 
         // Check if this is SpecificationRelease table - use single table migration
@@ -3116,6 +3567,99 @@ public class ExcelMigrationService : IExcelMigrationService
             return MatchColumnsForMonthlyActualUnplannedCollection(excelData, tableMetadata);
         }
 
+        // Check if this is SparesOrderTransmittal table - use hardcoded mapping
+        if (string.Equals(tableName, "SparesOrderTransmittal", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForSparesOrderTransmittal(excelData, tableMetadata);
+        }
+
+        if (string.Equals(tableName, "SparesOrderTransmittalLineItem", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForSparesOrderTransmittalLineItem(excelData, tableMetadata);
+        }
+
+        if (string.Equals(tableName, "OrderReceiptAcknowledgement", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForOrderReceiptAcknowledgement(excelData, tableMetadata);
+        }
+
+
+
+        if (string.Equals(tableName, "AuditAction", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForAuditAction(excelData, tableMetadata);
+        }
+
+        if (string.Equals(tableName, "RCCA", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForRCCA(excelData, tableMetadata);
+        }
+
+        if (string.Equals(tableName, "RCCA_StandardLI", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForRCCA_StandardLI(excelData, tableMetadata);
+        }
+
+        if (string.Equals(tableName, "RCCA_SelectTeamMembersLI", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForRCCA_SelectTeamMembersLI(excelData, tableMetadata);
+        }
+
+        if (string.Equals(tableName, "MonthlyProgressReport", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForMonthlyProgressReport(excelData, tableMetadata);
+        }
+
+        if (string.Equals(tableName, "MonthlyProgressReport_MajorMilestoneLI", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForMonthlyProgressReport_MajorMilestoneLI(excelData, tableMetadata);
+        }
+
+        if (string.Equals(tableName, "MonthlyProgressReport_ScopeOfSupplyLI", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForMonthlyProgressReport_ScopeOfSupplyLI(excelData, tableMetadata);
+        }
+
+        if (string.Equals(tableName, "MonthlyProgressReport_ProcurementProgressofBoughtOutsItemLI", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForMonthlyProgressReport_ProcurementProgressofBoughtOutsItemLI(excelData, tableMetadata);
+        }
+
+        if (string.Equals(tableName, "MonthlyProgressReport_TurbineManufacturingProgressLI", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForMonthlyProgressReport_TurbineManufacturingProgressLI(excelData, tableMetadata);
+        }
+
+        if (string.Equals(tableName, "MonthlyProgressReport_InspectionDispatchPlanLI", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForMonthlyProgressReport_InspectionDispatchPlanLI(excelData, tableMetadata);
+        }
+
+        if (string.Equals(tableName, "MonthlyProgressReport_CashInFlowPlanLI", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForMonthlyProgressReport_CashInFlowPlanLI(excelData, tableMetadata);
+        }
+
+        if (string.Equals(tableName, "MonthlyProgressReport_LookAheadTaskforNext30DaysLI", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForMonthlyProgressReport_LookAheadTaskforNext30DaysLI(excelData, tableMetadata);
+        }
+
+        if (string.Equals(tableName, "MonthlyProgressReport_EngineeringProgressLI", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForMonthlyProgressReport_EngineeringProgressLI(excelData, tableMetadata);
+        }
+
+        if (string.Equals(tableName, "MonthlyProgressReport_InputsRequiredFromCustomerLI", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForMonthlyProgressReport_InputsRequiredFromCustomerLI(excelData, tableMetadata);
+        }
+
+        if (string.Equals(tableName, "MonthlyProgressReport_DBOSummarizeSheetLI", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForMonthlyProgressReport_DBOSummarizeSheetLI(excelData, tableMetadata);
+        }
+
         // Check if this is SpecificationRelease table - use hardcoded mapping
         if (string.Equals(tableName, "SpecificationRelease", StringComparison.OrdinalIgnoreCase))
         {
@@ -4381,6 +4925,297 @@ public class ExcelMigrationService : IExcelMigrationService
         return mappings;
     }
 
+    private List<ColumnMapping> MatchColumnsForSparesOrderTransmittal(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        var mappings = new List<ColumnMapping>();
+
+        var excelColumnLookup = excelData.Columns.Cast<DataColumn>()
+            .GroupBy(c => c.ColumnName.Trim(), StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+
+        var sqlColumnLookup = tableMetadata
+            .ToDictionary(c => c.ColumnName, c => c, StringComparer.OrdinalIgnoreCase);
+
+        var addedSqlColumns = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var mapping in SparesOrderTransmittalMapping)
+        {
+            var excelColumnName = mapping.Key.Trim();
+            var sqlColumnName   = mapping.Value;
+
+            if (addedSqlColumns.Contains(sqlColumnName))
+                continue;
+
+            if (!excelColumnLookup.TryGetValue(excelColumnName, out var excelColumn))
+                continue;
+
+            if (!sqlColumnLookup.TryGetValue(sqlColumnName, out var sqlColumn))
+                continue;
+
+            mappings.Add(new ColumnMapping
+            {
+                ExcelColumnName = excelColumn.ColumnName,
+                SqlColumnName   = sqlColumn.ColumnName,
+                SqlDataType     = sqlColumn.DataType,
+                IsIdentity      = sqlColumn.IsIdentity,
+                IsNullable      = sqlColumn.IsNullable,
+                ForeignKeyTableSchema      = sqlColumn.ForeignKeyTableSchema,
+                ForeignKeyTableName        = sqlColumn.ForeignKeyTableName,
+                ForeignKeyColumnName       = sqlColumn.ForeignKeyColumnName,
+                ForeignKeyLookupColumnName = sqlColumn.ForeignKeyLookupColumnName
+            });
+
+            addedSqlColumns.Add(sqlColumnName);
+        }
+
+        return mappings;
+    }
+
+    private List<ColumnMapping> MatchColumnsForSparesOrderTransmittalLineItem(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        var mappings = new List<ColumnMapping>();
+
+        var excelColumnLookup = excelData.Columns.Cast<DataColumn>()
+            .GroupBy(c => c.ColumnName.Trim(), StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+
+        var sqlColumnLookup = tableMetadata
+            .ToDictionary(c => c.ColumnName, c => c, StringComparer.OrdinalIgnoreCase);
+
+        var addedSqlColumns = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var mapping in SparesOrderTransmittalLineItemMapping)
+        {
+            var excelColumnName = mapping.Key.Trim();
+            var sqlColumnName   = mapping.Value;
+
+            if (addedSqlColumns.Contains(sqlColumnName))
+                continue;
+
+            if (!excelColumnLookup.TryGetValue(excelColumnName, out var excelColumn))
+                continue;
+
+            if (!sqlColumnLookup.TryGetValue(sqlColumnName, out var sqlColumn))
+                continue;
+
+            mappings.Add(new ColumnMapping
+            {
+                ExcelColumnName = excelColumn.ColumnName,
+                SqlColumnName   = sqlColumn.ColumnName,
+                SqlDataType     = sqlColumn.DataType,
+                IsIdentity      = sqlColumn.IsIdentity,
+                IsNullable      = sqlColumn.IsNullable,
+                ForeignKeyTableSchema      = sqlColumn.ForeignKeyTableSchema,
+                ForeignKeyTableName        = sqlColumn.ForeignKeyTableName,
+                ForeignKeyColumnName       = sqlColumn.ForeignKeyColumnName,
+                ForeignKeyLookupColumnName = sqlColumn.ForeignKeyLookupColumnName
+            });
+
+            addedSqlColumns.Add(sqlColumnName);
+        }
+
+        return mappings;
+    }
+
+    private List<ColumnMapping> MatchColumnsForOrderReceiptAcknowledgement(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        var mappings = new List<ColumnMapping>();
+        var excelColumns = excelData.Columns.Cast<DataColumn>().ToList();
+
+        // Create a lookup for SQL column metadata by column name (case-insensitive)
+        var sqlColumnLookup = tableMetadata.ToDictionary(
+            m => m.ColumnName,
+            m => m,
+            StringComparer.OrdinalIgnoreCase);
+
+        // Iterate through the hardcoded mapping dictionary
+        foreach (var mappingEntry in OrderReceiptAcknowledgementMapping)
+        {
+            var excelColumnName = mappingEntry.Key;
+            var sqlColumnName = mappingEntry.Value;
+
+            // Check if Excel has this column
+            var excelColumn = excelColumns.FirstOrDefault(
+                ec => ec.ColumnName.Equals(excelColumnName, StringComparison.OrdinalIgnoreCase));
+
+            if (excelColumn == null)
+            {
+                // FALLBACK: Try matching by SQL column name directly if mapped name is not found
+                excelColumn = excelColumns.FirstOrDefault(
+                    ec => ec.ColumnName.Equals(sqlColumnName, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (excelColumn == null)
+                continue; // Skip if column not found
+
+            // Check if SQL table has the mapped column
+            if (!sqlColumnLookup.TryGetValue(sqlColumnName, out var sqlColumn))
+                continue; // Skip if SQL column not found in metadata
+
+            // Add the mapping
+            mappings.Add(new ColumnMapping
+            {
+                ExcelColumnName = excelColumn.ColumnName,
+                SqlColumnName = sqlColumn.ColumnName,
+                SqlDataType = sqlColumn.DataType,
+                IsIdentity = sqlColumn.IsIdentity,
+                IsNullable = sqlColumn.IsNullable,
+                ForeignKeyTableSchema = sqlColumn.ForeignKeyTableSchema,
+                ForeignKeyTableName = sqlColumn.ForeignKeyTableName,
+                ForeignKeyColumnName = sqlColumn.ForeignKeyColumnName,
+                ForeignKeyLookupColumnName = sqlColumn.ForeignKeyLookupColumnName
+            });
+        }
+
+        return mappings;
+    }
+
+    private List<ColumnMapping> MatchColumnsUsingDictionary(DataTable excelData, List<ColumnMetadata> tableMetadata, Dictionary<string, string> mappingDict)
+    {
+        var mappings = new List<ColumnMapping>();
+        var excelColumns = excelData.Columns.Cast<DataColumn>().ToList();
+
+        // Create a lookup for SQL column metadata by column name (case-insensitive)
+        var sqlColumnLookup = tableMetadata.ToDictionary(
+            m => m.ColumnName,
+            m => m,
+            StringComparer.OrdinalIgnoreCase);
+
+        // Iterate through the hardcoded mapping dictionary
+        foreach (var mappingEntry in mappingDict)
+        {
+            var excelColumnName = mappingEntry.Key;
+            var sqlColumnName = mappingEntry.Value;
+
+            // Check if Excel has this column
+            var excelColumn = excelColumns.FirstOrDefault(
+                ec => ec.ColumnName.Equals(excelColumnName, StringComparison.OrdinalIgnoreCase));
+
+            if (excelColumn == null)
+            {
+                // FALLBACK: Try matching by SQL column name directly if mapped name is not found
+                excelColumn = excelColumns.FirstOrDefault(
+                    ec => ec.ColumnName.Equals(sqlColumnName, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (excelColumn == null)
+                continue; // Skip if column not found
+
+            // Check if SQL table has the mapped column
+            if (!sqlColumnLookup.TryGetValue(sqlColumnName, out var sqlColumn))
+                continue; // Skip if SQL column not found in metadata
+
+            // Add the mapping
+            mappings.Add(new ColumnMapping
+            {
+                ExcelColumnName = excelColumn.ColumnName,
+                SqlColumnName = sqlColumn.ColumnName,
+                SqlDataType = sqlColumn.DataType,
+                IsIdentity = sqlColumn.IsIdentity,
+                IsNullable = sqlColumn.IsNullable,
+                ForeignKeyTableSchema = sqlColumn.ForeignKeyTableSchema,
+                ForeignKeyTableName = sqlColumn.ForeignKeyTableName,
+                ForeignKeyColumnName = sqlColumn.ForeignKeyColumnName,
+                ForeignKeyLookupColumnName = sqlColumn.ForeignKeyLookupColumnName
+            });
+        }
+
+        return mappings;
+    }
+
+    private List<ColumnMapping> MatchColumnsForAuditAction(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, AuditActionMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForRCCA(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, RCCAMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForRCCA_StandardLI(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, RCCA_StandardLIMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForRCCA_SelectTeamMembersLI(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, RCCA_SelectTeamMembersLIMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForMonthlyProgressReport(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        var mappings = MatchColumnsUsingDictionary(excelData, tableMetadata, MonthlyProgressReportMapping);
+        
+        // Special case: mpr_title_sdt120 also maps to Title column if it exists in SQL
+        var excelColumn = excelData.Columns.Cast<DataColumn>().FirstOrDefault(c => string.Equals(c.ColumnName, "mpr_title_sdt120", StringComparison.OrdinalIgnoreCase));
+        var sqlTitleColumn = tableMetadata.FirstOrDefault(m => string.Equals(m.ColumnName, "Title", StringComparison.OrdinalIgnoreCase));
+        
+        if (excelColumn != null && sqlTitleColumn != null && !mappings.Any(m => string.Equals(m.SqlColumnName, "Title", StringComparison.OrdinalIgnoreCase)))
+        {
+            mappings.Add(new ColumnMapping
+            {
+                ExcelColumnName = excelColumn.ColumnName,
+                SqlColumnName = sqlTitleColumn.ColumnName,
+                SqlDataType = sqlTitleColumn.DataType,
+                IsIdentity = sqlTitleColumn.IsIdentity,
+                IsNullable = sqlTitleColumn.IsNullable
+            });
+        }
+        
+        return mappings;
+    }
+
+    private List<ColumnMapping> MatchColumnsForMonthlyProgressReport_MajorMilestoneLI(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, MonthlyProgressReport_MajorMilestoneLIMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForMonthlyProgressReport_ScopeOfSupplyLI(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, MonthlyProgressReport_ScopeOfSupplyLIMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForMonthlyProgressReport_ProcurementProgressofBoughtOutsItemLI(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, MonthlyProgressReport_ProcurementProgressofBoughtOutsItemLIMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForMonthlyProgressReport_TurbineManufacturingProgressLI(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, MonthlyProgressReport_TurbineManufacturingProgressLIMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForMonthlyProgressReport_InspectionDispatchPlanLI(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, MonthlyProgressReport_InspectionDispatchPlanLIMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForMonthlyProgressReport_CashInFlowPlanLI(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, MonthlyProgressReport_CashInFlowPlanLIMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForMonthlyProgressReport_LookAheadTaskforNext30DaysLI(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, MonthlyProgressReport_LookAheadTaskforNext30DaysLIMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForMonthlyProgressReport_EngineeringProgressLI(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, MonthlyProgressReport_EngineeringProgressLIMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForMonthlyProgressReport_InputsRequiredFromCustomerLI(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, MonthlyProgressReport_InputsRequiredFromCustomerLIMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForMonthlyProgressReport_DBOSummarizeSheetLI(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, MonthlyProgressReport_DBOSummarizeSheetLIMapping);
+    }
+
     private List<ColumnMapping> MatchColumnsForCustomerMaster(DataTable excelData, List<ColumnMetadata> tableMetadata)
     {
         var mappings = new List<ColumnMapping>();
@@ -5127,11 +5962,12 @@ public class ExcelMigrationService : IExcelMigrationService
         var isMonthlyActualCollectionPlanned = string.Equals(tableName, "MonthlyActualCollectionPlanned", StringComparison.OrdinalIgnoreCase);
         var isMonthlyActualUnplannedCollection = string.Equals(tableName, "MonthlyActualUnplannedCollection", StringComparison.OrdinalIgnoreCase);
         var isSpecificationRelease = string.Equals(tableName, "SpecificationRelease", StringComparison.OrdinalIgnoreCase);
-
-
-
-
-
+        var isSparesOrderTransmittal = string.Equals(tableName, "SparesOrderTransmittal", StringComparison.OrdinalIgnoreCase);
+        var isSparesOrderTransmittalLineItem = string.Equals(tableName, "SparesOrderTransmittalLineItem", StringComparison.OrdinalIgnoreCase);
+        var isOrderReceiptAcknowledgement = string.Equals(tableName, "OrderReceiptAcknowledgement", StringComparison.OrdinalIgnoreCase);
+        var isAuditAction = string.Equals(tableName, "AuditAction", StringComparison.OrdinalIgnoreCase);
+        var isRCCA = string.Equals(tableName, "RCCA", StringComparison.OrdinalIgnoreCase);
+        var isMonthlyProgressReport = string.Equals(tableName, "MonthlyProgressReport", StringComparison.OrdinalIgnoreCase);
 
         // Performance optimization: Cache FK lookups to avoid repeated database queries
         var projectIdCache = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
@@ -5345,8 +6181,8 @@ public class ExcelMigrationService : IExcelMigrationService
 
                             if (resolvedProjectId == null)
                             {
-                                // For CommunicationProtocol, OrderTransmittal, BankGuarantee, Turbine, and ElectricalInstrumentationDBO, if ProjectID doesn't exist, set to NULL instead of skipping row
-                                if (isCommunicationProtocol || isOrderTransmittal || isBankGuarantee || isTurbine || isElectricalInstrumentationDBO || isBPAttachments || isMechanicalDBO || isContractClearance || isAdditionalOrderBooking || isMinutesOfMeeting || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isInitialCashFlowPlan || isMonthlyPlanning || isMonthlyPlanningLineItem || isMonthlyActualCollectionPlanned || isMonthlyActualUnplannedCollection || isSpecificationRelease)
+                                // For CommunicationProtocol, OrderTransmittal, BankGuarantee, Turbine, and ElectricalInstrumentationDBO, if ProjectID doesn't exist, set to NULL instead of skipping
+                                if (isCommunicationProtocol || isOrderTransmittal || isBankGuarantee || isTurbine || isElectricalInstrumentationDBO || isBPAttachments || isMechanicalDBO || isContractClearance || isAdditionalOrderBooking || isMinutesOfMeeting || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isInitialCashFlowPlan || isMonthlyPlanning || isMonthlyPlanningLineItem || isMonthlyActualCollectionPlanned || isMonthlyActualUnplannedCollection || isSpecificationRelease || isOrderReceiptAcknowledgement || isSparesOrderTransmittal || isAuditAction || isRCCA || isMonthlyProgressReport)
                                 {
                                     value = DBNull.Value;
                                 }
@@ -5437,8 +6273,8 @@ public class ExcelMigrationService : IExcelMigrationService
                     }
 
                     // Special handling for OrderTransmittalId column in InitialCashFlowPlan (FK to bp.OrderTransmittal)
-                    if (isInitialCashFlowPlan &&
-                        string.Equals(mapping.SqlColumnName, "OrderTransmittalId", StringComparison.OrdinalIgnoreCase) &&
+                    if ((isInitialCashFlowPlan || isRCCA || isMonthlyProgressReport) &&
+                        string.Equals(mapping.SqlColumnName, "OrderTransmittalID", StringComparison.OrdinalIgnoreCase) &&
                         value != DBNull.Value && value != null)
                     {
                         var otValueKey = value.ToString()?.Trim() ?? string.Empty;
@@ -5638,6 +6474,21 @@ public class ExcelMigrationService : IExcelMigrationService
                         }
                     }
 
+                    if (isSparesOrderTransmittalLineItem &&
+                        string.Equals(mapping.SqlColumnName, "SparesOrderTransmittalID", StringComparison.OrdinalIgnoreCase) &&
+                        value != DBNull.Value && value != null)
+                    {
+                        // If value is numeric 0, convert to NULL to avoid FK constraint error
+                        if ((value is int intVal && intVal == 0) ||
+                            (value is long longVal && longVal == 0) ||
+                            (value is short shortVal && shortVal == 0) ||
+                            (long.TryParse(value.ToString()?.Trim(), out var numericVal) && numericVal == 0))
+                        {
+                            value = DBNull.Value;
+                        }
+                    }
+
+
                     // Special handling for InitialCashPlanId column in MonthlyActualUnplannedCollection (FK to bp.InitialCashPlan)
                     if (isMonthlyActualUnplannedCollection &&
                         string.Equals(mapping.SqlColumnName, "InitialCashPlanId", StringComparison.OrdinalIgnoreCase) &&
@@ -5724,7 +6575,8 @@ public class ExcelMigrationService : IExcelMigrationService
                     // Special handling for CustomerId in CommunicationProtocol (FK to master.CustomerMaster)
                     // If the customer doesn't exist, set to NULL instead of failing the migration
                     if ( ((isContractClearance && (string.Equals(mapping.SqlColumnName, "CustomerMasterID", StringComparison.OrdinalIgnoreCase) || string.Equals(mapping.SqlColumnName, "EndUserID", StringComparison.OrdinalIgnoreCase))) ||
-                          (isCommunicationProtocol && string.Equals(mapping.SqlColumnName, "CustomerId", StringComparison.OrdinalIgnoreCase))) &&
+                          (isCommunicationProtocol && string.Equals(mapping.SqlColumnName, "CustomerId", StringComparison.OrdinalIgnoreCase)) ||
+                          (isSparesOrderTransmittal && (string.Equals(mapping.SqlColumnName, "CustomerID", StringComparison.OrdinalIgnoreCase) || string.Equals(mapping.SqlColumnName, "EndUserID", StringComparison.OrdinalIgnoreCase)))) &&
                          value != DBNull.Value && value != null )
                     {
                         var valueKey = value.ToString()?.Trim() ?? string.Empty;
@@ -5765,7 +6617,7 @@ public class ExcelMigrationService : IExcelMigrationService
 
                     // Special handling for OrderTransmittalId in ContractClearance or AdditionalOrderBooking (FK to bp.OrderTransmittal)
                     // If the OrderTransmittal doesn't exist, set to NULL instead of failing the migration
-                    if ((isContractClearance || isAdditionalOrderBooking || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isSpecificationRelease) &&
+                    if ((isContractClearance || isAdditionalOrderBooking || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isSpecificationRelease || isOrderReceiptAcknowledgement) &&
                         string.Equals(mapping.SqlColumnName, "OrderTransmittalId", StringComparison.OrdinalIgnoreCase))
                     {
                         if (IsValueZero(value))
@@ -8256,6 +9108,8 @@ public class ExcelMigrationService : IExcelMigrationService
 
         return null;
     }
+
+
 
     private async Task<object?> ResolveProjectTypeMasterIdByNameAsync(
         SqlConnection connection,
@@ -14510,6 +15364,141 @@ public class ExcelMigrationService : IExcelMigrationService
 
         var count = (int?)(await command.ExecuteScalarAsync(cancellationToken)) ?? 0;
         return count > 0;
+    }
+
+    private async Task<UploadResponse> MigrateToRCCALineItemsAsync(
+        string connectionString,
+        string schemaName,
+        string tableName,
+        DataTable excelData,
+        CancellationToken cancellationToken = default)
+    {
+        var response = new UploadResponse();
+
+        // Specific filtering logic: uuu_tab_id = 0 for RCCA_StandardLI
+        DataTable? filteredData = null;
+        if (excelData.Columns.Contains("uuu_tab_id"))
+        {
+            string targetTabId = "0";
+            if (string.Equals(tableName, "RCCA_SelectTeamMembersLI", StringComparison.OrdinalIgnoreCase))
+            {
+                targetTabId = "1";
+            }
+
+            var rows = excelData.AsEnumerable()
+                .Where(row => row.Field<object>("uuu_tab_id")?.ToString()?.Trim() == targetTabId);
+
+            if (rows.Any())
+            {
+                filteredData = rows.CopyToDataTable();
+            }
+        }
+        else
+        {
+            filteredData = excelData;
+        }
+
+        if (filteredData == null || filteredData.Rows.Count == 0)
+        {
+            response.Success = true;
+            response.Message = $"No matching rows found with uuu_tab_id = 0 for table {tableName}. No data migrated.";
+            return response;
+        }
+
+        await using var connection = new SqlConnection(connectionString);
+        await connection.OpenAsync(cancellationToken);
+
+        return await MigrateToSingleTableAsync(
+            connection,
+            schemaName,
+            tableName,
+            filteredData,
+            null,
+            cancellationToken);
+    }
+
+    private async Task<UploadResponse> MigrateToMonthlyProgressReportLineItemsAsync(
+        string connectionString,
+        string schemaName,
+        string tableName,
+        DataTable excelData,
+        CancellationToken cancellationToken = default)
+    {
+        var response = new UploadResponse();
+
+        // Specific filtering logic: uuu_tab_id based on table name
+        DataTable? filteredData = null;
+        string targetTabId = "0";
+        if (excelData.Columns.Contains("uuu_tab_id"))
+        {
+            if (tableName.EndsWith("ScopeOfSupplyLI", StringComparison.OrdinalIgnoreCase))
+            {
+                targetTabId = "1";
+            }
+            else if (tableName.EndsWith("ProcurementProgressofBoughtOutsItemLI", StringComparison.OrdinalIgnoreCase))
+            {
+                targetTabId = "2";
+            }
+            else if (tableName.EndsWith("TurbineManufacturingProgressLI", StringComparison.OrdinalIgnoreCase))
+            {
+                targetTabId = "3";
+            }
+            else if (tableName.EndsWith("InspectionDispatchPlanLI", StringComparison.OrdinalIgnoreCase))
+            {
+                targetTabId = "4";
+            }
+            else if (tableName.EndsWith("CashInFlowPlanLI", StringComparison.OrdinalIgnoreCase))
+            {
+                targetTabId = "5";
+            }
+            else if (tableName.EndsWith("LookAheadTaskforNext30DaysLI", StringComparison.OrdinalIgnoreCase))
+            {
+                targetTabId = "6";
+            }
+            else if (tableName.EndsWith("EngineeringProgressLI", StringComparison.OrdinalIgnoreCase))
+            {
+                targetTabId = "7";
+            }
+            else if (tableName.EndsWith("InputsRequiredFromCustomerLI", StringComparison.OrdinalIgnoreCase))
+            {
+                targetTabId = "8";
+            }
+            else if (tableName.EndsWith("DBOSummarizeSheetLI", StringComparison.OrdinalIgnoreCase))
+            {
+                targetTabId = "10";
+            }
+
+            var rows = excelData.AsEnumerable()
+                .Where(row => row.Field<object>("uuu_tab_id")?.ToString()?.Trim() == targetTabId);
+
+            if (rows.Any())
+            {
+                filteredData = rows.CopyToDataTable();
+            }
+        }
+        else
+        {
+            // If column is missing, we don't skip – let it proceed but it might fail later or migrate nothing
+            filteredData = excelData;
+        }
+
+        if (filteredData == null || filteredData.Rows.Count == 0)
+        {
+            response.Success = true;
+            response.Message = $"No matching rows found with uuu_tab_id = {targetTabId} for table {tableName}. No data migrated.";
+            return response;
+        }
+
+        await using var connection = new SqlConnection(connectionString);
+        await connection.OpenAsync(cancellationToken);
+
+        return await MigrateToSingleTableAsync(
+            connection,
+            schemaName,
+            tableName,
+            filteredData,
+            null,
+            cancellationToken);
     }
 
     private bool IsValueZero(object? value)
