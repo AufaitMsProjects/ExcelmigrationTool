@@ -6437,7 +6437,8 @@ public class ExcelMigrationService : IExcelMigrationService
                         }
                     }
 
-                    // Special handling for OrderTransmittalID column in MonthlyActualCollectionPlanned (FK to bp.OrderTransmit                     if (isMonthlyActualCollectionPlanned &&
+                    // Special handling for OrderTransmittalID column in MonthlyActualCollectionPlanned (FK to bp.OrderTransmittal)
+                    if (isMonthlyActualCollectionPlanned &&
                         string.Equals(mapping.SqlColumnName, "OrderTransmittalID", StringComparison.OrdinalIgnoreCase) &&
                         value != DBNull.Value && value != null)
                     {
@@ -6474,7 +6475,7 @@ public class ExcelMigrationService : IExcelMigrationService
                             // If parent record doesn't exist, set to NULL
                             value = DBNull.Value;
                         }
-                    }     }
+                    }
 
                     // Special handling for MonthlyActualCollectionId column in MonthlyActualCollectionPlanned (FK to bp.MonthlyActualCollection)
                     if (isMonthlyActualCollectionPlanned &&
