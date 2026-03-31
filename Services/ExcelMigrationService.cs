@@ -5967,7 +5967,7 @@ public class ExcelMigrationService : IExcelMigrationService
         var isOrderReceiptAcknowledgement = string.Equals(tableName, "OrderReceiptAcknowledgement", StringComparison.OrdinalIgnoreCase);
         var isAuditAction = string.Equals(tableName, "AuditAction", StringComparison.OrdinalIgnoreCase);
         var isRCCA = string.Equals(tableName, "RCCA", StringComparison.OrdinalIgnoreCase);
-        var isMonthlyProgressReport = string.Equals(tableName, "MonthlyProgressReport", StringComparison.OrdinalIgnoreCase);
+        var isMonthlyProgressReport = tableName.StartsWith("MonthlyProgressReport", StringComparison.OrdinalIgnoreCase);
 
         // Performance optimization: Cache FK lookups to avoid repeated database queries
         var projectIdCache = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
@@ -5982,6 +5982,7 @@ public class ExcelMigrationService : IExcelMigrationService
         var initialCashFlowPlanIdCache = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
         var monthlyPlanningLineItemIdCache = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
         var monthlyActualCollectionIdCache = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+        var monthlyProgressReportIdCache = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
 
 
         // Add columns in the order of mappings
@@ -6294,7 +6295,7 @@ public class ExcelMigrationService : IExcelMigrationService
                     }
 
                     // Special handling for InitialCashPlanId column in InitialCashFlowPlan (FK to bp.InitialCashPlan)
-                    if (isInitialCashFlowPlan &&
+                    if ((isInitialCashFlowPlan || isMonthlyProgressReport) &&
                         string.Equals(mapping.SqlColumnName, "InitialCashPlanId", StringComparison.OrdinalIgnoreCase) &&
                         value != DBNull.Value && value != null)
                     {
@@ -6357,7 +6358,7 @@ public class ExcelMigrationService : IExcelMigrationService
                     }
 
                     // Special handling for InitialCashFlowPlanId column in MonthlyPlanningLineItem (FK to bp.InitialCashFlowPlan)
-                    if (isMonthlyPlanningLineItem &&
+                    if ((isMonthlyPlanningLineItem || isMonthlyProgressReport) &&
                         string.Equals(mapping.SqlColumnName, "InitialCashFlowPlanId", StringComparison.OrdinalIgnoreCase) &&
                         value != DBNull.Value && value != null)
                     {
@@ -6436,8 +6437,7 @@ public class ExcelMigrationService : IExcelMigrationService
                         }
                     }
 
-                    // Special handling for OrderTransmittalID column in MonthlyActualCollectionPlanned (FK to bp.OrderTransmittal)
-                    if (isMonthlyActualCollectionPlanned &&
+                    // Special handling for OrderTransmittalID column in MonthlyActualCollectionPlanned (FK to bp.OrderTransmit                     if (isMonthlyActualCollectionPlanned &&
                         string.Equals(mapping.SqlColumnName, "OrderTransmittalID", StringComparison.OrdinalIgnoreCase) &&
                         value != DBNull.Value && value != null)
                     {
@@ -6454,6 +6454,27 @@ public class ExcelMigrationService : IExcelMigrationService
                             if (!(bool)otExists!) value = DBNull.Value;
                         }
                     }
+
+                    // Special handling for MonthlyProgressReportID column in MonthlyProgressReport line items (FK to bp.MonthlyProgressReport)
+                    if (isMonthlyProgressReport &&
+                        string.Equals(mapping.SqlColumnName, "MonthlyProgressReportID", StringComparison.OrdinalIgnoreCase) &&
+                        value != DBNull.Value && value != null)
+                    {
+                        var mprValueKey = value.ToString()?.Trim() ?? string.Empty;
+
+                        if (!monthlyProgressReportIdCache.TryGetValue(mprValueKey, out var mprExists))
+                        {
+                            var exists = await RecordExistsAsync(connection, transaction, "bp", "MonthlyProgressReport", "MonthlyProgressReportID", mprValueKey, cancellationToken);
+                            mprExists = exists;
+                            monthlyProgressReportIdCache[mprValueKey] = mprExists;
+                        }
+
+                        if (!(bool)mprExists!)
+                        {
+                            // If parent record doesn't exist, set to NULL
+                            value = DBNull.Value;
+                        }
+                    }     }
 
                     // Special handling for MonthlyActualCollectionId column in MonthlyActualCollectionPlanned (FK to bp.MonthlyActualCollection)
                     if (isMonthlyActualCollectionPlanned &&
