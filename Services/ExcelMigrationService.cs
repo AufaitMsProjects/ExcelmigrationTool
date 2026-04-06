@@ -848,14 +848,14 @@ public class ExcelMigrationService : IExcelMigrationService
            { "id", "CustomerContactID" },
             { "record_no", "RecordNo" },
             { "title", "Title" },
-
+ 
             { "uuu_record_last_update_date", "UpdatedAt" },
             { "k__creator_id", "PrimaveraCreatedId" },
             { "uuu_creation_date", "CreatedAt" },
         { "creator_id","CreatedName"},
 
             { "uircntctfstnmtb", "ContactName" },
-            { "k__uot_sold_party_dp", "CustomerID" },
+            { "customermasterid", "CustomerID" },
 
             { "uuu_proj_city", "City" },
             { "uuu_user_state", "State" },
@@ -1939,7 +1939,7 @@ public class ExcelMigrationService : IExcelMigrationService
      { "task_status", "StatusID" },
      { "source_modelname", "ApprovalUrl" },
      { "task_start_date", "CreatedAt" },
-     { "task_end_date", "end_date" }
+     { "task_end_date", "CompletionDate" }
 };
     public async Task<UploadResponse> MigrateExcelToSqlServerAsync(
         string connectionString,
@@ -6143,6 +6143,22 @@ public class ExcelMigrationService : IExcelMigrationService
                     else
                     {
                         value = excelRow[mapping.ExcelColumnName];
+                    }
+
+                    // Remove double quotes if present at the beginning and end, and leading single quote
+                    if (value is string fieldValueAsStr && !string.IsNullOrEmpty(fieldValueAsStr))
+                    {
+                        if (fieldValueAsStr.StartsWith("\"") && fieldValueAsStr.EndsWith("\"") && fieldValueAsStr.Length >= 2)
+                        {
+                            fieldValueAsStr = fieldValueAsStr.Trim('\"');
+                        }
+
+                        if (fieldValueAsStr.StartsWith("'"))
+                        {
+                            fieldValueAsStr = fieldValueAsStr.TrimStart('\'');
+                        }
+
+                        value = fieldValueAsStr;
                     }
 
 
