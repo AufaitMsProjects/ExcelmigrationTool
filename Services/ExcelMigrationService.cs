@@ -52,7 +52,7 @@ public class ExcelMigrationService : IExcelMigrationService
             { "description", "Description" },
 
             { "uuu_shell_template_picker", "ProjectTemplateID" },
-            { "uuu_shell_location", "ProjectTypeMasterID" },
+            { "shelllocation", "ProjectTypeMasterID" },
 
             { "shellname", "ProjectName" },
 
@@ -1054,7 +1054,7 @@ public class ExcelMigrationService : IExcelMigrationService
     // Hardcoded column mapping for BPComments table
     private static readonly Dictionary<string, string> BPCommentsMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
-        { "id", "BPCommentsID" },
+        { "detail_id", "BPCommentsID" },
         { "project_id", "ProjectID" },
         { "file_name", "CompanyID" },
         { "content", "Comments" },
