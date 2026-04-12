@@ -119,7 +119,7 @@ public class ExcelMigrationService : IExcelMigrationService
     { "email_id21", "ZonalHeadEmail" },
     { "phone_number21", "ZonalHeadPhoneNumber" },
     { "extention21", "ZonalHeadExtension" },
-    { "mobile_number21", "ZonalHeadMobileNumber" },
+    { "mobile_number_mails", "ZonalHeadMobileNumber" },
 
     // IC Head
     { "k__uot_copies_to_be_sent_to_dp", "ICHeadPrimaveraId" },
@@ -143,7 +143,7 @@ public class ExcelMigrationService : IExcelMigrationService
     { "email_id51", "InchargeEmail" },
     { "phone_number51", "InchargePhoneNumber" },
     { "extention51", "InchargeExtension" },
-    //{ "mobile_number_headspares", "InchargeMobileNumber" },
+    { "mobile_number21", "InchargeMobileNumber" },
 
     // HOSS
     { "k__uot_head_spares_and_service", "HOSSPrimaveraId" },
@@ -151,7 +151,7 @@ public class ExcelMigrationService : IExcelMigrationService
     { "email_id61", "HOSSEmail" },
     { "phone_number61", "HOSSPhoneNumber" },
     { "extention61", "HOSSExtension" },
-    //{ "mobile_number_headspares", "HOSSMobileNumber" },
+    { "mobile_number_headspares", "HOSSMobileNumber" },
 
     // Misc
     { "postal_address", "PostalAddress" },
@@ -271,7 +271,9 @@ public class ExcelMigrationService : IExcelMigrationService
             { "id", "LetterOfCorrespondenceId" },
             { "employee_bpk", "EmployeeId" },
             { "loc_reference_sdt120", "Reference" },
-            { "ordertransmittalid", "OrderTransmittalId" }
+            { "ordertransmittalid", "OrderTransmittalId" },
+        {"uot_sold_party_dp","CustomerMasterID" },
+        {"uot_ship_to_partydp","EndUserID" }
     };
 
     private static readonly Dictionary<string, string> ContractClearanceMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -511,6 +513,16 @@ public class ExcelMigrationService : IExcelMigrationService
         { "record_id", "OrderTransmittalID" },
         { "id", "PaymentENCID" },
         { "Projectid", "ProjectID" }
+    };
+
+    // Hardcoded column mapping for OrderTransmittal_Notes table
+    private static readonly Dictionary<string, string> OrderTransmittalNotesMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        //{ "NotesId", "Id" },
+        { "record_id", "OrderTransmittalID" },
+        {"id","NotesId" },
+        { "project_id", "ProjectId" },
+        { "notes", "Notes" }
     };
 
     // Hardcoded column mapping for UserList table
@@ -1941,6 +1953,22 @@ public class ExcelMigrationService : IExcelMigrationService
      { "task_start_date", "CreatedAt" },
      { "task_end_date", "CompletionDate" }
 };
+
+    // Hardcoded column mapping for AuditLog table changes
+    private static readonly Dictionary<string, string> AuditLogMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "AuditID" },
+        { "projectid", "ProjectID" },
+        { "fieldname", "Field" },
+        { "oldvalue", "OldValue" },
+        { "newvalue", "NewValue" },
+        { "eventname", "Event" },
+        { "attchcnt", "Attachment" },
+        { "proxyuserid", "ProxyUser" },
+        { "eventtime", "CreatedAt" },
+        { "sourceid", "SourceId" },
+        { "sourcetype", "SourceType" }
+    };
     public async Task<UploadResponse> MigrateExcelToSqlServerAsync(
         string connectionString,
         string schemaName,
@@ -1958,6 +1986,11 @@ public class ExcelMigrationService : IExcelMigrationService
         }
 
         // Check if table name starts with "OrderTransmittal" OR is "Payment_Supply" OR "LiquidatedDamage" OR "Payment_ENC" - migrate to all matching tables
+        if (string.Equals(tableName, "OrderTransmittal_Notes", StringComparison.OrdinalIgnoreCase))
+        {
+            return await MigrateToOrderTransmittalNotesAsync(connectionString, schemaName, tableName, excelData, cancellationToken);
+        }
+
         if (tableName.StartsWith("OrderTransmittal", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(tableName, "Payment_Supply", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(tableName, "payment_supply", StringComparison.OrdinalIgnoreCase) ||
@@ -2115,6 +2148,13 @@ public class ExcelMigrationService : IExcelMigrationService
             await using var srConnection = new SqlConnection(connectionString);
             await srConnection.OpenAsync(cancellationToken);
             return await MigrateToSingleTableAsync(srConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "AuditLog", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var auditLogConnection = new SqlConnection(connectionString);
+            await auditLogConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(auditLogConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
         }
 
 
@@ -3590,6 +3630,11 @@ public class ExcelMigrationService : IExcelMigrationService
             return MatchColumnsForAuditAction(excelData, tableMetadata);
         }
 
+        if (string.Equals(tableName, "AuditLog", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForAuditLog(excelData, tableMetadata);
+        }
+
         if (string.Equals(tableName, "RCCA", StringComparison.OrdinalIgnoreCase))
         {
             return MatchColumnsForRCCA(excelData, tableMetadata);
@@ -3793,6 +3838,10 @@ public class ExcelMigrationService : IExcelMigrationService
         // Check if table name starts with "OrderTransmittal" - use hardcoded mapping
         if (tableName.StartsWith("OrderTransmittal", StringComparison.OrdinalIgnoreCase))
         {
+            if (string.Equals(tableName, "OrderTransmittal_Notes", StringComparison.OrdinalIgnoreCase))
+            {
+                return MatchColumnsForOrderTransmittalNotes(excelData, tableMetadata);
+            }
             return MatchColumnsForOrderTransmittal(excelData, tableMetadata);
         }
 
@@ -4460,7 +4509,11 @@ public class ExcelMigrationService : IExcelMigrationService
                 SqlColumnName = sqlColumn.ColumnName,
                 SqlDataType = sqlColumn.DataType,
                 IsIdentity = sqlColumn.IsIdentity,
-                IsNullable = sqlColumn.IsNullable
+                IsNullable = sqlColumn.IsNullable,
+                ForeignKeyTableSchema = sqlColumn.ForeignKeyTableSchema,
+                ForeignKeyTableName = sqlColumn.ForeignKeyTableName,
+                ForeignKeyColumnName = sqlColumn.ForeignKeyColumnName,
+                ForeignKeyLookupColumnName = sqlColumn.ForeignKeyLookupColumnName
             });
         }
 
@@ -5123,9 +5176,19 @@ public class ExcelMigrationService : IExcelMigrationService
         return mappings;
     }
 
+    private List<ColumnMapping> MatchColumnsForOrderTransmittalNotes(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, OrderTransmittalNotesMapping);
+    }
+
     private List<ColumnMapping> MatchColumnsForAuditAction(DataTable excelData, List<ColumnMetadata> tableMetadata)
     {
         return MatchColumnsUsingDictionary(excelData, tableMetadata, AuditActionMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForAuditLog(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, AuditLogMapping);
     }
 
     private List<ColumnMapping> MatchColumnsForRCCA(DataTable excelData, List<ColumnMetadata> tableMetadata)
@@ -5968,6 +6031,7 @@ public class ExcelMigrationService : IExcelMigrationService
         var isAuditAction = string.Equals(tableName, "AuditAction", StringComparison.OrdinalIgnoreCase);
         var isRCCA = string.Equals(tableName, "RCCA", StringComparison.OrdinalIgnoreCase);
         var isMonthlyProgressReport = tableName.StartsWith("MonthlyProgressReport", StringComparison.OrdinalIgnoreCase);
+        var isOrderTransmittalNotes = string.Equals(tableName, "OrderTransmittal_Notes", StringComparison.OrdinalIgnoreCase);
 
         // Performance optimization: Cache FK lookups to avoid repeated database queries
         var projectIdCache = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
@@ -6199,7 +6263,7 @@ public class ExcelMigrationService : IExcelMigrationService
                             if (resolvedProjectId == null)
                             {
                                 // For CommunicationProtocol, OrderTransmittal, BankGuarantee, Turbine, and ElectricalInstrumentationDBO, if ProjectID doesn't exist, set to NULL instead of skipping
-                                if (isCommunicationProtocol || isOrderTransmittal || isBankGuarantee || isTurbine || isElectricalInstrumentationDBO || isBPAttachments || isMechanicalDBO || isContractClearance || isAdditionalOrderBooking || isMinutesOfMeeting || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isInitialCashFlowPlan || isMonthlyPlanning || isMonthlyPlanningLineItem || isMonthlyActualCollectionPlanned || isMonthlyActualUnplannedCollection || isSpecificationRelease || isOrderReceiptAcknowledgement || isSparesOrderTransmittal || isAuditAction || isRCCA || isMonthlyProgressReport)
+                                if (isCommunicationProtocol || isOrderTransmittal || isBankGuarantee || isTurbine || isElectricalInstrumentationDBO || isBPAttachments || isMechanicalDBO || isContractClearance || isAdditionalOrderBooking || isMinutesOfMeeting || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isInitialCashFlowPlan || isMonthlyPlanning || isMonthlyPlanningLineItem || isMonthlyActualCollectionPlanned || isMonthlyActualUnplannedCollection || isSpecificationRelease || isOrderReceiptAcknowledgement || isSparesOrderTransmittal || isAuditAction || isRCCA || isMonthlyProgressReport || isLetterOfCorrespondence)
                                 {
                                     value = DBNull.Value;
                                 }
@@ -6614,6 +6678,7 @@ public class ExcelMigrationService : IExcelMigrationService
                     // If the customer doesn't exist, set to NULL instead of failing the migration
                     if ( ((isContractClearance && (string.Equals(mapping.SqlColumnName, "CustomerMasterID", StringComparison.OrdinalIgnoreCase) || string.Equals(mapping.SqlColumnName, "EndUserID", StringComparison.OrdinalIgnoreCase))) ||
                           (isCommunicationProtocol && string.Equals(mapping.SqlColumnName, "CustomerId", StringComparison.OrdinalIgnoreCase)) ||
+                          (isLetterOfCorrespondence && (string.Equals(mapping.SqlColumnName, "CustomerMasterID", StringComparison.OrdinalIgnoreCase) || string.Equals(mapping.SqlColumnName, "EndUserID", StringComparison.OrdinalIgnoreCase))) ||
                           (isSparesOrderTransmittal && (string.Equals(mapping.SqlColumnName, "CustomerID", StringComparison.OrdinalIgnoreCase) || string.Equals(mapping.SqlColumnName, "EndUserID", StringComparison.OrdinalIgnoreCase)))) &&
                          value != DBNull.Value && value != null )
                     {
@@ -6655,7 +6720,7 @@ public class ExcelMigrationService : IExcelMigrationService
 
                     // Special handling for OrderTransmittalId in ContractClearance or AdditionalOrderBooking (FK to bp.OrderTransmittal)
                     // If the OrderTransmittal doesn't exist, set to NULL instead of failing the migration
-                    if ((isContractClearance || isAdditionalOrderBooking || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isSpecificationRelease || isOrderReceiptAcknowledgement) &&
+                    if ((isContractClearance || isAdditionalOrderBooking || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isSpecificationRelease || isOrderReceiptAcknowledgement || isLetterOfCorrespondence) &&
                         string.Equals(mapping.SqlColumnName, "OrderTransmittalId", StringComparison.OrdinalIgnoreCase))
                     {
                         if (IsValueZero(value))
@@ -7272,11 +7337,12 @@ public class ExcelMigrationService : IExcelMigrationService
                     // Handle Excel column k__ot_sel_ot_rec_bpp, ot_sel_ot_rec_bpp, or SQL column OrderTransmittalID
                     // Resolve by OrderTransmittalID (numeric) or by RecordNo (string)
                     if (((isOrderTransmittal && !string.Equals(tableName, "OrderTransmittal", StringComparison.OrdinalIgnoreCase)) ||
+                         isOrderTransmittalNotes ||
                          isElectricalInstrumentationDBO) &&
                         (string.Equals(mapping.SqlColumnName, "OrderTransmittalID", StringComparison.OrdinalIgnoreCase) ||
                          string.Equals(mapping.ExcelColumnName, "k__ot_sel_ot_rec_bpp", StringComparison.OrdinalIgnoreCase) ||
                          string.Equals(mapping.ExcelColumnName, "ot_sel_ot_rec_bpp", StringComparison.OrdinalIgnoreCase) ||
-                         string.Equals(mapping.ExcelColumnName, "id", StringComparison.OrdinalIgnoreCase)))
+                         string.Equals(mapping.ExcelColumnName, "record_id", StringComparison.OrdinalIgnoreCase)))
                     {
                         // If value is NULL or DBNull, keep it as NULL
                         if (value == DBNull.Value || value == null)
@@ -7936,27 +8002,9 @@ public class ExcelMigrationService : IExcelMigrationService
 
 
 
-                    // Special handling for OrderTransmittalId column in LetterOfCorrespondence
-                    if (isLetterOfCorrespondence &&
-                        string.Equals(mapping.SqlColumnName, "OrderTransmittalId", StringComparison.OrdinalIgnoreCase))
-                    {
-                        // If value is NULL or DBNull, keep it as NULL
-                        if (value == DBNull.Value || value == null)
-                        {
-                            value = DBNull.Value;
-                        }
-                        // If value is numeric 0 or string "0", convert to NULL
-                        else if ((value is int intVal && intVal == 0) ||
-                                 (value is long longVal && longVal == 0) ||
-                                 (value is short shortVal && shortVal == 0) ||
-                                 (long.TryParse(value.ToString()?.Trim(), out var orderTransmittalNumeric) && orderTransmittalNumeric == 0))
-                        {
-                            value = DBNull.Value;
-                        }
-                    }
 
-                    // Special handling for ContractClearance foreign keys - if they don't exist, set to NULL
-                    if (isContractClearance && 
+                    // Special handling for ContractClearance and LetterOfCorrespondence foreign keys - if they don't exist, set to NULL
+                    if ((isContractClearance || isLetterOfCorrespondence) && 
                         value != DBNull.Value && value != null &&
                         !string.IsNullOrEmpty(mapping.ForeignKeyTableName))
                     {
@@ -15544,6 +15592,52 @@ public class ExcelMigrationService : IExcelMigrationService
         if (value == null || value == DBNull.Value) return false;
         var str = value.ToString()?.Trim();
         return str == "0" || str == "0.0" || str == "0.00";
+    }
+
+    private async Task<UploadResponse> MigrateToOrderTransmittalNotesAsync(
+        string connectionString,
+        string schemaName,
+        string tableName,
+        DataTable excelData,
+        CancellationToken cancellationToken = default)
+    {
+        var response = new UploadResponse();
+
+        // Specific filtering logic: uuu_tab_id == 0
+        DataTable? filteredData = null;
+        string targetTabId = "0";
+        if (excelData.Columns.Contains("uuu_tab_id"))
+        {
+            var rows = excelData.AsEnumerable()
+                .Where(row => row.Field<object>("uuu_tab_id")?.ToString()?.Trim() == targetTabId);
+
+            if (rows.Any())
+            {
+                filteredData = rows.CopyToDataTable();
+            }
+        }
+        else
+        {
+            filteredData = excelData;
+        }
+
+        if (filteredData == null || filteredData.Rows.Count == 0)
+        {
+            response.Success = true;
+            response.Message = $"No matching rows found with uuu_tab_id = {targetTabId} for table {tableName}. No data migrated.";
+            return response;
+        }
+
+        await using var connection = new SqlConnection(connectionString);
+        await connection.OpenAsync(cancellationToken);
+
+        return await MigrateToSingleTableAsync(
+            connection,
+            schemaName,
+            tableName,
+            filteredData,
+            null,
+            cancellationToken);
     }
 
 

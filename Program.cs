@@ -9,7 +9,7 @@ builder.WebHost.ConfigureKestrel(options =>
 {
     options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(30);
     options.Limits.RequestHeadersTimeout = TimeSpan.FromMinutes(30);
-    options.Limits.MaxRequestBodySize = 1073741824; // 100 MB
+    options.Limits.MaxRequestBodySize = 209715200; // 100 MB
 });
 
 // Add services to the container
@@ -35,7 +35,7 @@ builder.Services.AddScoped<IAzureGraphService, AzureGraphService>();
 // Configure form options for file uploads
 builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
 {
-    options.MultipartBodyLengthLimit = 1073741824; // 100 MB
+    options.MultipartBodyLengthLimit = 209715200; // 100 MB
     options.ValueLengthLimit = int.MaxValue;
     options.ValueCountLimit = int.MaxValue;
     options.KeyLengthLimit = int.MaxValue;
