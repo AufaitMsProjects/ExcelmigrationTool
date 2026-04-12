@@ -7574,6 +7574,22 @@ public class ExcelMigrationService : IExcelMigrationService
                         {
                             value = TransformElectricalInstrumentationDBOLtPowerCablingValue(value, mapping.IsNullable);
                         }
+                        else if (colName.Equals("HTPowerCablingID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOHtPowerCablingValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("LTPowerCableMOCID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOLtPowerCableMocValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("BusDuctID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOBusDuctValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("ControlCableMOCID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOControlCableMocValue(value, mapping.IsNullable);
+                        }
                     }
 
                     // Special handling for OrderTransmittalRecordID column in BPComments table (FK to OrderTransmittal)
@@ -13747,6 +13763,46 @@ public class ExcelMigrationService : IExcelMigrationService
     }
 
     //Nithya ELDBO
+
+    private object TransformElectricalInstrumentationDBOHtPowerCablingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL scope", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Purchaser scope (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOLtPowerCableMocValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Aluminium (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Copper", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOBusDuctValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL scope", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Purchaser scope (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOControlCableMocValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Aluminium (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Copper", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
 
     private object TransformElectricalDBOScopeValue(object value, bool isNullable)
     {
