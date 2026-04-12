@@ -1954,7 +1954,7 @@ public class ExcelMigrationService : IExcelMigrationService
      { "task_end_date", "CompletionDate" }
 };
 
-    // Hardcoded column mapping for AuditLog table
+    // Hardcoded column mapping for AuditLog table changes
     private static readonly Dictionary<string, string> AuditLogMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
         { "id", "AuditID" },
