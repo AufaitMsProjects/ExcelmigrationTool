@@ -7598,6 +7598,14 @@ public class ExcelMigrationService : IExcelMigrationService
                         {
                             value = TransformElectricalInstrumentationDBOBusDuctTypeValue(value, mapping.IsNullable);
                         }
+                        else if (colName.Equals("Battery_TypeID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOBatteryTypeValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("Battery_TypeOfChargerID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOBatteryTypeOfChargerValue(value, mapping.IsNullable);
+                        }
                     }
 
                     // Special handling for OrderTransmittalRecordID column in BPComments table (FK to OrderTransmittal)
@@ -13828,6 +13836,27 @@ public class ExcelMigrationService : IExcelMigrationService
         var str = value.ToString()?.Trim() ?? string.Empty;
         if (string.Equals(str, "HT cables from Generator to NGR & LAPT", StringComparison.OrdinalIgnoreCase)) return 0;
         else if (string.Equals(str, "HT cables from Generator to NGR & LAPT and NGR/LAPT to Generator VCB", StringComparison.OrdinalIgnoreCase)) return 1;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOBatteryTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "VRLA (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "NI-CD", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "PLANTE", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOBatteryTypeOfChargerValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "1FC + 1FCBC (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "2FCBC", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
         return isNullable ? DBNull.Value : 0;
     }
 
