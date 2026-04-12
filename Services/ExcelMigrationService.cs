@@ -1280,9 +1280,11 @@ public class ExcelMigrationService : IExcelMigrationService
             { "process_status", "ProcessStatus" },
             { "status", "Status" },
             { "k__creator_id", "PrimaveraCreatedId" },
+            { "creator_id","CreatedName"},
             { "uuu_creation_date", "CreatedAt" },
             { "uuu_record_last_update_date", "UpdatedAt" },
             { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+            { "uuu_record_last_update_user","UpdatedName"},
 
             // ---- Alternator Options ----
             { "uot_alternator_scope", "AlternatorScopeID" },
