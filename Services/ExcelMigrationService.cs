@@ -7590,6 +7590,14 @@ public class ExcelMigrationService : IExcelMigrationService
                         {
                             value = TransformElectricalInstrumentationDBOControlCableMocValue(value, mapping.IsNullable);
                         }
+                        else if (colName.Equals("HTPowerCableMOCID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOHtPowerCableMocValue(value, mapping.IsNullable);
+                        }
+                        else if (colName.Equals("BusDuctTypeID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOBusDuctTypeValue(value, mapping.IsNullable);
+                        }
                     }
 
                     // Special handling for OrderTransmittalRecordID column in BPComments table (FK to OrderTransmittal)
@@ -13801,6 +13809,25 @@ public class ExcelMigrationService : IExcelMigrationService
         if (string.Equals(str, "Aluminium (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
         else if (string.Equals(str, "Copper", StringComparison.OrdinalIgnoreCase)) return 1;
         else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOHtPowerCableMocValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Aluminium (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Copper", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOBusDuctTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "HT cables from Generator to NGR & LAPT", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "HT cables from Generator to NGR & LAPT and NGR/LAPT to Generator VCB", StringComparison.OrdinalIgnoreCase)) return 1;
         return isNullable ? DBNull.Value : 0;
     }
 
