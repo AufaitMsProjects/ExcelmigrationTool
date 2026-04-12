@@ -7646,39 +7646,39 @@ public class ExcelMigrationService : IExcelMigrationService
                         {
                             value = TransformMechanicalDBOScopeValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AlternatorMakeID", StringComparison.OrdinalIgnoreCase) || colName.Equals("VMS_MakeID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("AlternatorMakeID", StringComparison.OrdinalIgnoreCase) || colName.Equals("VMS_MakeID", StringComparison.OrdinalIgnoreCase) || colName.Equals("sync_MakeID", StringComparison.OrdinalIgnoreCase))
                         {
                             value = TransformElectricalInstrumentationDBOMakeValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AlternatorStandardID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("StandardID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorStandardID", StringComparison.OrdinalIgnoreCase))
                         {
                             value = TransformElectricalInstrumentationDBOStandardValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AlternatorVoltageID", StringComparison.OrdinalIgnoreCase) || colName.Equals("Battery_VoltageRatingID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("VoltageAlternatorID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorVoltageID", StringComparison.OrdinalIgnoreCase) || colName.Equals("Battery_VoltageRatingID", StringComparison.OrdinalIgnoreCase))
                         {
                             value = TransformElectricalInstrumentationDBOVoltageValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AlternatorEnclosureID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("EnclosureID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorEnclosureID", StringComparison.OrdinalIgnoreCase))
                         {
                             value = TransformElectricalInstrumentationDBOEnclosureValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AlternatorDesignTempID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("DesignTemperatureID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorDesignTempID", StringComparison.OrdinalIgnoreCase))
                         {
                             value = TransformElectricalInstrumentationDBODesignTempValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AlternatorRatedPfID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("RatedPFID", StringComparison.OrdinalIgnoreCase))
                         {
                             value = TransformElectricalInstrumentationDBORatedPfValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AlternatorTempRiseID", StringComparison.OrdinalIgnoreCase) || colName.Equals("TransformerTempRiseID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("TemperatureRaiseID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorTempRiseID", StringComparison.OrdinalIgnoreCase) || colName.Equals("TransformerTempRiseID", StringComparison.OrdinalIgnoreCase) || colName.Equals("TemperatureRiseID", StringComparison.OrdinalIgnoreCase))
                         {
                             value = TransformElectricalInstrumentationDBOTempRiseValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AlternatorInsulationClassID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("InsulationClassID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorInsulationClassID", StringComparison.OrdinalIgnoreCase))
                         {
                             value = TransformElectricalInstrumentationDBOInsulationValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AlternatorTBToSuitID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("TerminalBoxToSuitID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorTBToSuitID", StringComparison.OrdinalIgnoreCase))
                         {
                             value = TransformElectricalInstrumentationDBOTerminalBoxValue(value, mapping.IsNullable);
                         }
@@ -7686,43 +7686,43 @@ public class ExcelMigrationService : IExcelMigrationService
                         {
                             value = TransformElectricalInstrumentationDBOCertValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AlternatorNeutralCtStarID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("NeutralCTStarFormationID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorNeutralCtStarID", StringComparison.OrdinalIgnoreCase))
                         {
                             value = TransformElectricalInstrumentationDBONeutralCtValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AlternatorPhaseSideCtID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("PhaseSideCTLocationID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorPhaseSideCtID", StringComparison.OrdinalIgnoreCase))
                         {
                             value = TransformElectricalInstrumentationDBOPhaseCtValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AlternatorOverloadID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("ContinuousOverloadID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorOverloadID", StringComparison.OrdinalIgnoreCase))
                         {
                             value = TransformElectricalInstrumentationDBOOverloadValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AlternatorNoiseLevelID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("NoiseLevelID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorNoiseLevelID", StringComparison.OrdinalIgnoreCase))
                         {
                             value = TransformElectricalInstrumentationDBONoiseValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AlternatorSlipRingID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("SlipRingID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorSlipRingID", StringComparison.OrdinalIgnoreCase))
                         {
                             value = TransformElectricalInstrumentationDBOSlipRingValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AlternatorPMGID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("PMGID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorPMGID", StringComparison.OrdinalIgnoreCase))
                         {
                             value = TransformElectricalInstrumentationDBOPMGValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AlternatorTestsID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("TestsID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorTestsID", StringComparison.OrdinalIgnoreCase))
                         {
                             value = TransformElectricalInstrumentationDBOTestsValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AlternatorCoolingMethodID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("CoolingMethodID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorCoolingMethodID", StringComparison.OrdinalIgnoreCase))
                         {
                             value = TransformElectricalInstrumentationDBOCoolingValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AlternatorCoolerConfigID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("CoolerConfigurationID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorCoolerConfigID", StringComparison.OrdinalIgnoreCase))
                         {
                             value = TransformElectricalInstrumentationDBOCoolerConfigValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AlternatorCoolerTubesMocID", StringComparison.OrdinalIgnoreCase) || colName.EndsWith("_MOCID", StringComparison.OrdinalIgnoreCase) || colName.EndsWith("MaterialID", StringComparison.OrdinalIgnoreCase))
+                        else if (colName.Equals("CoolerTubesMOCID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorCoolerTubesMocID", StringComparison.OrdinalIgnoreCase) || colName.EndsWith("_MOCID", StringComparison.OrdinalIgnoreCase) || colName.EndsWith("MaterialID", StringComparison.OrdinalIgnoreCase))
                         {
                              if (colName.Contains("BusBar", StringComparison.OrdinalIgnoreCase))
                                 value = TransformElectricalInstrumentationDBOBusBarMocValue(value, mapping.IsNullable);
