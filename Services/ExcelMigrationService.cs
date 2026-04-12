@@ -7606,6 +7606,10 @@ public class ExcelMigrationService : IExcelMigrationService
                         {
                             value = TransformElectricalInstrumentationDBOBatteryTypeOfChargerValue(value, mapping.IsNullable);
                         }
+                        else if (colName.Equals("TCP_SILRatingID", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformElectricalInstrumentationDBOTcpSilRatingValue(value, mapping.IsNullable);
+                        }
                     }
 
                     // Special handling for OrderTransmittalRecordID column in BPComments table (FK to OrderTransmittal)
@@ -13857,6 +13861,17 @@ public class ExcelMigrationService : IExcelMigrationService
         if (string.Equals(str, "1FC + 1FCBC (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
         else if (string.Equals(str, "2FCBC", StringComparison.OrdinalIgnoreCase)) return 1;
         else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOTcpSilRatingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Std", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "SIL-2", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "SIL-3", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
         return isNullable ? DBNull.Value : 0;
     }
 
