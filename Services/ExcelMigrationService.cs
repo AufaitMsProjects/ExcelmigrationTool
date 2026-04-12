@@ -13696,7 +13696,55 @@ public class ExcelMigrationService : IExcelMigrationService
         return isNullable ? DBNull.Value : 1;
     }
 
+    private object TransformElectricalInstrumentationDBOTcpSpecificationValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL std", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Customer / Consultant specification", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 2;
+        return isNullable ? DBNull.Value : 0;
+    }
 
+    private object TransformElectricalInstrumentationDBOTcpCommunicationTypeValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Modbus (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "RS485", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Profibus", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOTvmMountingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "Part MCSP panel (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Part of LASCTP panel (With separate cubical)", StringComparison.OrdinalIgnoreCase)) return 1;
+        else if (string.Equals(str, "Separate panel", StringComparison.OrdinalIgnoreCase)) return 2;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 3;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOLtPowerCablingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "TTL scope for TTL supplied equipments", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Purchaser scope (Std)", StringComparison.OrdinalIgnoreCase)) return 1;
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformElectricalInstrumentationDBOBatteryCapacityValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value) return DBNull.Value;
+        var str = value.ToString()?.Trim() ?? string.Empty;
+        if (string.Equals(str, "100 AH (Std)", StringComparison.OrdinalIgnoreCase)) return 0;
+        else if (string.Equals(str, "Others", StringComparison.OrdinalIgnoreCase)) return 1;
+        return isNullable ? DBNull.Value : 0;
+    }
 
     //Nithya ELDBO
 
