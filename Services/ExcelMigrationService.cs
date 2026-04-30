@@ -246,6 +246,195 @@ public class ExcelMigrationService : IExcelMigrationService
             { "id", "BankGuaranteeID" }
     };
 
+    // Hardcoded column mapping for BankGuaranteeSpares table
+    private static readonly Dictionary<string, string> BankGuaranteeSparesMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "BankGuaranteeSparesID" },
+        { "record_no", "RecordNo" },
+        { "project_id", "ProjectID" },
+        { "k__uot_bp_picker_bp", "SparesOrderTransmittalID" },
+        { "ubg_guarantee_num_sdt250", "BankGuaranateeNoIssued" },
+        { "ubg_type_of_bg_pd", "TypeOfGuarantee" },
+        { "ubg_others01_sdt250", "TypeOfGuaranteeOthers" },
+        { "ubg_agre_sdt_250", "ContractReferenceNo" },
+        { "ubg_date_dop", "ContractDate" },
+        { "ubg_contractual_order_ca", "TotalOrderValue" },
+        { "ubg_currency_pd", "Currency" },
+        { "ubg_exchange_rate_da", "ExchangeRate" },
+        { "ubg_equivalent_value_ca", "TotalOrderValueINR" },
+        { "ubg_percent_bg_da", "PercentageOfGuarantee" },
+        { "ubg_currency_amount_ca", "BankGuaranteeAmount" },
+        { "ubg_warranty_clause_pd", "WarrantyClause" },
+        { "ubg_others2601_sdt250", "WarrantyClauseOthers" },
+        { "ubg_gurantee_against_pd", "GuaranteeAgainst" },
+        { "ubg_gurantee_against_PD01", "GuaranteeAgainstOthers" },
+        { "ubg_validity_dop", "ValidityDate" },
+        { "ubg_claim_period_01dop", "ClaimPeriodDate" },
+        { "ubg_draft_bank_ynpd", "IsDraftFormatAttached" },
+        { "ubg_draft_gurante_format_pd", "DraftFormat" },
+        { "ubg_others_sdt2502", "DraftFormatDetails" },
+        { "ubg_remarks_ldt", "InitiatorReviewRemarksBeforeAuthorized" },
+        { "ubg_contract_01pd", "IsContractCopyAttached" },
+        { "ubg_init_final_remarks_ldt", "InitiatorReviewRemarks" },
+        { "ubg_fin_remarks_ldt", "FinanceRemarks" },
+        { "ubg_issuing_bank_sdt250", "IssuingBank" },
+        { "ubg_validity_dop02", "BGValidityDuringIssual" },
+        { "ubg_claim_period_03dop", "BGClaimPeriodDate" },
+        { "ubg_contractual_order_ca02", "BGTotalOrderValueINR" },
+        { "ubg_currency_pd01", "BGCurrency" },
+        { "ubg_exchange_rate_da02", "BGExchangeRateDuringIssual" },
+        { "ubg_equivalent_value_ca02", "BGEquivalentValueINR" },
+        { "ubg_percent_bg_da03", "PercentageOfBankGuarantee" },
+        { "ubg_currency_amount_ca02", "BankGuaranteeAmountDuringIssual" },
+        { "status", "Status" },
+        { "k__creator_id", "PrimaveraCreatedId" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "creator_id", "CreatedName" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "uuu_record_last_update_user", "UpdatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "sparesprovisionalordertransmittalid", "SparesProvisionalOrderTransmittalId" },
+        { "ubg_status_pd", "BGStatus" },
+        { "ubg_exp_expirydate_dop", "ExpectedExpiryDate" },
+        { "ubg_remarks01_ldt", "BGStatusRemarks" },
+        { "spares_sales_order_number", "SalesOrderNo" }
+    };
+
+    // Hardcoded column mapping for DeviationRequest table
+    private static readonly Dictionary<string, string> DeviationRequestMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "DeviationRequestId" },
+        { "project_id", "ProjectId" },
+        { "ordertransmittalid", "OrderTransmittalId" },
+        { "customermasterid", "CustomerMasterId" },
+        { "enduserid", "EndUserId" },
+        { "k__rcca_ref_bpp", "RCCAId" },
+        { "k__dev_insp_bpp", "InspectionId" },
+        { "record_no", "RecordNo" },
+        { "status", "Status" },
+        { "dr_dr_no_smn", "DeviationRequestNo" },
+        { "des_des_no_smn", "NCNo" },
+        { "dev_item_desc_sdt250", "ItemDescription" },
+        { "dev_item_no_sdt50", "ItemNo" },
+        { "qacr_po_no_sdt250", "PurchaseOrderNo" },
+        { "dev_l_no_sdt50", "LNoOrSNo" },
+        { "dev_ir_no_sdt50", "InspectionReportNo" },
+        { "dev_ir_date_dop", "InspectionReportDate" },
+        { "qacr_component_name_sdt250", "ComponentName" },
+        { "qacr_item_code_sdt250", "ItemCode" },
+        { "dev_spec_req_mtb4000", "SpecifiedRequirement" },
+        { "dev_dev_req_det_mtb4000", "DeviationRequestDetails" },
+        { "dev_dev_req_just_mtb4000", "DeviationRequestJustification" },
+        { "sqdcm_plant_pd", "Plant" },
+        { "dev_quantity_ia", "Quantity" },
+        { "dev_attachment1_ynpd", "Attachment" },
+        { "dev_proc_req_pd", "DeviationRequestProcess" },
+        { "dev_dev_type_pd", "DeviationType" },
+        { "dev_type_devi_pd", "TypeOfDeviation" },
+        { "dev_operation_sdt250", "Operation" },
+        { "dev_mach_name_sdt250", "MachineName" },
+        { "dev_cause_code_pd", "CauseCode" },
+        { "vendor_select_dp", "SelectSupplier" },
+        { "dev_other_pd", "Other" },
+        { "dev_cat_risk_pd", "CategoryOfRisk" },
+        { "dev_tech_dec_ynpd", "IsTechnicalDecisionRequired" },
+        { "dev_risk_mit_meas_mtb4000", "RiskMitigationMeasures" },
+        { "dev_resp_person_upk", "RiskMitigationResponsible" },
+        { "dev_plan_date_dop", "RiskMitigationPlannedDate" },
+        { "dev_ser_foll_mtb4000", "ServiceFollowUp" },
+        { "dev_responsible2_upk", "ServiceFollowUpResponsible" },
+        { "dev_plan_date2_dop", "ServiceFollowUpPlannedDate" },
+        { "dev_corr_act_pd", "CorrectiveAction" },
+        { "dev_other2_pd", "CorrectiveActionOther" },
+        { "dev_responsible_upk", "ResponsiblePerson" },
+        { "dev_doc_root_id_dop", "DateOfCompletionForIdentification" },
+        { "dev_doc_root_elim_dop", "DateOfCompletionForElimination" },
+        { "dev_ini_dept_pd", "InitiatorDepartment" },
+        { "dev_resp_qa_upk", "ResponsibleQAEngineer" },
+        { "dev_initiat_hod_name_sdt50", "HODName" },
+        { "dev_initiator_hod_date_dop", "HODDate" },
+        { "dev_hod_comm_sdt250", "HODComments" },
+        { "dev_cause_area_pd", "CauseArea" },
+        { "dev_sec_cause_pd", "SecondaryCauseArea" },
+        { "dev_rec_mat_dev_pd", "RecipientOfMaterial" },
+        { "dev_sec_rec_mat_dev_pd", "SecondaryRecipientOfMaterial" },
+        { "dev_proj_ec_pd1", "ProjectApprovalDecision" },
+        { "dev_name2_sdt50", "ProjectApprovalName" },
+        { "dev_date2_dop", "ProjectApprovalDate" },
+        { "dev_comments2_mtb4000", "ProjectApprovalComments" },
+        { "dev_name4_sdt50", "DesignName" },
+        { "dev_date4_dop", "DesignDate" },
+        { "dev_remarks2_mtb4000", "DesignRemarks" },
+        { "dev_design_rd_pd", "HODDesign" },
+        { "dev_name_sdt50", "ReviewOfDeviationName" },
+        { "dev_date_dop", "ReviewOfDeviationDate" },
+        { "dev_comments_mtb4000", "RecommendationFromDesign" },
+        { "dev_change_mating_ynpd", "IsChangeInMatingParts" },
+        { "dev_rework_res_upk", "ReworkResponsible" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "k__creator_id", "PrimaveraCreatedId" },
+        { "creator_id", "CreatedName" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "uuu_record_last_update_user", "UpdatedName" },
+        { "k__vendor_select_dp", "VendorId" },
+        { "sqdcm_rcca_required_pd", "IsRCCARequired" },
+        { "sqdcm_rcca_lead_upk", "RCCALead" },
+        { "rcca_lead_department", "LeadDepartment" },
+        { "dev_cs_qa_pd1", "HODCSandQAReview" },
+        { "dev_name3_sdt50", "HODCSandQAName" },
+        { "dev_date3_dop", "HODCSandQADate" },
+        { "dev_comments3_mtb4000", "HODCSandQComments" },
+        { "dev_component_sdt50", "NCDrawingComponent" },
+        { "dev_nc_drawing_no_sdt50", "NCDrawingNumber" },
+        { "dev_item_code_sdt50", "NCDrawingItemCode" },
+        { "dev_design_man_hrs_da", "NCDrawingDesignManHrs" },
+        { "dev_design_remarks_mtb4000", "NCDrawingDesignRemarks" },
+        { "dev_bom_updated_ynpd", "IsBOMUpdatedWithItemCodes" },
+        { "dev_design_remarks2_mtb4000", "BOMDesignRemarks" },
+        { "dev_design_bom_rev_ynpd", "IsDesignBOMRevised" },
+        { "dev_design_recomm_mtb4000", "DesignRecommendation" },
+        { "dev_details_rework_mtb4000", "DetailsOfRework" },
+        { "dev_qa_observations_mtb4000", "InspectionReportQAObservation" },
+        { "dev_decision_pd", "InspectionReportDecision" },
+        { "dev_remarks_mtb4000", "InspectionReportRemarks" },
+        { "k__dev_resp_person_upk", "PrimaveraRiskMitigationResponsibleId" },
+        { "k__dev_responsible_upk", "PrimaveraResponsibleId" },
+        { "k__dev_resp_qa_upk", "PrimaveraResponsibleQAEngineerId" },
+        { "k__sqdcm_rcca_lead_upk", "PrimaveraRCCALeadId" },
+        { "k__dev_responsible2_upk", "PrimaveraServiceFollowUpResponsibleId" },
+        { "qacr_supply_type_pd", "SupplyType" },
+        { "dev_ec_dec_pd", "HODECDecision" },
+        { "dev_name5_sdt50", "HODECName" },
+        { "dev_date5_dop", "HODECDate" },
+        { "dev_comments4_mtb4000", "HODECComments" }
+    };
+
+    // Hardcoded column mapping for DesignRecommendation table
+    private static readonly Dictionary<string, string> DesignRecommendationMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "DesignRecommendationId" },
+        { "project_id", "ProjectId" },
+        { "ordertransmittalid", "OrderTransmittalId" },
+        { "customermasterid", "CustomerMasterId" },
+        { "enduserid", "EndUserId" },
+        { "k__dev_insp_bpp", "InspectionId" },
+        { "dev_rework_res_upk", "ReworkResponsible" },
+        { "k__dev_sel_deviation_bpp", "DeviationRequestId" },
+        { "dev_design_recomm_mtb4000", "DesignRecommendation" },
+        { "dev_details_rework_mtb4000", "DetailsOfRework" },
+        { "dev_qa_observations_mtb4000", "QAObservations" },
+        { "dev_decision_pd", "InspectionReportDecision" },
+        { "dev_remarks_mtb4000", "InspectionReportRemarks" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "creator_id", "CreatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "uuu_record_last_update_user", "UpdatedName" },
+        { "k__creator_id", "PrimaveraCreatedId" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "record_no", "RecordNo" },
+        { "status", "Status" }
+    };
+
 
     private static readonly Dictionary<string, string> LetterOfCorrespondenceMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
@@ -523,6 +712,667 @@ public class ExcelMigrationService : IExcelMigrationService
         {"id","NotesId" },
         { "project_id", "ProjectId" },
         { "notes", "Notes" }
+    };
+
+    // Hardcoded column mapping for OrderTransmittal_ContractualDeliveryMapping table
+    private static readonly Dictionary<string, string> OrderTransmittalContractualDeliveryMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "OrderTransmittalId" },
+        { "ot_remarks4_sdt250", "ContractualCommencementRemarks" },
+        { "ot_contrac_comm_dop", "ContractualCommencement" },
+        { "contractual_delivery_date_d", "CDContractualDeliveryDate" },
+        { "ot_remarks5_sdt250", "ContractualDeliveryDateRemarks" },
+        { "uot_con_comm_dop", "CDContractualCommissioningDate" },
+        { "ot_remarks6_sdt250", "ContractualCommissioningRemarks" },
+        { "ot_contr_del_weeks_da", "ContractualDeliveryWeeks" },
+        { "ot_contr_del_ia", "ContractualDeliveryDifferenceDays" },
+        { "ot_contr_comm_weeks_da", "ContractualCommissioningWeeks" },
+        { "ot_contr_comm_ia", "ContractualCommissioningDifferenceDays" },
+        { "duration_in_months", "DurationInMonths" },
+        { "remarks_tb14", "DurationInMonthsRemarks" },
+        { "ot_approval_req3_msi", "ContractDeliveryApprovalRequiredFor" },
+        { "terms_of_delivery_incoterms", "TermsOfDeliveryIncoterms" },
+        { "k__creator_id", "PrimaveraCreatedId" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "creator_id", "CreatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "uuu_record_last_update_user", "UpdatedName" }
+    };
+
+    // Hardcoded column mapping for OrderTransmittal_DefectLiability table
+    private static readonly Dictionary<string, string> OrderTransmittalDefectLiabilityMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "OrderTransmittalId" },
+        { "ot_original_warr_rb", "OriginalWarranty" },
+        { "ot_remarks_sdt250", "OriginalWarrantyRemarks" },
+        { "ot_repair_warr_rb", "RepairReplacementWarranty" },
+        { "ot_remarks2_sdt250", "RepairReplacementWarrantyRemarks" },
+        { "ot_defect_ext_warr_rb", "LatentDefectWarranty" },
+        { "ot_remarks3_sdt250", "LatentDefectWarrantyRemarks" },
+        { "remarks_tb3", "DefectLiabilityRemarks" },
+        { "ot_approval_req2_msi", "DefectLiabilityApprovalRequiredFor" },
+        { "k__creator_id", "PrimaveraCreatedId" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "creator_id", "CreatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "uuu_record_last_update_user", "UpdatedName" }
+    };
+
+    // Hardcoded column mapping for OrderTransmittal_FormatsReviewed table
+    private static readonly Dictionary<string, string> OrderTransmittalFormatsReviewedMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "OrderTransmittalId" },
+        { "ot_formats_rev_msi", "FormatsReviewed" },
+        { "Others2", "FormatsReviewedOthers" },
+        { "remarks_tb12", "FormatsReviewedRemarks" },
+        { "uot_commercial_pk", "CommercialManager" },
+        { "ucc_review_dop", "CommercialReviewDate" },
+        { "ugenremarkstb4000", "CommercialReviewSummaryRemarks" },
+        { "uot_exec_review_ldt", "ProposalExecutiveReview" },
+        { "uot_prosal_ldt", "ProposalHeadReview" },
+        { "uot_prosal_1ldt", "ProposalHeadApprovalReview" },
+        { "uot_markting_head_rev", "MarketingHeadReview" },
+        { "uot_proect_heads_ldt", "ProjectsHeadReview" },
+        { "uot_project_pan_pd", "HasProjectNumberCreatedInSAP" },
+        { "remarks_tb13", "PMRemarks" },
+        { "uot_project_pan_pd1", "HasProjectPlanCreated" },
+        { "k__creator_id", "PrimaveraCreatedId" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "creator_id", "CreatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "uuu_record_last_update_user", "UpdatedName" }
+    };
+
+    // Hardcoded column mapping for OrderTransmittal_GoverningLaw table
+    private static readonly Dictionary<string, string> OrderTransmittalGoverningLawMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "OrderTransmittalId" },
+        { "ot_governing_law_rb", "GoverningLaw" },
+        { "ot_others_specify2_sdt250", "GoverningLawOthersSpecify" },
+        { "ot_dispute_resol_rb", "DisputeResolution" },
+        { "ot_others_specify3_sdt250", "DisputeResolutionOthersSpecify" },
+        { "ot_no_arbitrators_rb", "NoOfArbitrators" },
+        { "ot_others_specify4_sdt250", "NoOfArbitratorsOthers" },
+        { "ot_language_rb", "Language" },
+        { "ot_others_specify5_sdt250", "LanguageOthers" },
+        { "jurisdiction_pd", "Jurisdiction" },
+        { "if_not_bangalore_please_sp", "IfNotBanglorePleaseSpecify" },
+        { "remarks_tb10", "GoverningLawRemarks" },
+        { "ot_approval_req4_msi", "GoverningLawApprovalRequiredFor" },
+        { "k__creator_id", "PrimaveraCreatedId" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "creator_id", "CreatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "uuu_record_last_update_user", "UpdatedName" }
+    };
+
+    // Hardcoded column mapping for OrderTransmittal_ScopeOfWork table
+    private static readonly Dictionary<string, string> OrderTransmittalScopeOfWorkMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "OrderTransmittalId" },
+        { "supply_rb", "Supply" },
+        { "ot_transportation_rb", "Transportation" },
+        { "transit_insurance_rb", "SOWTransitInsurance" },
+        { "custom_clearance_rb", "CustomClearance" },
+        { "crane_at_site_rb", "CraneAtSite" },
+        { "ear_insurance_rb", "EARInsurance" },
+        { "storage_at_site_rb", "StorageAtSite" },
+        { "eandc_complete_rb", "EandCComplete" },
+        { "eandc_supervision_rb", "EandCSupervision" },
+        { "eandc_lodging_and_boardrb", "EandCLodgingandBoarding" },
+        { "pgtr_rb", "PGTR" },
+        { "uot_statu_app_pd", "StatutoryApprovals" },
+        { "remarks_tb16", "ScopeOfWorkRemarks" },
+        { "k__creator_id", "PimaveraCreatedId" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "creator_id", "CreatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "uuu_record_last_update_user", "UpdatedName" }
+    };
+
+    // Hardcoded column mapping for OrderTransmittal_RelevantTerms table
+    private static readonly Dictionary<string, string> OrderTransmittalRelevantTermsMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "OrderTransmittalId" },
+        { "storage_clause_rb", "StorageClause" },
+        { "ot_remarks7_sdt250", "StorageClauseRemarks" },
+        { "confidentiality_rb", "Confidentiality" },
+        { "ot_remarks9_sdt250", "ConfidentialityRemarks" },
+        { "consequential_damage_inderb", "ConsequentialDamage" },
+        { "ot_remarks5_sdt250", "ConsequentialDamageRemarks" },
+        { "intellectual_patent_inderb", "Intellectual" },
+        { "ot_remarks10_sdt250", "IntellectualRemarks" },
+        { "risk_and_title_transfer_rb", "RiskandTitleTransfer" },
+        { "ot_remarks11_sdt250", "RiskandTitleTransferRemarks" },
+        { "force_majeure_rb", "ForceMajeure" },
+        { "ot_remarks12_sdt250", "ForceMajeureRemarks" },
+        { "insurance_rb", "Insurance" },
+        { "ot_remarks13_sdt250", "InsuranceRemarks" },
+        { "suspension_cancellatio_rb", "SuspensionAndCancellation" },
+        { "ot_remarks14_sdt250", "SuspensionAndCancellationRemarks" },
+        { "termination_clause_rb", "TerminationClause" },
+        { "ot_remarks15_sdt250", "TerminationClauseRemarks" },
+        { "ot_purchaser_oblig_rb", "PurchaserObligation" },
+        { "ot_remarks16_sdt250", "PurchaserObligationRemarks" },
+        { "any_other_critical_clasuerb", "AnyOtherCriticalClause" },
+        { "ucc_relevent_others_sdt120", "AnyOtherCriticalClauseOthers" },
+        { "ot_approval_req_msi", "RelevantTermsApprovalRequiredFor" },
+        { "remarks_tb11", "RelevantTermsRemarks" },
+        { "k__creator_id", "PimaveraCreatedId" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "creator_id", "CreatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "uuu_record_last_update_user", "UpdatedName" }
+    };
+
+    // Hardcoded column mapping for OrderTransmittal_PerformanceGuarantee table
+    private static readonly Dictionary<string, string> OrderTransmittalPerformanceGuaranteeMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "OrderTransmittalId" },
+        { "standard_frame_rb", "StandardFrame" },
+        { "development_frame_rb", "DevelopmentFrame" },
+        { "availability_confirmationrb", "RDPerformanceConfirmation" },
+        { "specific_approvals_rb", "SpecificApproval" },
+        { "remarks_tb8", "PGDocumentsRemarks" },
+        { "k__creator_id", "PimaveraCreatedId" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "creator_id", "CreatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "uuu_record_last_update_user", "UpdatedName" }
+    };
+
+    // Hardcoded column mapping for OrderTransmittal_LiquidatedDamages table
+    private static readonly Dictionary<string, string> OrderTransmittalLiquidatedDamagesMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "OrderTransmittalId" },
+        { "ucc_liquid_dam_cb01", "LDLateDelivery_fivepercentCV" },
+        { "ld_15_ed_approval_rb", "LDLateDelivery_EDApproval" },
+        { "ld1015_hod_approval_rb", "LDLateDelivery_HODApproval" },
+        { "remarks_tb4", "LDLateDelivery_Remarks" },
+        { "ucc_liquid_dam_CB02", "LDLateDelivery_TenpercentOfCV" },
+        { "ucc_liquid_perf_cb01", "LDPerformance_SteamConsumption" },
+        { "ucc_aux_cb2", "LDPerformance_AuxiliaryPower" },
+        { "ld_15_ed_approval_rb1", "LDPerformance_EDApproval" },
+        { "ld1015_hod_approval_rb1", "LDPerformance_HODApproval" },
+        { "remarks_tb5", "LDPerformance_Remarks" },
+        { "ucc_liquid_sdt2000", "LDDocumentation_DocumenationSpecify" },
+        { "ld_on_documentation_pd", "LDDocumentation_LDOnDocumentation" },
+        { "remarks_tb6", "LDDocumentation_Remarks" },
+        { "not_exceed_10_of_cv_rb", "MaximumCumulativeLD_TenpercentOfCV" },
+        { "ld1015_hod_approval_rb2", "MaximumCumulativeLD_HODApproval" },
+        { "uot_if_others11_sdt250", "MaximumCumulativeLD_Others" },
+        { "others_specify_tb", "MaximumCumulativeLD_OthersSpecify" },
+        { "remarks_tb7", "MaximumCumulativeLD_Remarks" },
+        { "k__creator_id", "PimaveraCreatedId" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "creator_id", "CreatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "uuu_record_last_update_user", "UpdatedName" }
+    };
+
+    // Hardcoded column mapping for OrderTransmittal_PaymentDetails table
+    private static readonly Dictionary<string, string> OrderTransmittalPaymentDetailsMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "OrderTransmittalId" },
+        { "ucc_payment_terms_rb", "PaymentTerms" },
+        { "taxes_and_duties_tb", "TaxesAndDuties" },
+        { "notes_tb", "PaymentNotes" },
+        { "remarks_tb2", "PaymentRemarks" },
+        { "k__creator_id", "PimaveraCreatedId" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "creator_id", "CreatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "uuu_record_last_update_user", "UpdatedName" }
+    };
+
+    // Hardcoded column mapping for OrderTransmittal_TermsOfDelivery table
+    private static readonly Dictionary<string, string> OrderTransmittalTermsOfDeliveryMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "OrderTransmittalId" },
+        { "CV_10_RB", "LimitsOfLiabilityTenpercentCV" },
+        { "equal_to_cv_rb", "LimitsOfLiabilityEqualToCV" },
+        { "others_rb2", "LimitsOfLiabilityOthers" },
+        { "ucc_ld_others_sdt120", "LimitsOfLiabilityOthersSpecify" },
+        { "remarks_tb9", "LimitsOfLiabilityRemarks" },
+        { "ot_approval10_rb", "LimitsOfLiabilityApproval" },
+        { "payment_mechanism", "PaymentMechanism" },
+        { "remarks_tb15", "PaymentMechanismRemarks" },
+        { "k__creator_id", "PimaveraCreatedId" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "creator_id", "CreatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "uuu_record_last_update_user", "UpdatedName" }
+    };
+
+    // Hardcoded column mapping for OrderTransmittal_CostSheetReview table
+    private static readonly Dictionary<string, string> OrderTransmittalCostSheetReviewMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "OrderTransmittalId" },
+        { "ucc_margin_rb", "MarginAsPerBusinessPlan" },
+        { "man_days_charges_rb", "ManDaysCharges" },
+        { "bg_cost_included_rb", "BGCostIncludedInTheCostSheet" },
+        { "ot_exchange_rate_da", "CSRExchangeRate" },
+        { "contingency_3_rb", "ThreePercentContingency" },
+        { "ot_ec_rb", "ErectionAndCommissioning" },
+        { "agent_commission_pd", "AgencyCommission" },
+        { "ot_site_insurance_cost_rb", "SiteInsuranceCost" },
+        { "special_expenses_rb", "SpecialExpenses" },
+        { "additional_warranty_cost_rb", "AdditionalWarrantyCost" },
+        { "ld_cost_short_delivery_rb", "LDCostShortDelivery" },
+        { "export_packing_forwardingrb", "ExportPackingandForwardingCost" },
+        { "additional_contingency_3_rb", "ThreePercentAdditionalContingency" },
+        { "transport_cost_as_per_incrb", "TransportCostAsPerINCOTERMS" },
+        { "lc_confirmation_charges_rb", "LCConfirmationCharges" },
+        { "insurance_cost_rb", "InsuranceCost" },
+        { "lc_discounting_charges_rb", "LCDiscountingCharges" },
+        { "remarks_tb", "CostSheetRemarks" },
+        { "k__creator_id", "PimaveraCreatedId" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "creator_id", "CreatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "uuu_record_last_update_user", "UpdatedName" }
+    };
+
+    // Hardcoded column mapping for Risks table
+    private static readonly Dictionary<string, string> RisksMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "RiskId" },
+        { "k__risk_sel_risk_dpk", "OldRiskId" },
+        { "record_no", "RecordNo" },
+        { "project_id", "ProjectId" },
+        { "risk_supply_status_pd", "SupplyStatus" },
+        { "ordertransmittalid", "OrderTransmittalId" },
+        { "risk_financial_year_pd", "FinancialYear" },
+        { "risk_quarter_pd", "Quarter" },
+        { "risk_ot_pd", "RiskRatingDuringOTStage" },
+        { "risk_type_pd", "Type" },
+        { "risk_phase_pd", "Phase" },
+        { "risk_category_pd", "Category" },
+        { "k__risk_risk_identifier_upk", "RiskIdentifierId" },
+        { "risk_risk_identifier_upk", "RiskIdentifierName" },
+        { "usmusassigneddeptpd01", "RiskIdentifierDepartment" },
+        { "k__risk_risk_owner_upk", "RiskOpportunityOwnerId" },
+        { "risk_risk_owner_upk", "RiskOpportunityOwnerName" },
+        { "usmusassigneddeptpd02", "RiskOpportunityOwnerDepartment" },
+        { "risk_brief_desc_sdt250", "RiskActivityDescription" },
+        { "riskbp_risk_description", "RiskDescription" },
+        { "risk_causes", "Causes" },
+        { "risk_conseq", "Consequences" },
+        { "risk_cost_impact_probabilit", "CostImpact" },
+        { "probable_case_amount", "ExpectedAmount" },
+        { "risk_schedule_impact_pd_yn", "ScheduleImpact" },
+        { "risk_schedule_impact_pd", "ScheduleImpactWeeks" },
+        { "risk_scope_impact_ynpd", "ScopeImpact" },
+        { "risk_quality_impact_ynpd", "QualityImpact" },
+        { "urischedchangereqdpd", "ScheduleChangeRequired" },
+        { "risk_inherent_likelihood", "InherentLikelihood" },
+        { "risk_final_inherent_score1", "FinalInherentScore" },
+        { "risk_inherent_impact_pd", "InherentImpact" },
+        { "inherent_risk_rating_qualit", "InherentRiskRatingQualitative" },
+        { "risk_ttl_risk_rating_pd", "TTLInherentRiskRating" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "creator_id", "CreatedName" },
+        { "k__creator_id", "PrimaveraCreatedId" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "uuu_record_last_update_user", "UpdatedName" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "status", "Status" }
+    };
+
+    // Hardcoded column mapping for Risk_MitigationPlan table
+    private static readonly Dictionary<string, string> RiskMitigationPlanMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "MitigationPlanId" },
+        { "record_id", "RiskId" },
+        { "risk_prop_miti_plan_mtb4000", "ProposedMitigationPlan" },
+        { "risk_prop_date_miti_dop", "ProposedDateOfMitigation" },
+        { "risk_curr_miti_stat_mtb4000", "CurrentStatusOfMitigationPlan" },
+        { "risk_revi_date_miti_dop", "RevisedDateOfMitigation" },
+        { "uuu_li_last_update_date", "UpdatedAt" }
+    };
+
+    // Hardcoded column mapping for PositiveRecall table
+    private static readonly Dictionary<string, string> PositiveRecallMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "PositiveRecallId" },
+        { "project_id", "ProjectId" },
+        { "customermasterid", "CustomerMasterId" },
+        { "ordertransmittalid", "OrderTransmittalID" },
+        { "k__vendor_select_dp", "VendorId" },
+        { "status", "Status" },
+        { "record_no", "RecordNo" },
+        { "pr_item_code", "ItemCode" },
+        { "pr_drawing_number", "DrawingNumber" },
+        { "pr_description", "ReasonForPositiveRecallRequest" },
+        { "pr_proposed_date_of_closure", "ProposedDateOfClosure" },
+        { "pr_quantity", "Quantity" },
+        { "pr_closure_action", "ClosureAction" },
+        { "uot_tur_framepd", "TurbineFrameType" },
+        { "pr_item_description", "ItemDescription" },
+        { "pr_dep_pd", "InitiatorDepartment" },
+        { "pr_hod_name", "HODName" },
+        { "pr_hod_approval_date_new", "ApprovalDate" },
+        { "pr_hod_comments", "HODComments" },
+        { "k__pr_qa_responsible", "PrimaveraQAResponsibleId" },
+        { "pr_qa_responsible", "QAResponsibleName" },
+        { "pr_qa_res_coomments", "QAResponsibleComments" },
+        { "pr_qa_approval_date", "QAApprovalDate" },
+        { "k__pr_hod_name", "PrimaveraHODId" },
+        { "creator_id", "CreatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "uuu_record_last_update_user", "UpdatedName" },
+        { "k__creator_id", "PrimaveraCreatedId" },
+        { "k__uuu_record_last_update_user", "PrimaverAaUpdatedId" },
+        { "k__mp_sel_proj_spk", "SelectProjectId" },
+        { "vendor_select_dp", "SelectSupplier" },
+        { "turbine_material_code", "TurbineMaterialCode" },
+        { "enduserid", "EndUserId" },
+        { "pr_closure_action_completed", "IsPRClosureActionCompleted" },
+        { "pr_date_of_closure2", "DateOfClosure" },
+        { "pr_initiator_comments", "InitiatorComments" },
+        { "pr_closure_action_verified", "IsPRClosureActionVerified" },
+        { "pr_qa_decision_date", "QADecisionDate" },
+        { "pr_qa_comments", "QAComments" }
+    };
+
+    // Hardcoded column mapping for MonthlyCashInflow table
+    private static readonly Dictionary<string, string> MonthlyCashInflowMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "MonthlyCashInflowId" },
+        { "record_no", "RecordNo" },
+        { "status", "Status" },
+        { "project_id", "ProjectId" },
+        { "ci_planned_date5_dp", "MarketingPlannedDate" },
+        { "mci_mar_proj_da", "MarketingProjectedPayment" },
+        { "k__mci_sel_rec_pk", "OldMonthlyCashInflowId" },
+        { "mci_mar_act_da", "MarketingActualPayment" },
+        { "ci_planned_date_dop", "CustomerCarePartsPlannedDate" },
+        { "mci_cc_proj_parts_da", "CustomerCarePartsProjectedPayment" },
+        { "ci_planned_date2_dop", "CustomerCareServicesPlannedDate" },
+        { "mci_cc_proj_serv_da", "CustomerCareServicesProjectedPayment" },
+        { "ci_planned_date3_ic_dop", "ICPlannedDate" },
+        { "mci_ec_proj_da", "ICProjectedPayment" },
+        { "ci_planned_date3_dop", "CustomerCareOMPlannedDate" },
+        { "mci_cc_proj_om_da", "CustomerCareOMProjectedPayment" },
+        { "ci_planned_date4_dop", "CustomerCareRefurbishingPlannedDate" },
+        { "mci_cc_proj_refurb_da", "CustomerCareRefurbishingProjectedPayment" },
+        { "ci_planned_date5_dop", "CustomerCareSubsidariesPlannedDate" },
+        { "mci_cc_proj_subs_da", "CustomerCareSubsidariesProjectedPayment" },
+        { "ci_planned_date6_dop", "CustomerCareAgainstBillingPlannedDate" },
+        { "mci_cc_proj_bill_da", "CustomerCareAgainstBillingProjectedPayment" },
+        { "mci_cc_proj_da", "CustomerCareProjectedPayment" },
+        { "mci_cc_act_da", "CustomerCareActualPayment" },
+        { "mci_bal_coll_da", "MarketingBalanceToBeCollected" },
+        { "mci_sum_bal_coll_da", "CustomerCareBalanceToBeCollected" },
+        { "mci_ec_bal_da", "ICBalanceToBeCollected" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "k__creator_id", "PrimaveraCreatorId" },
+        { "creator_id", "CreatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "uuu_record_last_update_user", "UpdatedName" }
+    };
+
+    // Hardcoded column mapping for MonthlyCashInflow_CustomerCare table
+    private static readonly Dictionary<string, string> MonthlyCashInflowCustomerCareMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "MCI_CustomerCareId" },
+        { "record_id", "MonthlyCashInflowId" },
+        { "mci_pay_agnst_pd", "PaymentFor" },
+        { "ci_actual_date1_dop", "ActualDate" },
+        { "mci_actual_coll_da", "ActualPayment" },
+        { "mci_proj_da", "ProjectedPayment" }
+    };
+
+    // Hardcoded column mapping for MonthlyCashInflow_MarketingAdvance table
+    private static readonly Dictionary<string, string> MonthlyCashInflowMarketingAdvanceMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "MCI_MarketingAdvanceId" },
+        { "record_id", "MonthlyCashInflowId" },
+        { "mp_prj_segmnt", "SegmentOfProject" },
+        { "ci_1exchange_da", "ExchangeRate" },
+        { "ci_1eq_amt_da", "EquivalentAmountINR" },
+        { "mac_date_credit_dop", "DateOfCredit" },
+        { "ci_actual_date_dop", "ActualDate" },
+        { "mac_mode_of_payment_sdt50", "ModeOfPayment" },
+        { "ci_bank_name_sdt250", "BankName" },
+        { "ci_remarks_mtb4000", "Remarks" },
+        { "ordertransmittalid", "OrderTransmittalID" },
+        { "customermasterid", "CustomerMasterId" },
+        { "k__ci_sel_proj_spk", "ProjectId" },
+        { "mci_actual_coll_da", "ActualPayment" },
+        { "mci_proj_da", "ProjectedPayment" },
+        { "ci_status1_pd", "Status" }
+    };
+
+    // Hardcoded column mapping for MonthlyCashInflow_ICDue table
+    private static readonly Dictionary<string, string> MonthlyCashInflowICDueMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "MCI_ICDueId" },
+        { "record_id", "MonthlyCashInflowId" },
+        { "ci_project_name_sdt50", "ProjectName" },
+        { "ci_actual_date_dop", "ActualDate" },
+        { "mci_actual_coll_da", "ActualPayment" },
+        { "ci_status1_pd", "Status" },
+        { "mci_proj_da", "ProjectedPayment" }
+    };
+
+    // Hardcoded column mapping for MonthlyCashInflow_ICNotDue table
+    private static readonly Dictionary<string, string> MonthlyCashInflowICNotDueMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "MCI_ICNotDueId" },
+        { "record_id", "MonthlyCashInflowId" },
+        { "ci_project_name_sdt50", "ProjectName" },
+        { "ci_actual_date_dop", "ActualDate" },
+        { "mci_actual_coll_da", "ActualPayment" },
+        { "ci_status1_pd", "Status" },
+        { "mci_proj_da", "ProjectedPayment" }
+    };
+
+    // Hardcoded column mapping for HandoverProtocol table
+    private static readonly Dictionary<string, string> HandoverProtocolMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "HandoverProtocolId" },
+        { "project_id", "ProjectId" },
+        { "ordertransmittalid", "OrderTransmittalId" },
+        { "k__uot_sold_party_dp", "CustomerMasterID" },
+        { "k__uot_ship_to_partydp", "EndUserID" },
+        { "uot_nonstandard_pd", "FrameStandard" },
+        { "uot_order_type_pd", "OrderType" },
+        { "uot_tur_framepd", "TurbineFrameType" },
+        { "specify_if_non_standard_tb", "FrameNonStandard" },
+        { "turbine_serial_no", "TurbineSerialNo" },
+        { "turbine_material_code", "TurbineMaterialCode" },
+        { "commissioned_status_pd", "CommissioningStatus" },
+        { "commissioning_date", "CommissioningDate" },
+        { "warranty_completion_date", "WarrantyCompletionDate" },
+        { "hp_sap_bills_status_pd", "IsSAPbillingStatusAttached" },
+        { "hp_full_payment_pd", "IsFullPaymentCollected" },
+        { "hp_no_rem_sdt250", "ActionPlanCollectionIfNo" },
+        { "hp_list_issues_ynpd", "ListOfOpenIssue" },
+        { "hp_list_commit_ynpd", "ListOfOpenCommitments" },
+        { "hp_details_spares_ynpd", "DetailsOfSparesSupply" },
+        { "hp_spec_ser_off_sdt250", "SpecialServicesOffered" },
+        { "hp_value_spec_sdt250", "ValueForSpecialServices" },
+        { "hop_bg_status_pd", "BGStatus" },
+        { "hop_bg_exp_dop", "BGExpiry" },
+        { "hop_bg_clm_prd_dop", "BGClaimPeriod" },
+        { "hp_proj_lock_sap_cb", "IsProjectLockedinSAP" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "creator_id", "CreatedName" },
+        { "k__creator_id", "PrimaveraCreatedId" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "uuu_record_last_update_user", "UpdatedName" },
+        { "hp_value_cost_da", "Value_cost" },
+        { "sc_sc_a_status_pd", "SiteClosureAStatus" },
+        { "sc_planned_delivery_dp", "PlannedDateOfCompletion" },
+        { "es_remarks10_sdt250", "SiteClosureARemarks" },
+        { "sc_sc_b_stat_pd", "SiteClosureBStatus" },
+        { "sc_pl_date_sc_b_dop", "PlannedDateOfCommissioning" },
+        { "es_remarks11_sdt250", "SiteClosureBRemarks" },
+        { "sc_sc_c_status_pd", "SiteClosureCStatus" },
+        { "sc_pl_date_sc_c_dop", "PlannedDateOfPGtest" },
+        { "es_remarks12_sdt250", "SiteClosureCRemarks" },
+        { "sc_sc_d_status_pd", "SiteClosureDStatus" },
+        { "sc_planned_date_of_expiry", "PlannedDatEOfWarrantyExpiry" },
+        { "es_remarks13_sdt250", "SiteClosureDRemarks" },
+        { "status", "Status" },
+        { "uot_tur_rating_da", "TurbineRatingKW" },
+        { "hp_cont_person1_sdt50", "CustomerContactPerson" },
+        { "uot_designation3_sdt50", "CustomerDesignation" },
+        { "uue_user_contactphone", "CustomerContactPhone" },
+        { "hp_cont_person2_sdt50", "EndUserContactPerson" },
+        { "ec_des_sdt50", "EndUserDesignation" },
+        { "ec_cont_per_smn", "EndUserContactPhone" },
+        { "record_no", "RecordNo" },
+        { "uot_drive_pd", "DrivenEquipmentName" },
+        { "contractclearanceid", "ContractClearanceId" },
+        { "format_no", "FormatNumber" }
+    };
+
+    // Hardcoded column mapping for HandoverProtocolLineItem table
+    private static readonly Dictionary<string, string> HandoverProtocolLineItemMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "HandoverProtocolLineItemId" },
+        { "record_id", "HandoverProtocolId" },
+        { "uuu_name", "Name" },
+        { "hop_type_of_doc_pd", "TypeOfDocument" },
+        { "group_type", "Isgroupby" },
+        { "uuu_li_last_update_date", "UpdatedAt" },
+        { "uuu_file_repo_path", "FilePath" }
+    };
+
+    // Hardcoded column mapping for InternalAudit table
+    private static readonly Dictionary<string, string> InternalAuditMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "InternalAuditId" },
+        { "record_no", "RecordNo" },
+        { "status", "Status" },
+        { "project_id", "ProjectId" },
+        { "ia_audit_number", "AuditNumber" },
+        { "ia_audit_type", "AuditType" },
+        { "ia_audit_name", "AuditName" },
+        { "ia_reference", "Reference" },
+        { "ia_function_pd", "InternalFunction" },
+        { "ia_section_pd", "Section" },
+        { "supp_city", "City" },
+        { "supp_state_new", "State" },
+        { "supp_country_pd", "Country" },
+        { "ia_scheduled_start_date", "ScheduledStartDate" },
+        { "ia_scheduled_finish_date", "ScheduledFinishDate" },
+        { "k__vendor_select_dp", "VendorId" },
+        { "dev_supp_name_sdt250", "SupplierName" },
+        { "ia_auditee_upk", "AuditeeName" },
+        { "ia_ext_aud_sdt250", "ExternalAuditee" },
+        { "ia_auditor_upk", "AuditorName" },
+        { "ia_coauditor_upk", "CoAuditorName" },
+        { "ia_planned_finish_date", "PlannedFinishDate" },
+        { "ia_audit_comment", "AuditComment" },
+        { "k__ia_auditee_upk", "PrimaveraAuditeeId" },
+        { "k__ia_auditor_upk", "PrimaveraAuditorId" },
+        { "k__ia_coauditor_upk", "PrimaveraCoAuditorId" },
+        { "vendor_select_dp", "SelectSupplier" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "k__creator_id", "PrimaveraCreatedId" },
+        { "creator_id", "CreatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "uuu_record_last_update_user", "UpdatedName" },
+        { "ia_auditee_type_pd", "AuditeeType" },
+        { "ia_supp_type_pd", "SupplierType" },
+        { "ia_planned_start_date", "PlannedStartDate" },
+        { "ia_actual_start_date", "ActualStartDate" },
+        { "ia_actual_finish_date", "ActualFinishDate" }
+    };
+
+    // Hardcoded column mapping for InternalAudit_Notes table
+    private static readonly Dictionary<string, string> InternalAuditNotesMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "InternalAuditNotesId" },
+        { "record_id", "InternalAuditId" },
+        { "notes", "Notes" },
+        { "uuu_li_last_update_date", "UpdatedAt" }
+    };
+
+    // Hardcoded column mapping for InternalAudit_ObservationDetails table
+    private static readonly Dictionary<string, string> InternalAuditObservationDetailsMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "InternalAudit_ObservationDetailsId" },
+        { "record_id", "InternalAuditId" },
+        { "ia_observation_number_da", "ObservationNumber" },
+        { "ia_observation_df", "Observation" },
+        { "ia_observation_type_pd", "ObservationType" },
+        { "ia_reference_clause", "ReferenceClause" },
+        { "ia_rcca_required_ipd", "IsRCCARequired" },
+        { "ia_rcca_required_date_df", "RCCARequiredDate" },
+        { "ia_correction_done_df", "CorrectionDone" },
+        { "ia_actual_corr_com_date_df", "ActualCorrectiveCompletionDate" },
+        { "ia_root_cause_analysis_df", "RootCauseAnalysis" },
+        { "ia_corrective_action_tak_df", "CorrectiveActionTaken" },
+        { "ia_actual_cor_act_com_da_df", "ActualCorrectionActionCompletionDate" },
+        { "ia_verification_dec_ipd", "VerificationDecision" },
+        { "ia_veri_deci_date_df", "VerificationDecisionDate" },
+        { "ia_reason_for_ver_dec_df", "ReasonForVerificationDecision" },
+        { "ia_reference_document", "ReferenceDocument" },
+        { "ia_requirement_df", "Requirement" },
+        { "ia_evidence_df", "Evidence" },
+        { "uuu_li_last_update_date", "UpdatedAt" }
+    };
+
+    // Hardcoded column mapping for OTRisk table
+    private static readonly Dictionary<string, string> OTRiskMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "OTRiskId" },
+        { "project_id", "ProjectId" },
+        { "ordertransmittalid", "OrderTransmittalId" },
+        { "status", "Status" },
+        { "record_no", "RecordNo" },
+        { "otr_cost_rating_pd", "CostOverrunRiskRating" },
+        { "otr_cost_impact_pd", "CostOverrunImpact" },
+        { "otr_con_del_rating_pd", "ContractualDeliveryRiskRating" },
+        { "otr_con_del_impact_pd", "ContractualDeliveryImpact" },
+        { "otr_payment_rating_pd", "CommercialTermsRiskRating" },
+        { "otr_payment_impact_pd", "CommercialTermsImpact" },
+        { "otr_crs_rating_pd", "CustomerRelationshipRiskRating" },
+        { "otr_crs_impact_pd", "CustomerRelationshipImpact" },
+        { "otr_financial_rating_pd", "FinancialHealthRiskRating" },
+        { "otr_financial_impact_pd", "FinancialHealthImpact" },
+        { "otr_tg_rating_pd", "AgreedPerformanceRiskRating" },
+        { "otr_tg_impact_pd", "AgreedPerformanceImpact" },
+        { "otr_comm_terms_rating_pd", "WarrantyTermsRiskRating" },
+        { "otr_comm_terms_impact_pd", "WarrantyTermsImpact" },
+        { "otr_m_cost_rating_pd", "CostOverrunRiskRatingPM" },
+        { "otr_m_cost_impact_pd", "CostOverrunImpactPM" },
+        { "otr_m_con_del_rating_pd", "ContractualDeliveryRiskRatingPM" },
+        { "otr_m_con_del_impact_pd", "ContractualDeliveryImpactPM" },
+        { "otr_m_payment_rating_pd", "CommercialTermsRiskRatingPM" },
+        { "otr_m_payment_impact_pd", "CommercialTermsImpactPM" },
+        { "otr_m_crs_rating_pd", "CustomerRelationshipRiskRatingPM" },
+        { "otr_m_crs_impact_pd", "CustomerRelationshipImpactPM" },
+        { "otr_m_financial_rating_pd", "FinancialHealthRiskRatingPM" },
+        { "otr_m_financial_impact_pd", "FinancialHealthImpactPM" },
+        { "otr_m_tg_rating_pd", "AgreedPerformanceRiskRatingPM" },
+        { "otr_m_tg_impact_pd", "AgreedPerformanceImpactPM" },
+        { "otr_m_comm_terms_rating_pd", "WarrantyTermsRiskRatingPM" },
+        { "otr_m_comm_terms_impact_pd", "WarrantyTermsImpactPM" },
+        { "k__creator_id", "PrimeveraCreatedId" },
+        { "k__uuu_record_last_update_user", "PrimeveraUpdatedId" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "creator_id", "CreatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "uuu_record_last_update_user", "UpdatedName" }
     };
 
     // Hardcoded column mapping for UserList table
@@ -2258,6 +3108,27 @@ public class ExcelMigrationService : IExcelMigrationService
                 cancellationToken);
         }
 
+        if (string.Equals(tableName, "BankGuaranteeSpares", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var bankGuaranteeSparesConnection = new SqlConnection(connectionString);
+            await bankGuaranteeSparesConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(bankGuaranteeSparesConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "DeviationRequest", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var deviationRequestConnection = new SqlConnection(connectionString);
+            await deviationRequestConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(deviationRequestConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "DesignRecommendation", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var designRecommendationConnection = new SqlConnection(connectionString);
+            await designRecommendationConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(designRecommendationConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
         // Check if this is UserList table - use single table migration
         if (string.Equals(tableName, "UserList", StringComparison.OrdinalIgnoreCase))
         {
@@ -2401,6 +3272,104 @@ public class ExcelMigrationService : IExcelMigrationService
             await using var auditLogConnection = new SqlConnection(connectionString);
             await auditLogConnection.OpenAsync(cancellationToken);
             return await MigrateToSingleTableAsync(auditLogConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "Risks", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var risksConnection = new SqlConnection(connectionString);
+            await risksConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(risksConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "Risk_MitigationPlan", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var riskMitigationPlanConnection = new SqlConnection(connectionString);
+            await riskMitigationPlanConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(riskMitigationPlanConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "PositiveRecall", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var positiveRecallConnection = new SqlConnection(connectionString);
+            await positiveRecallConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(positiveRecallConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "MonthlyCashInflow", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var monthlyCashInflowConnection = new SqlConnection(connectionString);
+            await monthlyCashInflowConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(monthlyCashInflowConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "MonthlyCashInflow_CustomerCare", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var monthlyCashInflowCustomerCareConnection = new SqlConnection(connectionString);
+            await monthlyCashInflowCustomerCareConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(monthlyCashInflowCustomerCareConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "MonthlyCashInflow_MarketingAdvance", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var monthlyCashInflowMarketingAdvanceConnection = new SqlConnection(connectionString);
+            await monthlyCashInflowMarketingAdvanceConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(monthlyCashInflowMarketingAdvanceConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "MonthlyCashInflow_ICDue", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var monthlyCashInflowICDueConnection = new SqlConnection(connectionString);
+            await monthlyCashInflowICDueConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(monthlyCashInflowICDueConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "MonthlyCashInflow_ICNotDue", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var monthlyCashInflowICNotDueConnection = new SqlConnection(connectionString);
+            await monthlyCashInflowICNotDueConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(monthlyCashInflowICNotDueConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "HandoverProtocol", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var handoverProtocolConnection = new SqlConnection(connectionString);
+            await handoverProtocolConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(handoverProtocolConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "HandoverProtocolLineItem", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var handoverProtocolLineItemConnection = new SqlConnection(connectionString);
+            await handoverProtocolLineItemConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(handoverProtocolLineItemConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "InternalAudit", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var internalAuditConnection = new SqlConnection(connectionString);
+            await internalAuditConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(internalAuditConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "InternalAudit_Notes", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var internalAuditNotesConnection = new SqlConnection(connectionString);
+            await internalAuditNotesConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(internalAuditNotesConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "InternalAudit_ObservationDetails", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var internalAuditObservationDetailsConnection = new SqlConnection(connectionString);
+            await internalAuditObservationDetailsConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(internalAuditObservationDetailsConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "OTRisk", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var otRiskConnection = new SqlConnection(connectionString);
+            await otRiskConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(otRiskConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
         }
 
 
@@ -3807,6 +4776,24 @@ public class ExcelMigrationService : IExcelMigrationService
             return MatchColumnsForOrderTransmittalLineItemBankGuarantee(excelData, tableMetadata);
         }
 
+        // Check if this is BankGuaranteeSpares table - use hardcoded mapping
+        if (string.Equals(tableName, "BankGuaranteeSpares", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForBankGuaranteeSpares(excelData, tableMetadata);
+        }
+
+        // Check if this is DeviationRequest table - use hardcoded mapping
+        if (string.Equals(tableName, "DeviationRequest", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForDeviationRequest(excelData, tableMetadata);
+        }
+
+        // Check if this is DesignRecommendation table - use hardcoded mapping
+        if (string.Equals(tableName, "DesignRecommendation", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForDesignRecommendation(excelData, tableMetadata);
+        }
+
         // Check if this is UserList table - use hardcoded mapping
         if (string.Equals(tableName, "UserList", StringComparison.OrdinalIgnoreCase))
         {
@@ -4063,6 +5050,90 @@ public class ExcelMigrationService : IExcelMigrationService
             return MatchColumnsForProject(excelData, tableMetadata);
         }
 
+        // Check if this is Risks table - use hardcoded mapping
+        if (string.Equals(tableName, "Risks", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForRisks(excelData, tableMetadata);
+        }
+
+        // Check if this is Risk_MitigationPlan table - use hardcoded mapping
+        if (string.Equals(tableName, "Risk_MitigationPlan", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForRiskMitigationPlan(excelData, tableMetadata);
+        }
+
+        // Check if this is PositiveRecall table - use hardcoded mapping
+        if (string.Equals(tableName, "PositiveRecall", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForPositiveRecall(excelData, tableMetadata);
+        }
+
+        // Check if this is MonthlyCashInflow table - use hardcoded mapping
+        if (string.Equals(tableName, "MonthlyCashInflow", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForMonthlyCashInflow(excelData, tableMetadata);
+        }
+
+        // Check if this is MonthlyCashInflow_CustomerCare table - use hardcoded mapping
+        if (string.Equals(tableName, "MonthlyCashInflow_CustomerCare", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForMonthlyCashInflowCustomerCare(excelData, tableMetadata);
+        }
+
+        // Check if this is MonthlyCashInflow_MarketingAdvance table - use hardcoded mapping
+        if (string.Equals(tableName, "MonthlyCashInflow_MarketingAdvance", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForMonthlyCashInflowMarketingAdvance(excelData, tableMetadata);
+        }
+
+        // Check if this is MonthlyCashInflow_ICDue table - use hardcoded mapping
+        if (string.Equals(tableName, "MonthlyCashInflow_ICDue", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForMonthlyCashInflowICDue(excelData, tableMetadata);
+        }
+
+        // Check if this is MonthlyCashInflow_ICNotDue table - use hardcoded mapping
+        if (string.Equals(tableName, "MonthlyCashInflow_ICNotDue", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForMonthlyCashInflowICNotDue(excelData, tableMetadata);
+        }
+
+        // Check if this is HandoverProtocol table - use hardcoded mapping
+        if (string.Equals(tableName, "HandoverProtocol", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForHandoverProtocol(excelData, tableMetadata);
+        }
+
+        // Check if this is HandoverProtocolLineItem table - use hardcoded mapping
+        if (string.Equals(tableName, "HandoverProtocolLineItem", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForHandoverProtocolLineItem(excelData, tableMetadata);
+        }
+
+        // Check if this is InternalAudit table - use hardcoded mapping
+        if (string.Equals(tableName, "InternalAudit", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForInternalAudit(excelData, tableMetadata);
+        }
+
+        // Check if this is InternalAudit_Notes table - use hardcoded mapping
+        if (string.Equals(tableName, "InternalAudit_Notes", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForInternalAuditNotes(excelData, tableMetadata);
+        }
+
+        // Check if this is InternalAudit_ObservationDetails table - use hardcoded mapping
+        if (string.Equals(tableName, "InternalAudit_ObservationDetails", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForInternalAuditObservationDetails(excelData, tableMetadata);
+        }
+
+        // Check if this is OTRisk table - use hardcoded mapping
+        if (string.Equals(tableName, "OTRisk", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForOTRisk(excelData, tableMetadata);
+        }
+
         // Check if this is BPComments table - use hardcoded mapping
         if (string.Equals(tableName, "BPComments", StringComparison.OrdinalIgnoreCase))
         {
@@ -4087,6 +5158,50 @@ public class ExcelMigrationService : IExcelMigrationService
             if (string.Equals(tableName, "OrderTransmittal_Notes", StringComparison.OrdinalIgnoreCase))
             {
                 return MatchColumnsForOrderTransmittalNotes(excelData, tableMetadata);
+            }
+            if (string.Equals(tableName, "OrderTransmittal_ContractualDeliveryMapping", StringComparison.OrdinalIgnoreCase))
+            {
+                return MatchColumnsForOrderTransmittalContractualDeliveryMapping(excelData, tableMetadata);
+            }
+            if (string.Equals(tableName, "OrderTransmittal_DefectLiability", StringComparison.OrdinalIgnoreCase))
+            {
+                return MatchColumnsForOrderTransmittalDefectLiability(excelData, tableMetadata);
+            }
+            if (string.Equals(tableName, "OrderTransmittal_FormatsReviewed", StringComparison.OrdinalIgnoreCase))
+            {
+                return MatchColumnsForOrderTransmittalFormatsReviewed(excelData, tableMetadata);
+            }
+            if (string.Equals(tableName, "OrderTransmittal_GoverningLaw", StringComparison.OrdinalIgnoreCase))
+            {
+                return MatchColumnsForOrderTransmittalGoverningLaw(excelData, tableMetadata);
+            }
+            if (string.Equals(tableName, "OrderTransmittal_ScopeOfWork", StringComparison.OrdinalIgnoreCase))
+            {
+                return MatchColumnsForOrderTransmittalScopeOfWork(excelData, tableMetadata);
+            }
+            if (string.Equals(tableName, "OrderTransmittal_RelevantTerms", StringComparison.OrdinalIgnoreCase))
+            {
+                return MatchColumnsForOrderTransmittalRelevantTerms(excelData, tableMetadata);
+            }
+            if (string.Equals(tableName, "OrderTransmittal_PerformanceGuarantee", StringComparison.OrdinalIgnoreCase))
+            {
+                return MatchColumnsForOrderTransmittalPerformanceGuarantee(excelData, tableMetadata);
+            }
+            if (string.Equals(tableName, "OrderTransmittal_LiquidatedDamages", StringComparison.OrdinalIgnoreCase))
+            {
+                return MatchColumnsForOrderTransmittalLiquidatedDamages(excelData, tableMetadata);
+            }
+            if (string.Equals(tableName, "OrderTransmittal_PaymentDetails", StringComparison.OrdinalIgnoreCase))
+            {
+                return MatchColumnsForOrderTransmittalPaymentDetails(excelData, tableMetadata);
+            }
+            if (string.Equals(tableName, "OrderTransmittal_TermsOfDelivery", StringComparison.OrdinalIgnoreCase))
+            {
+                return MatchColumnsForOrderTransmittalTermsOfDelivery(excelData, tableMetadata);
+            }
+            if (string.Equals(tableName, "OrderTransmittal_CostSheetReview", StringComparison.OrdinalIgnoreCase))
+            {
+                return MatchColumnsForOrderTransmittalCostSheetReview(excelData, tableMetadata);
             }
             return MatchColumnsForOrderTransmittal(excelData, tableMetadata);
         }
@@ -4880,6 +5995,21 @@ public class ExcelMigrationService : IExcelMigrationService
         return mappings;
     }
 
+    private List<ColumnMapping> MatchColumnsForBankGuaranteeSpares(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, BankGuaranteeSparesMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForDeviationRequest(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, DeviationRequestMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForDesignRecommendation(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, DesignRecommendationMapping);
+    }
+
     private List<ColumnMapping> MatchColumnsForUserList(DataTable excelData, List<ColumnMetadata> tableMetadata)
     {
         var mappings = new List<ColumnMapping>();
@@ -5425,6 +6555,131 @@ public class ExcelMigrationService : IExcelMigrationService
     private List<ColumnMapping> MatchColumnsForOrderTransmittalNotes(DataTable excelData, List<ColumnMetadata> tableMetadata)
     {
         return MatchColumnsUsingDictionary(excelData, tableMetadata, OrderTransmittalNotesMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForOrderTransmittalContractualDeliveryMapping(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, OrderTransmittalContractualDeliveryMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForOrderTransmittalDefectLiability(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, OrderTransmittalDefectLiabilityMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForOrderTransmittalFormatsReviewed(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, OrderTransmittalFormatsReviewedMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForOrderTransmittalGoverningLaw(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, OrderTransmittalGoverningLawMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForOrderTransmittalScopeOfWork(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, OrderTransmittalScopeOfWorkMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForOrderTransmittalRelevantTerms(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, OrderTransmittalRelevantTermsMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForOrderTransmittalPerformanceGuarantee(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, OrderTransmittalPerformanceGuaranteeMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForOrderTransmittalLiquidatedDamages(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, OrderTransmittalLiquidatedDamagesMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForOrderTransmittalPaymentDetails(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, OrderTransmittalPaymentDetailsMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForOrderTransmittalTermsOfDelivery(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, OrderTransmittalTermsOfDeliveryMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForOrderTransmittalCostSheetReview(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, OrderTransmittalCostSheetReviewMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForRisks(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, RisksMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForRiskMitigationPlan(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, RiskMitigationPlanMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForPositiveRecall(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, PositiveRecallMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForMonthlyCashInflow(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, MonthlyCashInflowMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForMonthlyCashInflowCustomerCare(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, MonthlyCashInflowCustomerCareMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForMonthlyCashInflowMarketingAdvance(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, MonthlyCashInflowMarketingAdvanceMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForMonthlyCashInflowICDue(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, MonthlyCashInflowICDueMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForMonthlyCashInflowICNotDue(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, MonthlyCashInflowICNotDueMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForHandoverProtocol(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, HandoverProtocolMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForHandoverProtocolLineItem(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, HandoverProtocolLineItemMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForInternalAudit(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, InternalAuditMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForInternalAuditNotes(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, InternalAuditNotesMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForInternalAuditObservationDetails(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, InternalAuditObservationDetailsMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForOTRisk(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, OTRiskMapping);
     }
 
     private List<ColumnMapping> MatchColumnsForAuditAction(DataTable excelData, List<ColumnMetadata> tableMetadata)
