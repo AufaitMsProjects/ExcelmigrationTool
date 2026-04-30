@@ -435,6 +435,84 @@ public class ExcelMigrationService : IExcelMigrationService
         { "status", "Status" }
     };
 
+    // Hardcoded column mapping for FrameMaster table
+    private static readonly Dictionary<string, string> FrameMasterMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "record_no", "RecordNo" },
+        { "id", "FrameMasterID" },
+        { "status", "Status" },
+        { "fm_frame_sdt50", "Frame" },
+        { "fm_frame_plan_sdt50", "FrameForPlan" },
+        { "fm_turb_del_week_da", "TurbineDelivery" },
+        { "fm_turb_del_days_da", "DispatchDays" },
+        { "fm_rm_avail_patt_da", "TurbineDeliveryWithoutRMAvailable" },
+        { "fm_rm_new_patt_da", "TurbineDeliveryWithoutRMNew" },
+        { "fm_turb_mrt_da", "TurbineMRT" },
+        { "fm_turb_assem_days_da", "TurbineAssembly" },
+        { "fm_sc_casing_days_da", "SteamCasing" },
+        { "fm_ex_casing_fab_days_da", "ExCasingFabrication" },
+        { "fm_ex_casing_mcg_days_da", "ExCasingMcg" },
+        { "fm_ex_casing_fab_mc_da", "ExhaustCasing" },
+        { "fm_rotor_mcg_days_da", "Rotor" },
+        { "fm_blade_mcg_days_da", "Blades" },
+        { "fm_pede_fab_mcng_da", "PedestalFabrication" },
+        { "fm_pede_fab_days_da", "PedestalMcg" },
+        { "fm_pede_mcg_days_da", "Pedestal" },
+        { "fm_diaph_manu_days_da", "WeldedDiaphragm" },
+        { "fm_base_frame_man_days_da", "BasePlate" },
+        { "fm_grid_val_dia_mcg_days_da", "GridValveDiaphragmMcg" },
+        { "fm_gear_box_fab_days_da", "GearboxFabrication" },
+        { "fm_gear_box_mcg_days_da", "GearboxMcg" },
+        { "fm_nozzle_hou_days_da", "NozzleChest" },
+        { "fm_nc_housing_mcg_days_da", "NCHousingICPIVMcg" },
+        { "fm_pass_out_days_da", "PassOutManifoldMcg" },
+        { "fm_gbc_mcg_days_da", "GBC" },
+        { "fm_esv_column_mcg_days_da", "ESVColumnMcg" },
+        { "fm_esv_body_mcg_days_da", "ESVBodyMcg" },
+        { "fm_laby_holder_days_da", "LabyHolderMcg" },
+        { "fm_tv_column_days_da", "TVColumnMcg" },
+        { "fm_panting_plate_days_da", "PantingPlateManufacturing" },
+        { "fm_packing_mcg_days_da", "PackingMcg" },
+        { "fm_tv_internals_days_da", "TVInternalsMcg" },
+        { "fm_relay_mcg_days_da", "RelayCylinderMcg" },
+        { "fm_blade_shield_days_da", "BladeShieldManufacturing" },
+        { "fn_sev_internals_days_da", "SEVInternalsMcg" },
+        { "fm_c_class_days_da", "CClassRaviComponentsMcg" },
+        { "fm_tip_seal_days_da", "TipSealManufacturing" },
+        { "fm_remarks_sdt250", "Remarks" },
+        { "fm_other_c_class_days_da", "OtherCClassItemsLeadTime" },
+        { "fm_long_lead_ors_da", "LongLeadORS" },
+        { "k__creator_id", "CreatedBy" },
+        { "creator_id", "CreatedName" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "k__uuu_record_last_update_user", "UpdatedBy" },
+        { "uuu_record_last_update_user", "UpdatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" }
+    };
+
+    // Hardcoded column mapping for BankMaster table
+    private static readonly Dictionary<string, string> BankMasterMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "BankMasterID" },
+        { "record_no", "RecordNo" },
+        { "bm_bank_sdt50", "Bank" },
+        { "bm_bank_name_sdt50", "NameOfTheBank" },
+        { "bm_ac_type_sdt50", "AcType" },
+        { "bm_branch_sdt50", "Branch" },
+        { "bm_address_sdt250", "Address" },
+        { "bm_acc_no_sdt50", "BankAcNo" },
+        { "bm_ifsc_code_sdt50", "IFSCCode" },
+        { "bm_swift_code_sdt50", "SwiftCode" },
+        { "bm_bsr_code_sdt50", "BSRCode" },
+        { "status", "Status" },
+        { "k__creator_id", "CreatedBy" },
+        { "creator_id", "CreatedName" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "k__uuu_record_last_update", "UpdatedBy" },
+        { "uuu_record_last_update_us", "UpdatedName" },
+        { "uuu_record_last_update_da", "UpdatedAt" }
+    };
+
 
     private static readonly Dictionary<string, string> LetterOfCorrespondenceMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
@@ -3129,6 +3207,20 @@ public class ExcelMigrationService : IExcelMigrationService
             return await MigrateToSingleTableAsync(designRecommendationConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
         }
 
+        if (string.Equals(tableName, "FrameMaster", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var frameMasterConnection = new SqlConnection(connectionString);
+            await frameMasterConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(frameMasterConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "BankMaster", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var bankMasterConnection = new SqlConnection(connectionString);
+            await bankMasterConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(bankMasterConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
         // Check if this is UserList table - use single table migration
         if (string.Equals(tableName, "UserList", StringComparison.OrdinalIgnoreCase))
         {
@@ -4794,6 +4886,18 @@ public class ExcelMigrationService : IExcelMigrationService
             return MatchColumnsForDesignRecommendation(excelData, tableMetadata);
         }
 
+        // Check if this is FrameMaster table - use hardcoded mapping
+        if (string.Equals(tableName, "FrameMaster", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForFrameMaster(excelData, tableMetadata);
+        }
+
+        // Check if this is BankMaster table - use hardcoded mapping
+        if (string.Equals(tableName, "BankMaster", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForBankMaster(excelData, tableMetadata);
+        }
+
         // Check if this is UserList table - use hardcoded mapping
         if (string.Equals(tableName, "UserList", StringComparison.OrdinalIgnoreCase))
         {
@@ -6008,6 +6112,16 @@ public class ExcelMigrationService : IExcelMigrationService
     private List<ColumnMapping> MatchColumnsForDesignRecommendation(DataTable excelData, List<ColumnMetadata> tableMetadata)
     {
         return MatchColumnsUsingDictionary(excelData, tableMetadata, DesignRecommendationMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForFrameMaster(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, FrameMasterMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForBankMaster(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, BankMasterMapping);
     }
 
     private List<ColumnMapping> MatchColumnsForUserList(DataTable excelData, List<ColumnMetadata> tableMetadata)
