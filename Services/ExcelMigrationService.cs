@@ -7502,6 +7502,7 @@ public class ExcelMigrationService : IExcelMigrationService
         var isOrderReceiptAcknowledgement = string.Equals(tableName, "OrderReceiptAcknowledgement", StringComparison.OrdinalIgnoreCase);
         var isAuditAction = string.Equals(tableName, "AuditAction", StringComparison.OrdinalIgnoreCase);
         var isRCCA = string.Equals(tableName, "RCCA", StringComparison.OrdinalIgnoreCase);
+        var isOTRisk = string.Equals(tableName, "OTRisk", StringComparison.OrdinalIgnoreCase);
         var isMonthlyProgressReport = tableName.StartsWith("MonthlyProgressReport", StringComparison.OrdinalIgnoreCase);
         var isOrderTransmittalNotes = string.Equals(tableName, "OrderTransmittal_Notes", StringComparison.OrdinalIgnoreCase);
 
@@ -9939,6 +9940,15 @@ public class ExcelMigrationService : IExcelMigrationService
                         value != DBNull.Value && value != null)
                     {
                         value = TransformOrderTransmittalCostOverrunRiskRatingValue(value, mapping.IsNullable);
+                    }
+
+                    // Special handling for CostOverrunRiskRating column in OTRisk
+                    // Mapping requested: R1 -> 0, R2 -> 1, R3 -> 2
+                    if (isOTRisk &&
+                        string.Equals(mapping.SqlColumnName, "CostOverrunRiskRating", StringComparison.OrdinalIgnoreCase) &&
+                        value != DBNull.Value && value != null)
+                    {
+                        value = TransformOTRiskCostOverrunRiskRatingValue(value, mapping.IsNullable);
                     }
 
                     // Special handling for ContractualDeliveryRiskRating column in OrderTransmittal
@@ -13321,6 +13331,27 @@ public class ExcelMigrationService : IExcelMigrationService
             // Default to NULL if column is nullable, otherwise 0
             return isNullable ? DBNull.Value : 0;
         }
+    }
+
+    private object TransformOTRiskCostOverrunRiskRatingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value)
+            return DBNull.Value;
+
+        var ratingStr = value.ToString()?.Trim() ?? string.Empty;
+
+        if (string.Equals(ratingStr, "R1", StringComparison.OrdinalIgnoreCase))
+            return 0;
+        if (string.Equals(ratingStr, "R2", StringComparison.OrdinalIgnoreCase))
+            return 1;
+        if (string.Equals(ratingStr, "R3", StringComparison.OrdinalIgnoreCase))
+            return 2;
+
+        // Keep already-numeric values intact when Excel already stores 0/1/2.
+        if (int.TryParse(ratingStr, out var numeric))
+            return numeric;
+
+        return isNullable ? DBNull.Value : 0;
     }
 
     private object TransformOrderTransmittalCustomerRelationshipRiskRatingValue(object value, bool isNullable)
