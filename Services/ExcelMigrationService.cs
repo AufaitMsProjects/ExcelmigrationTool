@@ -2199,455 +2199,252 @@ public class ExcelMigrationService : IExcelMigrationService
             { "uot_mech_rb_sdt250", "RotorBlades" }
     };
 
-    //public static readonly Dictionary<string, string> ElectricalInstrumentationDBOMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-    //    {
-    //        // ---- Core / Audit ----
-    //        { "id", "ElectricalInstrumentationDBOID" },
-    //        { "record_no", "RecordNo" },
-    //        { "project_id", "ProjectId" },
-    //        { "process_status", "ProcessStatus" },
-    //        { "status", "Status" },
-    //        { "k__creator_id", "PrimaveraCreatedId" },
-    //        { "creator_id","CreatedName"},
-    //        { "uuu_creation_date", "CreatedAt" },
-    //        { "uuu_record_last_update_date", "UpdatedAt" },
-    //        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
-    //        { "uuu_record_last_update_user","UpdatedName"},
-
-    //        // ---- Alternator Options ----
-    //        { "uot_alternator_scope", "AlternatorScopeID" },
-    //        { "alternator_make", "AlternatorMakeID" },
-    //        { "alternator_standard", "AlternatorStandardID" },
-    //        { "alternator_voltage", "AlternatorVoltageID" },
-    //        { "alternator_enclosure", "AlternatorEnclosureID" },
-    //        { "alternator_design_temp", "AlternatorDesignTempID" },
-    //        { "alternator_rated_pf", "AlternatorRatedPfID" },
-    //        { "alternator_temp_rise", "AlternatorTempRiseID" },
-    //        { "alternator_insul_class", "AlternatorInsulationClassID" },
-    //        { "alternator_tb_suit", "AlternatorTBToSuitID" },
-    //        { "alternator_cert", "AlternatorCertificationID" },
-    //        { "alternator_neutral_ct", "AlternatorNeutralCtStarID" },
-    //        { "alternator_phase_ct", "AlternatorPhaseSideCtID" },
-    //        { "alternator_overload", "AlternatorOverloadID" },
-    //        { "alternator_noise", "AlternatorNoiseLevelID" },
-    //        { "alternator_slip_ring", "AlternatorSlipRingID" },
-    //        { "alternator_pmg", "AlternatorPMGID" },
-    //        { "alternator_tests", "AlternatorTestsID" },
-    //        { "alternator_cooling", "AlternatorCoolingMethodID" },
-    //        { "alternator_cooler_config", "AlternatorCoolerConfigID" },
-    //        { "alternator_cooler_moc", "AlternatorCoolerTubesMocID" },
-    //        { "alternator_cooler_mtg", "AlternatorCoolerMountingID" },
-    //        { "alternator_cooler_cert", "AlternatorCoolerCertID" },
-
-    //        // ---- AVR Panel Options ----
-    //        { "uot_avr_panel_scopepd2", "AVRPanelScopeID" },
-    //        { "avr_type", "AVRTypeID" },
-    //        { "ip_rating_avr", "Avr_IPRatingID" },
-    //        { "uot_control_mode_pd", "ControlModeID" },
-    //        { "avr_panel_qty", "AVRPanelQtyID" },
-    //        { "avr_standby_excitation", "AVRStandbyExcitationID" },
-
-    //        // ---- ACB Panel Options ----
-    //        { "uot_acb_panel_scope", "ACBPanelScopeID" },
-    //        { "acb_busbar_moc", "ACBBusBarMaterialID" },
-    //        { "acb_rating", "ACBRatingID" },
-    //        { "acb_qty", "ACBNumberOfBreakersID" },
-    //        { "acb_poles", "ACBNumberOfPolesID" },
-    //        { "ip_rating_acb", "Acb_IPRatingID" },
-    //        { "acb_redundant_ctpt", "ACBRedundantCtPtID" },
-
-    //        // ---- Generator Relay Panel Options ----
-    //        { "uot_grp_scope", "RelayPanelScopeID" },
-    //        { "grp_redundant_ctpt", "RelayRedundantCtPtID" },
-    //        { "grp_relay_type", "RelayTypeID" },
-    //        { "ip_rating_generator", "Relay_IPRatingID" },
-    //        { "grp_additional_relay", "RelayAdditionalRelayID" },
-    //        { "grp_software", "RelaySoftwareID" },
-
-    //        // ---- Metering Sync Panel Options ----
-    //        { "uot_avr_panel_scopepd2meter", "SynchronizingPanelScopeID" },
-    //        { "sync_grid", "SyncGridID" },
-    //        { "sync_type", "SyncTypeOfSynchronizerID" },
-    //        { "sync_breaker_qty", "SyncNumberOfBreakersID" },
-    //        { "sync_meter_accuracy", "SyncMeteringAccuracyID" },
-    //        { "ip_rating_meter", "IPRatingID" },
-    //        { "uot_tvm_type_pd", "TVMTypeID" },
-    //        { "uot_tvm_mounting_pd", "TVMMountingID" },
-    //        { "uot_tvm_accuracy_pd", "TVMAccuracyID" },
-    //        { "sync_pqm", "SyncPQMID" },
-    //        { "sync_transducer_qty", "SyncTransducerQtyID" },
-    //        { "sync_transducer_type", "SyncTransducerTypeID" },
-    //        { "sync_load_sharing_scope", "SyncLoadSharingScopeID" },
-    //        { "sync_master_modules", "SyncMasterModulesID" },
-    //        { "sync_slave_modules", "SyncSlaveModulesID" },
-    //        { "sync_part_of_grp", "SyncMcsPartOfGRPID" },
-    //        { "sync_hmi_software", "SyncHmiSoftwareID" },
-
-    //        // ---- NGR/NGT Panel Options ----
-    //        { "uot_avr_panel_scopepd2ng", "TransformerPanelScopeID" },
-    //        { "ngr_type", "TransformerTypeOfPanelID" },
-    //        { "ngr_duty", "TransformerDutyRatingID" },
-    //        { "ngr_temp_rise", "TransformerTempRiseID" },
-    //        { "ngr_resistor_cap", "TransformerResistorCapID" },
-    //        { "ngr_isolator", "TransformerNeutralIsolatorID" },
-    //        { "ngr_ct", "TransformerCTID" },
-    //        { "ip_rating_ngr", "Transformer_IPRatingID" },
-    //        { "ngr_ct_accuracy", "TransformerCtAccuracyID" },
-    //        { "ngr_fault_rating", "TransformerFaultRatingID" },
-    //        { "ngr_busbar_moc", "TransformerBusBarMOCID" },
-
-    //        // ---- LASC/PT Panel Options ----
-    //        { "uot_lascpt_scope", "LASCPTPanelScopeID" },
-    //        { "lascpt_ctpt", "LASCPT_CTPTID" },
-    //        { "lascpt_ctpt_accuracy", "LASCPT_CTPTAccuracyID" },
-    //        { "lascpt_fault_rating", "LASCPT_FaultRatingID" },
-    //        { "ip_rating_lascpt", "LASCPT_IPRatingID" },
-    //        { "lascpt_busbar_moc", "LASCPT_BusBarMOCID" },
-    //        { "lascpt_part_of_breaker", "LASCPT_PartOfBreakerID" },
-
-    //        // ---- Switch Gear Panel Options ----
-    //        { "uot_sg_scope", "SwitchGearPanelScopeID" },
-    //        { "sg_qty_rating", "SwitchGearQtyRatingID" },
-    //        { "sg_breaker_type", "SwitchGearBreakerTypeID" },
-    //        { "sg_ctpt_accuracy", "SwitchGearCtPtAccuracyID" },
-    //        { "sg_fault_rating", "SwitchGear_FaultRatingID" },
-    //        { "ip_rating_switch", "SwitchGear_IPRatingID" },
-    //        { "sg_busbar_moc", "SwitchGearBusBarMOCID" },
-
-    //        // ---- MCC Panel Options ----
-    //        { "uot_mcc_scope", "MotorControlScopeID" },
-    //        { "mcc_standby_excitation", "MotorControlStandbyExcitID" },
-    //        { "mcc_incomer_qty", "MotorControlIncomerQtyID" },
-    //        { "mcc_construction_type", "MotorControlConstTypeID" },
-    //        { "mcc_redundant_control", "MotorControlRedundantCtrlID" },
-    //        { "mcc_spec", "MotorControlSpecID" },
-    //        { "mcc_incomer_type", "MotorControlIncomerTypeID" },
-    //        { "mcc_busbar_moc", "MotorControlBusBarMOCID" },
-    //        { "ip_rating_motor", "MotorControl_IPRatingID" },
-    //        { "mcc_acdb", "MotorControlACDBID" },
-
-    //        // ---- Battery Charger Panel Options ----
-    //        { "uot_battery_scope", "BatteryPanelScopeID" },
-    //        { "battery_dcdb", "BatteryDCDBID" },
-    //        { "uot_bcc_volt_pd", "Battery_VoltageRatingID" },
-    //        { "uot_bcc_capc_pd", "Battery_CapacityID" },
-    //        { "uot_type_pd", "Battery_TypeID" },
-    //        { "uot_float_cum_boost_charger", "Battery_TypeOfChargerID" },
-    //        { "ip_rating_battery", "Battery_IPRatingID" },
-
-    //        // ---- Turbine Control Panel Options ----
-    //        { "uot_avr_panel_scopepd2plc", "TurbineControlPanelScopeID" },
-    //        { "tcp_type", "TCP_TypeOfControlPanelID" },
-    //        { "tcp_redundancy", "TCP_RedundancyID" },
-    //        { "uot_elect_scope_pd", "TCP_SpecificationID" },
-    //        { "ip_rating_turbinecontrol", "TCP_IPRatingID" },
-    //        { "uot_commu_type_pd", "TCP_CommunicationTypeID" },
-    //        { "uot_sil_rating_pd", "TCP_SILRatingID" },
-
-    //        // ---- Turbine Gauge Panel Options ----
-    //        { "uot_avr_panel_scopepd", "TurbineGaugePanelScopeID" },
-    //        { "tgp_type", "TGP_TypeID" },
-    //        { "uot_plc_based_instruments", "PLCBasedInstrumentsID" },
-    //        { "ip_rating_tgp", "TGP_IPRatingID" },
-    //        { "tgp_impulse_moc", "TGP_ImpulseTubeMOCID" },
-    //        { "tgp_logic_level", "TGP_LogicLevelID" },
-
-    //        // ---- DC Motor Starter Pack Options ----
-    //        { "uot_dc_motor_scope", "DC_MotorScopeID" },
-    //        { "dc_motor_panel", "DC_MotorStartPanelID" },
-    //        { "dc_motor_incomer", "DC_MotorIncomerID" },
-    //        { "dc_motor_steps", "DC_MotorStepsID" },
-    //        { "ip_rating_dcmotor", "DC_Motor_IPRatingID" },
-
-    //        // ---- Cables Options ----
-    //        { "uot_cables_scope", "CablesScopeID" },
-    //        { "cables_instr_cabling", "CablesInstrumentCablingID" },
-    //        { "cables_instr_moc", "CablesInstrumentMOCID" },
-    //        { "lt_power", "LTPowerCablingID" },
-    //        { "lt_powercable_moc", "LTPowerCableMOCID" },
-    //        { "uot_control_cabling_pd", "ControlCablingID" },
-    //        { "control_cable_moc", "ControlCableMOCID" },
-    //        { "ht_power", "HTPowerCablingID" },
-    //        { "ht_power_type", "HTPowerCablingTypeID" },
-    //        { "ht_cable_moc", "HTPowerCableMOCID" },
-    //        { "uot_bbt_pd", "BusDuctID" },
-    //        { "ot_bdt_pd", "BusDuctTypeID" },
-    //        { "cables_busbar_moc", "BusBarMOCID" },
-    //        { "cables_earthing", "EarthingID" },
-    //        { "cables_earth_moc", "EarthMOCID" },
-
-    //        // ---- Turbovisory System Options ----
-    //        { "uot_vms_scope", "VMS_ScopeID" },
-    //        { "vms_vibr_meas_type", "VMS_VibrationMeasTypeID" },
-    //        { "vms_probe_qty", "VMS_NumberOfProbesID" },
-    //        { "vms_make", "VMS_MakeID" },
-    //        { "vms_add_probes", "VMS_AdditionalProbesID" },
-    //        { "vms_overspeed_prot", "VMS_OverspeedProtectionID" },
-
-    //        // ---- Other Items ----
-    //        { "elec_dbo_other", "ElectricalDBOtherItemsID" },
-
-    //        // ---- Remarks / Notes ----
-    //        { "uot_spl_notes4_sdt2000", "SpecialNotes" },
-    //        { "elec_ot_rmk_mtb4000", "Remarks" },
-    //        { "elec_ot_rmk2_mtb4000", "AVRRemarks" },
-    //        { "elec_ot_rmk3_mtb4000", "ACBRemarks" },
-    //        { "elec_ot_rmk4_mtb4000", "Metering_Remarks" },
-    //        { "elec_ot_rmk5_mtb4000", "TransformerRemarks" },
-    //        { "elec_ot_rmk6_mtb4000", "LASCPTRemarks" },
-    //        { "elec_ot_rmk7_mtb4000", "SwitchGearRemarks" },
-    //        { "elec_ot_rmk8_mtb4000", "MotorControlRemarks" },
-    //        { "elec_ot_rmk9_mtb4000", "BatteryRemarks" },
-
-    //        // ---- OT / Reference ----
-    //        { "ot_sel_ot_rec_bpp", "OrderTransmittalID" },
-    //        { "ot_select_project_sp", "CloneProjectId" }
-    //    };
-
     public static readonly Dictionary<string, string> ElectricalInstrumentationDBOMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-        {
-            { "id","ElectricalInstrumentationDBOID" },
-            { "record_no","RecordNo" },
-            { "uuu_record_last_update_date","UpdatedAt" },
-            { "process_status","ProcessStatus" },
-            { "status","Status" },
-            { "creator_id","CreatedBy" },
-            { "project_id","ProjectId" },
-            { "uot_tvm_mounting_pd","TVMMountingID" },
-            { "uot_panel_qty_pd","PanelQtyID" },
-            { "ele_others_01","ACBRating_OthersSpecify" },
-            { "ele_others_02","Battery_TypeOfCharger_OthersSpecify" },
-            { "others_plc","TCP_Others" },
-            { "ele_others_03","NumberOfProbes_OthersSpecify" },
-            { "mcs_panel_part_of_grp_pd","MCSPannelPartOfGRPID" },
-            { "uot_export_cb","IsMeteringCumSynchronizedPanelPartOfACB" },
-            { "ip_rating_turbinecontrol","TCP_IPRatingID" },
-            { "lt_powercable_moc","LTPowerCableMOCID" },
-            { "ucc_export_cost7_cb","Printer" },
-            { "uot_elec_rating_da","RatedPower_KW" },
-            { "uot_avr_panel_scopepd2alt","AlternatorScopeID" },
-            { "uot_quantity15_da","UPSQuantity" },
-            { "uot_dc_motor_panle_ms","DCMotorStartPanelID" },
-            { "uot_avr_panel_scopepd2meter","SynchronizingPanelScopeID" },
-            { "ttl_rated_pf","RatedPFID" },
-            { "uot_avr_panel_scopepd2","AVRPanelScopeID" },
-            { "ip_rating_dcmotor","DC_Motor_IPRatingID" },
-            { "synchronization_grid","SynchronizationGridID" },
-            { "ot_length_sdt50","HTPowerCableLength" },
-            { "uot_elec_redundancy_ms","TCP_RedundancyID" },
-            { "uot_acb_cum_relay_scope_pd2","ACBPanelScopeID" },
-            { "uot_hmi_software_for_conf","HMISoftwareForLoadSharingID" },
-            { "ip_rating_ng","Transformer_IPRatingID" },
-            { "uot_control_mode_pd","ControlModeID" },
-            { "uot_avr_panel_scopepd","TurbineGaugePanelScopeID" },
-            { "uot_mcc_incomer_qty_pd","IncomerQtyID" },
-            { "uot_metering_ct_pt_accuracy","MeteringCTPTAccuracyID" },
-            { "uot_alt_enclo_pd","EnclosureID" },
-            { "lascpt_panel","LASCPTPanelPartOfBreakerPanelID" },
-            { "ttl_if_others_specify","Standard_OthersSpecify" },
-            { "uot_bus_bar_material_pd2","SwitchGear_BusBarMaterialID" },
-            { "uwarmake1tb120","sync_MakeID" },
-            { "uot_others_tb2","RelayRemarks" },
-            { "turbine_guage_panel_type","TurbineGaugePanelTypeID" },
-            { "uot_spl_notes4_sdt2000","SpecialNotes" },
-            { "elec_ot_rmk6_mtb4000","LASCPTRemarks" },
-            { "turbovisor_scope","TurbovisorySystemScopeID" },
-            { "ttl_standard_pd","StandardID" },
-            { "uot_metering_ct_accuracy","MeteringCTAccuracyID" },
-            { "ttl_cooler_pd","CoolerConfigurationID" },
-            { "uot_resistor_current_limiti","ResistorCurrentLimitingCapacityID" },
-            { "ip_rating_avr","Avr_IPRatingID" },
-            { "dcmotor_scope","DCMotorStartPanelScopeID" },
-            { "ttl_stand_by_exitation","avr_StandByExcitationID" },
-            { "uot_acb_cum_relay_quantity","NumberOfBreakersID" },
-            { "elec_ot_rmk3_mtb4000","ACBRemarks" },
-            { "uot_ct_pt_pd","CTPTID" },
-            { "ot_length2_sdt50","BusDuctLength" },
-            { "ot_bdt_pd","BusDuctTypeID" },
-            { "earth_moc","EarthMOCID" },
-            { "ot_elec_cab_moc_pd","InstrumentCablingMOCID" },
-            { "uot_type_of_construction_pd","TypeOfConstructionID" },
-            { "lt_power","LTPowerCablingID" },
-            { "elec_ot_rmk14_mtb4000","CablesRemarks" },
-            { "cooler_certification_pd","CoolerCertificationID" },
-            { "uot_tvm_accuracy_pd","TVMAccuracyID" },
-            { "uot_fault_pd","LASCPT_FaultRatingID" },
-            { "ot_remarks24_sdt250","LTPowerCabling_OthersSpecify" },
-            { "ot_remarks26_sdt250","HTPowerCabling_OthersSpecify" },
-            { "uot_specify_qty_pd","TransducerQuantityID" },
-            { "ip_rating_meter","IPRatingID" },
-            { "ele_others_405","NumberOfBreakerForSynchOthersSpecify" },
-            { "uot_htbraker_panel_pd","SwitchGearTypeID" },
-            { "electronic_overspeed","ElectronicOverspeedProtectionID" },
-            { "uot_vibration_pd","VibrationMeasurementsTypeID" },
-            { "uot_type_pd","Battery_TypeID" },
-            { "ot_remarks27_sdt250","BusDuct_OthersSpecify" },
-            { "bus_bar_moc","BusBarMOCID" },
-            { "comments_tb1","LTPowerCabling_Comments" },
-            { "ip_rating_lascpt","LASCPT_IPRatingID" },
-            { "uot_steps_pd","DC_Motor_StepsID" },
-            { "ttl_tubes_moc","CoolerTubesMOCID" },
-            { "ttl_continuous_overload","ContinuousOverloadID" },
-            { "elec_ot_rmk2_mtb4000","AVRRemarks" },
-            { "ucc_export_cost8_cb","UPS" },
-            { "ng_paneltype","TypeOfPanelID" },
-            { "uot_avr_panel_scopepd2plc","TurbineControlPanelScopeID" },
-            { "type_of_control_panel","TypeOfControlPanelID" },
-            { "ttl_mounting","CoolerMountingID" },
-            { "ttl_if_others_specify14","ResistorCurrentLimitingCapacity_OthersSpecify" },
-            { "uot_impulse_tube_material","Guage_ImpulseTubeMaterialID" },
-            { "uot_temp_pd","TemperatureRaiseID" },
-            { "uot_duty_rating_pd","DutyRatingID" },
-            { "uot_sil_rating_pd","TCP_SILRatingID" },
-            { "uot_earthing_pd","EarthingID" },
-            { "uot_acdb_pd","ACDBID" },
-            { "ttl_slip_ring","SlipRingID" },
-            { "ttl_if_others_specify109","MakeOfVMS_OthersSpecify" },
-            { "ttl_noise_level","NoiseLevelID" },
-            { "elec_ot_rmk5_mtb4000","TransformerRemarks" },
-            { "rated_voltage3","RatedVoltage_KV" },
-            { "elec_ot_rmk12_mtb4000","DC_Motor_Remarks" },
-            { "uot_number_pd","NumberOfBreakerForSynchID" },
-            { "elec_ot_rmk8_mtb4000","MotorControlRemarks" },
-            { "ht_cable_moc","HTPowerCableMOCID" },
-            { "uot_incommer_pd","DC_Motor_IncomerID" },
-            { "ip_rating_battery","Battery_IPRatingID" },
-            { "ttl_tests","TestsID" },
-            { "uot_add_pd","AdditionalProbesID" },
-            { "ttl_cooling_method","CoolingMethodID" },
-            { "voltage_alternator2","VoltageAlternatorID" },
-            { "elec_ot_rmk7_mtb4000","SwitchGearRemarks" },
-            { "uot_bcc_capc_pd","Battery_CapacityID" },
-            { "uuu_creation_date","CreatedAt" },
-            { "elec_ot_rmk4_mtb4000","Metering_Remarks" },
-            { "uot_scope_pd2","SwitchGearPanelScopeID" },
-            { "elec_ot_rmk13_mtb4000","Turbovisory_Remarks" },
-            { "uot_scope_pd1","LASCPTPanelScopeID" },
-            { "uot_type_of_synchronizer_pd","TypeOfSynchronizerID" },
-            { "uot_number_of_master_module","NumberOfMasterModulesID" },
-            { "uot_ct_pd","CTID" },
-            { "uot_incomer_type_pd","IncomerTypeID" },
-            { "uot_plc_based_instruments","PLCBasedInstrumentsID" },
-            { "uot_bbt_pd","BusDuctID" },
-            { "cablesbusduct_scope","CablesScopeID" },
-            { "uot_instrument_cabling_pd","InstrumentCablingID" },
-            { "uot_fault_rating_pd","Transformer_FaultRatingID" },
-            { "uot_redundant_ct_pt","GRP_RedundantCTPTInputProtectionID" },
-            { "uot_acb_rating_pd","ACBRatingID" },
-            { "uot_bcc_volt_pd","Battery_VoltageRatingID" },
-            { "number_of_probes","NumberOfProbesID" },
-            { "ttl_if_others_specify17","Transformer_FaultRating_OthersSpecify" },
-            { "ip_rating_turbineguage","Gauge_IPRatingID" },
-            { "uot_scope_pd2batt","BatteryBatteryChargerScopeID" },
-            { "uot_make_vms_pd","MakeOfVMSID" },
-            { "ht_power","HTPowerCablingID" },
-            { "uot_ctpt_pd","CTPTAccuracyID" },
-            { "ot_htpct_pd","HTPowerCablingTypeID" },
-            { "uot_neutral_isolator","NeutralIsolatorID" },
-            { "uot_scope_pd2motor","MotorControlCentreScopeID" },
-            { "uot_fault_rating_pd2","SwitchGear_FaultRatingID" },
-            { "ucc_export_cost5_cb","Desktop" },
-            { "uot_dcdb_pd","DCDBID" },
-            { "ttl_insulation_class","InsulationClassID" },
-            { "elec_ot_rmk_mtb4000","Remarks" },
-            { "alternator_certification_pd","AlternatorCertificationID" },
-            { "elec_ot_rmk10_mtb4000","TCP_Remarks" },
-            { "uot_relay_ms","AdditionalRelayID" },
-            { "uot_relay_type_pd","RelayTypeID" },
-            { "ttl_pmg","PMGID" },
-            { "uot_metering_pd","MeteringAccuracyID" },
-            { "ttl_if_others_specify7","NoiseLevel_OthersSpecify" },
-            { "uot_redundant_ct_pt_for","ACB_RedundantCTPTInputProtectionID" },
-            { "ot_remarks25_sdt250","ControlCabling_OthersSpecify" },
-            { "ttl_design_temperature_pd","DesignTemperatureID" },
-            { "uot_avr_panel_scopepd2ng","TransformerPanelScopeID" },
-            { "uot_other_electric_sdt2000","OtherElectricalItemsEquipments" },
-            { "uot_quantity14_da","PrinterQuantity" },
-            { "ttl_temperature_rise","TemperatureRiseID" },
-            { "uot_individual_ctpt_pd","IndividualCTPTForTVM" },
-            { "ip_rating_motor","MotorControl_IPRatingID" },
-            { "uot_redundant_control_pd","RedundantControlID" },
-            { "uot_elec_poles_pd","NumberOfPolesID" },
-            { "uot_control_cabling_pd","ControlCablingID" },
-            { "uot_generator_cb","IsGeneratorRelayPanelPartOfACBPanel" },
-            { "make_ms","MakeId" },
-            { "ip_rating_switch","SwitchGear_IPRatingID" },
-            { "uot_commu_type_pd","TCP_CommunicationTypeID" },
-            { "elec_ot_rmk11_mtb4000","GaugeRemarks" },
-            { "elec_ot_rmk9_mtb4000","BatteryRemarks" },
-            { "ttl_if_others_specify_da","DesignTemperature_OthersSpecify" },
-            { "ttl_type","AVRTypeID" },
-            { "pqm_pd","PQMID" },
-            { "ip_rating_generator","Relay_IPRatingID" },
-            { "ip_rating_acb","Acb_IPRatingID" },
-            { "ttl_terminal_box_to_suit_pd","TerminalBoxToSuitID" },
-            { "uot_discrete_type_pd","TransducerTypeId" },
-            { "uot_load_module_pd","LoadSharingModulesScopeID" },
-            { "ttl_phase_side_ct_location","PhaseSideCTLocationID" },
-            { "ttl_neutra_cr_star_format","NeutralCTStarFormationID" },
-            { "ttl_if_others_specify20","LASCPT_FaultRating_OthersSpecify" },
-            { "uot_htrating_pd","QuantityRatingID" },
-            { "control_cable_moc","ControlCableMOCID" },
-            { "uot_bus_bar_material3","MotorControl_BusBarMaterialID" },
-            { "ttl_if_others_specify29","Battery_Capacity_OthersSpecify" },
-            { "uot_others_9","Earthing_OthersSpecify" },
-            { "uot_hmi_laptop_quantity_tb","HMILaptopQuantity" },
-            { "uot_number_of_slave_modules","NumberOfSlaveModulesID" },
-            { "uot_others_3","TransducerQuantityOthersSpecify" },
-            { "uot_mcc_spce_pd","SpecificationID" },
-            { "uot_stand_by_exitation","StandByExcitationID" },
-            { "uot_others_5","TypeOfConstruction_OthersSpecify" },
-            { "uot_quantity13_da","LaptopQuantity" },
-            { "uot_others_6","TCP_Specification_OthersSpecify" },
-            { "ttl_if_others_specify30","Battery_Type_OthersSpecify" },
-            { "uot_softwaregrp_conf_pd","SoftwareGRPConfHMI_ID" },
-            { "uot_elect_scope_pd","TCP_SpecificationID" },
-            { "uot_level_of_instrumentatio","Guage_LevelOfInstrumentationLogicID" },
-            { "ucc_export_cost6_cb","Laptop" },
-            { "uot_float_cum_boost_charger","Battery_TypeOfChargerID" },
-            { "uot_bus_bar_material_pd","BusBarMaterialID" },
-            { "uot_scope_pd1_generator","GeneratorRelayPanelScopeID" },
-            { "uot_tvm_type_pd","TVMTypeID" },
-            { "uuu_record_last_update_user","UpdatedBy" },
-            { "ele_others_404","TVMMountingOthersSpecify" },
-            { "uot_others_10","InstrumentCabling_OthersSpecify" },
-            { "uot_bus_bar_material_pd1","Transformer_BusBarMaterialID" },
-            { "comments_tb3","HTPowerCabling_Comments" },
-            { "ttl_if_others_specify8","CoolerConfiguration_OthersSpecify" },
-            { "uot_bus_bar_material1","LASCPT_BusBarMaterialID" },
-            { "uot_others_2","Tests_OthersSpecify" },
-            { "uot_others_1","InsulationClass_OthersSpecify" },
-            { "ttl_if_others_specify28","Battery_VoltageRating_OthersSpecify" },
-            { "ttl_if_others_specify26","SwitchGear_FaultRating_OthersSpecify" },
-            { "uot_others_7","TCP_Remarks" },
-            { "ttl_if_others_specify25","MeteringCTPTAccuracy_OthersSpecify" },
-            { "ttl_if_others_specify22","SwitchGearType_OthersSpecify" },
-            { "ot_remarks22_sdt250","DC_Motor_Steps_OthersSpecify" },
-            { "ot_remarks20_sdt250","TurbineGaugePanelType_OthersSpecify" },
-            { "ot_remarks23_sdt250","DC_Motor_IPRating_OthersSpecify" },
-            { "ttl_if_others_specify1","Enclosure_OthersSpecify" },
-            { "ttl_if_others_specify9","CoolerTubesMOC_OthersSpecify" },
-            { "ele_others_402","CoolingMethod_OthersSpecify" },
-            { "ttl_if_others_specify6","ContinuousOverload_OthersSpecify" },
-            { "ucc_export_cost9_cb","Console" },
-            { "uot_quantity17_da","ConsoleQuantity" },
-            { "uot_quantity12_da","DesktopQuantity" },
-            { "uot_others_11","InstrumentCablingMOC_OthersSpecify" },
-            { "comments_tb2","ControlCabling_Comments" },
-            { "ele_others_65","TemperatureRise_OthersSpecify" },
-            { "ttl_if_others_specify15","NeutralIsolator_OthersSpecify" },
-            { "ttl_if_others_specify110","TCP_CommunicationType_OthersSpecify" },
-            { "ele_others_406","MasterModulesOthersSpecify" },
-            { "ttl_if_others_specify10","OthersSpecify" },
-            { "ele_others_407","SlaveModulesOthersSpecify" },
-            { "ttl_if_others_specify100","RatedPF_OthersSpecify" },
-            { "ttl_if_others_specify102","NumberOfBreakers_OthersSpecify" },
-            { "ttl_if_others_specify108","Guage_ImpulseTubeMaterial_OthersSpecify" },
-            { "ttl_if_others_specify111","TCP_SILRating_OthersSpecify" },
-            { "ot_remarks21_sdt250","DC_Motor_Incomer_OthersSpecify" },
-            { "ot_sel_ot_rec_bpp","OrderTransmittalID" }
-        };
+     {
+         { "id","ElectricalInstrumentationDBOID" },
+         { "record_no","RecordNo" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
 
+         { "process_status","ProcessStatus" },
+         { "status","Status" },
+          { "creator_id", "CreatedName" },
+        { "k__creator_id", "PrimaveraCreatedId" },
+         { "project_id","ProjectId" },
+         { "uot_tvm_mounting_pd","TVMMountingID" },
+         { "uot_panel_qty_pd","PanelQtyID" },
+         { "ele_others_01","ACBRating_OthersSpecify" },
+         { "ele_others_02","Battery_TypeOfCharger_OthersSpecify" },
+         { "others_plc","TCP_Others" },
+         { "ele_others_03","NumberOfProbes_OthersSpecify" },
+         { "mcs_panel_part_of_grp_pd","MCSPannelPartOfGRPID" },
+         { "uot_export_cb","IsMeteringCumSynchronizedPanelPartOfACB" },
+         { "ip_rating_turbinecontrol","TCP_IPRatingID" },
+         { "lt_powercable_moc","LTPowerCableMOCID" },
+         { "ucc_export_cost7_cb","Printer" },
+         { "uot_elec_rating_da","RatedPower_KW" },
+         { "uot_avr_panel_scopepd2alt","AlternatorScopeID" },
+         { "uot_quantity15_da","UPSQuantity" },
+         { "uot_dc_motor_panle_ms","DCMotorStartPanelID" },
+         { "uot_avr_panel_scopepd2meter","SynchronizingPanelScopeID" },
+         { "ttl_rated_pf","RatedPFID" },
+         { "uot_avr_panel_scopepd2","AVRPanelScopeID" },
+         { "ip_rating_dcmotor","DC_Motor_IPRatingID" },
+         { "synchronization_grid","SynchronizationGridID" },
+         { "ot_length_sdt50","HTPowerCableLength" },
+         { "uot_elec_redundancy_ms","TCP_RedundancyID" },
+         { "uot_acb_cum_relay_scope_pd2","ACBPanelScopeID" },
+         { "uot_hmi_software_for_conf","HMISoftwareForLoadSharingID" },
+         { "ip_rating_ng","Transformer_IPRatingID" },
+         { "uot_control_mode_pd","ControlModeID" },
+         { "uot_avr_panel_scopepd","TurbineGaugePanelScopeID" },
+         { "uot_mcc_incomer_qty_pd","IncomerQtyID" },
+         { "uot_metering_ct_pt_accuracy","MeteringCTPTAccuracyID" },
+         { "uot_alt_enclo_pd","EnclosureID" },
+         { "lascpt_panel","LASCPTPanelPartOfBreakerPanelID" },
+         { "ttl_if_others_specify","Standard_OthersSpecify" },
+         { "uot_bus_bar_material_pd2","SwitchGear_BusBarMaterialID" },
+         { "uwarmake1tb120","sync_MakeID" },
+         { "uot_others_tb2","RelayRemarks" },
+         { "turbine_guage_panel_type","TurbineGaugePanelTypeID" },
+         { "uot_spl_notes4_sdt2000","SpecialNotes" },
+         { "elec_ot_rmk6_mtb4000","LASCPTRemarks" },
+         { "turbovisor_scope","TurbovisorySystemScopeID" },
+         { "ttl_standard_pd","StandardID" },
+         { "uot_metering_ct_accuracy","MeteringCTAccuracyID" },
+         { "ttl_cooler_pd","CoolerConfigurationID" },
+         { "uot_resistor_current_limiti","ResistorCurrentLimitingCapacityID" },
+         { "ip_rating_avr","Avr_IPRatingID" },
+         { "dcmotor_scope","DCMotorStartPanelScopeID" },
+         { "ttl_stand_by_exitation","avr_StandByExcitationID" },
+         { "uot_acb_cum_relay_quantity","NumberOfBreakersID" },
+         { "elec_ot_rmk3_mtb4000","ACBRemarks" },
+         { "uot_ct_pt_pd","CTPTID" },
+         { "ot_length2_sdt50","BusDuctLength" },
+         { "ot_bdt_pd","BusDuctTypeID" },
+         { "earth_moc","EarthMOCID" },
+         { "ot_elec_cab_moc_pd","InstrumentCablingMOCID" },
+         { "uot_type_of_construction_pd","TypeOfConstructionID" },
+         { "lt_power","LTPowerCablingID" },
+         { "elec_ot_rmk14_mtb4000","CablesRemarks" },
+         { "cooler_certification_pd","CoolerCertificationID" },
+         { "uot_tvm_accuracy_pd","TVMAccuracyID" },
+         { "uot_fault_pd","LASCPT_FaultRatingID" },
+         { "ot_remarks24_sdt250","LTPowerCabling_OthersSpecify" },
+         { "ot_remarks26_sdt250","HTPowerCabling_OthersSpecify" },
+         { "uot_specify_qty_pd","TransducerQuantityID" },
+         { "ip_rating_meter","IPRatingID" },
+         { "ele_others_405","NumberOfBreakerForSynchOthersSpecify" },
+         { "uot_htbraker_panel_pd","SwitchGearTypeID" },
+         { "electronic_overspeed","ElectronicOverspeedProtectionID" },
+         { "uot_vibration_pd","VibrationMeasurementsTypeID" },
+         { "uot_type_pd","Battery_TypeID" },
+         { "ot_remarks27_sdt250","BusDuct_OthersSpecify" },
+         { "bus_bar_moc","BusBarMOCID" },
+         { "comments_tb1","LTPowerCabling_Comments" },
+         { "ip_rating_lascpt","LASCPT_IPRatingID" },
+         { "uot_steps_pd","DC_Motor_StepsID" },
+         { "ttl_tubes_moc","CoolerTubesMOCID" },
+         { "ttl_continuous_overload","ContinuousOverloadID" },
+         { "elec_ot_rmk2_mtb4000","AVRRemarks" },
+         { "ucc_export_cost8_cb","UPS" },
+         { "ng_paneltype","TypeOfPanelID" },
+         { "uot_avr_panel_scopepd2plc","TurbineControlPanelScopeID" },
+         { "type_of_control_panel","TypeOfControlPanelID" },
+         { "ttl_mounting","CoolerMountingID" },
+         { "ttl_if_others_specify14","ResistorCurrentLimitingCapacity_OthersSpecify" },
+         { "uot_impulse_tube_material","Guage_ImpulseTubeMaterialID" },
+         { "uot_temp_pd","TemperatureRaiseID" },
+         { "uot_duty_rating_pd","DutyRatingID" },
+         { "uot_sil_rating_pd","TCP_SILRatingID" },
+         { "uot_earthing_pd","EarthingID" },
+         { "uot_acdb_pd","ACDBID" },
+         { "ttl_slip_ring","SlipRingID" },
+         { "ttl_if_others_specify109","MakeOfVMS_OthersSpecify" },
+         { "ttl_noise_level","NoiseLevelID" },
+         { "elec_ot_rmk5_mtb4000","TransformerRemarks" },
+         { "rated_voltage3","RatedVoltage_KV" },
+         { "elec_ot_rmk12_mtb4000","DC_Motor_Remarks" },
+         { "uot_number_pd","NumberOfBreakerForSynchID" },
+         { "elec_ot_rmk8_mtb4000","MotorControlRemarks" },
+         { "ht_cable_moc","HTPowerCableMOCID" },
+         { "uot_incommer_pd","DC_Motor_IncomerID" },
+         { "ip_rating_battery","Battery_IPRatingID" },
+         { "ttl_tests","TestsID" },
+         { "uot_add_pd","AdditionalProbesID" },
+         { "ttl_cooling_method","CoolingMethodID" },
+         { "voltage_alternator2","VoltageAlternatorID" },
+         { "elec_ot_rmk7_mtb4000","SwitchGearRemarks" },
+         { "uot_bcc_capc_pd","Battery_CapacityID" },
+         { "uuu_creation_date","CreatedAt" },
+         { "elec_ot_rmk4_mtb4000","Metering_Remarks" },
+         { "uot_scope_pd2","SwitchGearPanelScopeID" },
+         { "elec_ot_rmk13_mtb4000","Turbovisory_Remarks" },
+         { "uot_scope_pd1","LASCPTPanelScopeID" },
+         { "uot_type_of_synchronizer_pd","TypeOfSynchronizerID" },
+         { "uot_number_of_master_module","NumberOfMasterModulesID" },
+         { "uot_ct_pd","CTID" },
+         { "uot_incomer_type_pd","IncomerTypeID" },
+         { "uot_plc_based_instruments","PLCBasedInstrumentsID" },
+         { "uot_bbt_pd","BusDuctID" },
+         { "cablesbusduct_scope","CablesScopeID" },
+         { "uot_instrument_cabling_pd","InstrumentCablingID" },
+         { "uot_fault_rating_pd","Transformer_FaultRatingID" },
+         { "uot_redundant_ct_pt","GRP_RedundantCTPTInputProtectionID" },
+         { "uot_acb_rating_pd","ACBRatingID" },
+         { "uot_bcc_volt_pd","Battery_VoltageRatingID" },
+         { "number_of_probes","NumberOfProbesID" },
+         { "ttl_if_others_specify17","Transformer_FaultRating_OthersSpecify" },
+         { "ip_rating_turbineguage","Gauge_IPRatingID" },
+         { "uot_scope_pd2batt","BatteryBatteryChargerScopeID" },
+         { "uot_make_vms_pd","MakeOfVMSID" },
+         { "ht_power","HTPowerCablingID" },
+         { "uot_ctpt_pd","CTPTAccuracyID" },
+         { "ot_htpct_pd","HTPowerCablingTypeID" },
+         { "uot_neutral_isolator","NeutralIsolatorID" },
+         { "uot_scope_pd2motor","MotorControlCentreScopeID" },
+         { "uot_fault_rating_pd2","SwitchGear_FaultRatingID" },
+         { "ucc_export_cost5_cb","Desktop" },
+         { "uot_dcdb_pd","DCDBID" },
+         { "ttl_insulation_class","InsulationClassID" },
+         { "elec_ot_rmk_mtb4000","Remarks" },
+         { "alternator_certification_pd","AlternatorCertificationID" },
+         { "elec_ot_rmk10_mtb4000","TCP_Remarks" },
+         { "uot_relay_ms","AdditionalRelayID" },
+         { "uot_relay_type_pd","RelayTypeID" },
+         { "ttl_pmg","PMGID" },
+         { "uot_metering_pd","MeteringAccuracyID" },
+         { "ttl_if_others_specify7","NoiseLevel_OthersSpecify" },
+         { "uot_redundant_ct_pt_for","ACB_RedundantCTPTInputProtectionID" },
+         { "ot_remarks25_sdt250","ControlCabling_OthersSpecify" },
+         { "ttl_design_temperature_pd","DesignTemperatureID" },
+         { "uot_avr_panel_scopepd2ng","TransformerPanelScopeID" },
+         { "uot_other_electric_sdt2000","OtherElectricalItemsEquipments" },
+         { "uot_quantity14_da","PrinterQuantity" },
+         { "ttl_temperature_rise","TemperatureRiseID" },
+         { "uot_individual_ctpt_pd","IndividualCTPTForTVM" },
+         { "ip_rating_motor","MotorControl_IPRatingID" },
+         { "uot_redundant_control_pd","RedundantControlID" },
+         { "uot_elec_poles_pd","NumberOfPolesID" },
+         { "uot_control_cabling_pd","ControlCablingID" },
+         { "uot_generator_cb","IsGeneratorRelayPanelPartOfACBPanel" },
+         { "make_ms","MakeId" },
+         { "ip_rating_switch","SwitchGear_IPRatingID" },
+         { "uot_commu_type_pd","TCP_CommunicationTypeID" },
+         { "elec_ot_rmk11_mtb4000","GaugeRemarks" },
+         { "elec_ot_rmk9_mtb4000","BatteryRemarks" },
+         { "ttl_if_others_specify_da","DesignTemperature_OthersSpecify" },
+         { "ttl_type","AVRTypeID" },
+         { "pqm_pd","PQMID" },
+         { "ip_rating_generator","Relay_IPRatingID" },
+         { "ip_rating_acb","Acb_IPRatingID" },
+         { "ttl_terminal_box_to_suit_pd","TerminalBoxToSuitID" },
+         { "uot_discrete_type_pd","TransducerTypeId" },
+         { "uot_load_module_pd","LoadSharingModulesScopeID" },
+         { "ttl_phase_side_ct_location","PhaseSideCTLocationID" },
+         { "ttl_neutra_cr_star_format","NeutralCTStarFormationID" },
+         { "ttl_if_others_specify20","LASCPT_FaultRating_OthersSpecify" },
+         { "uot_htrating_pd","QuantityRatingID" },
+         { "control_cable_moc","ControlCableMOCID" },
+         { "uot_bus_bar_material3","MotorControl_BusBarMaterialID" },
+         { "ttl_if_others_specify29","Battery_Capacity_OthersSpecify" },
+         { "uot_others_9","Earthing_OthersSpecify" },
+         { "uot_hmi_laptop_quantity_tb","HMILaptopQuantity" },
+         { "uot_number_of_slave_modules","NumberOfSlaveModulesID" },
+         { "uot_others_3","TransducerQuantityOthersSpecify" },
+         { "uot_mcc_spce_pd","SpecificationID" },
+         { "uot_stand_by_exitation","StandByExcitationID" },
+         { "uot_others_5","TypeOfConstruction_OthersSpecify" },
+         { "uot_quantity13_da","LaptopQuantity" },
+         { "uot_others_6","TCP_Specification_OthersSpecify" },
+         { "ttl_if_others_specify30","Battery_Type_OthersSpecify" },
+         { "uot_softwaregrp_conf_pd","SoftwareGRPConfHMI_ID" },
+         { "uot_elect_scope_pd","TCP_SpecificationID" },
+         { "uot_level_of_instrumentatio","Guage_LevelOfInstrumentationLogicID" },
+         { "ucc_export_cost6_cb","Laptop" },
+         { "uot_float_cum_boost_charger","Battery_TypeOfChargerID" },
+         { "uot_bus_bar_material_pd","BusBarMaterialID" },
+         { "uot_scope_pd1_generator","GeneratorRelayPanelScopeID" },
+         { "uot_tvm_type_pd","TVMTypeID" },
+        
+         { "ele_others_404","TVMMountingOthersSpecify" },
+         { "uot_others_10","InstrumentCabling_OthersSpecify" },
+         { "uot_bus_bar_material_pd1","Transformer_BusBarMaterialID" },
+         { "comments_tb3","HTPowerCabling_Comments" },
+         { "ttl_if_others_specify8","CoolerConfiguration_OthersSpecify" },
+         { "uot_bus_bar_material1","LASCPT_BusBarMaterialID" },
+         { "uot_others_2","Tests_OthersSpecify" },
+         { "uot_others_1","InsulationClass_OthersSpecify" },
+         { "ttl_if_others_specify28","Battery_VoltageRating_OthersSpecify" },
+         { "ttl_if_others_specify26","SwitchGear_FaultRating_OthersSpecify" },
+         //{ "uot_others_7","TCP_Remarks" },
+         { "ttl_if_others_specify25","MeteringCTPTAccuracy_OthersSpecify" },
+         { "ttl_if_others_specify22","SwitchGearType_OthersSpecify" },
+         { "ot_remarks22_sdt250","DC_Motor_Steps_OthersSpecify" },
+         { "ot_remarks20_sdt250","TurbineGaugePanelType_OthersSpecify" },
+         { "ot_remarks23_sdt250","DC_Motor_IPRating_OthersSpecify" },
+         { "ttl_if_others_specify1","Enclosure_OthersSpecify" },
+         { "ttl_if_others_specify9","CoolerTubesMOC_OthersSpecify" },
+         { "ele_others_402","CoolingMethod_OthersSpecify" },
+         { "ttl_if_others_specify6","ContinuousOverload_OthersSpecify" },
+         { "ucc_export_cost9_cb","Console" },
+         { "uot_quantity17_da","ConsoleQuantity" },
+         { "uot_quantity12_da","DesktopQuantity" },
+         { "uot_others_11","InstrumentCablingMOC_OthersSpecify" },
+         { "comments_tb2","ControlCabling_Comments" },
+         { "ele_others_65","TemperatureRise_OthersSpecify" },
+         { "ttl_if_others_specify15","NeutralIsolator_OthersSpecify" },
+         { "ttl_if_others_specify110","TCP_CommunicationType_OthersSpecify" },
+         { "ele_others_406","MasterModulesOthersSpecify" },
+         { "ttl_if_others_specify10","OthersSpecify" },
+         { "ele_others_407","SlaveModulesOthersSpecify" },
+         { "ttl_if_others_specify100","RatedPF_OthersSpecify" },
+         { "ttl_if_others_specify102","NumberOfBreakers_OthersSpecify" },
+         { "ttl_if_others_specify108","Guage_ImpulseTubeMaterial_OthersSpecify" },
+         { "ttl_if_others_specify111","TCP_SILRating_OthersSpecify" },
+         { "ot_remarks21_sdt250","DC_Motor_Incomer_OthersSpecify" },
+         { "ot_sel_ot_rec_bpp","OrderTransmittalID" }
+     };
 
     public static readonly Dictionary<string, string> MonthlyActualCollectionPlannedMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
@@ -4073,12 +3870,35 @@ public class ExcelMigrationService : IExcelMigrationService
 
         try
         {
-            // Step 1: Find all tables starting with "ElectricalInstrumentationDBO" in the schema
-            var matchingTables = await GetTablesWithPrefixAsync(connection, schemaName, "ElectricalInstrumentationDBO", cancellationToken);
+            // Step 1: Find matching tables.
+            // - Exact child: migrate only that child table.
+            // - Parent/prefix: migrate parent + child tables.
+            List<string> matchingTables;
+            if (tableNamePrefix.StartsWith("ElectricalInstrumentationDBO_", StringComparison.OrdinalIgnoreCase))
+            {
+                matchingTables = new List<string> { tableNamePrefix };
+            }
+            else
+            {
+                matchingTables = await GetTablesWithPrefixAsync(connection, schemaName, "ElectricalInstrumentationDBO", cancellationToken);
+            }
 
             if (matchingTables.Count == 0)
             {
                 response.ErrorMessages.Add($"No tables found with prefix 'ElectricalInstrumentationDBO' in schema '{schemaName}'.");
+                return response;
+            }
+
+            // Keep only existing tables and remove duplicates.
+            var availableElectricalTables = await GetTablesWithPrefixAsync(connection, schemaName, "ElectricalInstrumentationDBO", cancellationToken);
+            matchingTables = matchingTables
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Where(mt => availableElectricalTables.Any(at => string.Equals(at, mt, StringComparison.OrdinalIgnoreCase)))
+                .ToList();
+
+            if (matchingTables.Count == 0)
+            {
+                response.ErrorMessages.Add($"No matching ElectricalInstrumentationDBO table found for '{tableNamePrefix}' in schema '{schemaName}'.");
                 return response;
             }
 
@@ -4107,7 +3927,8 @@ public class ExcelMigrationService : IExcelMigrationService
                     targetTable,
                     excelData,
                     null,
-                    cancellationToken);
+                    cancellationToken,
+                    "ElectricalInstrumentationDBO");
 
                 allTableResults.Add((
                     targetTable,
@@ -4348,6 +4169,41 @@ public class ExcelMigrationService : IExcelMigrationService
 
             // Step 2: Match Excel columns to SQL columns
             var columnMappings = MatchColumns(excelData, tableMetadata, mappingTableName ?? tableName, attachmentRecordType);
+
+            // ElectricalInstrumentationDBO child tables require parent FK ElectricalInstrumentationDBOID.
+            // Ensure it is mapped from a parent id-like Excel column when dynamic matching doesn't add it.
+            if (tableName.StartsWith("ElectricalInstrumentationDBO_", StringComparison.OrdinalIgnoreCase))
+            {
+                var electricalParentFk = tableMetadata.FirstOrDefault(m =>
+                    string.Equals(m.ColumnName, "ElectricalInstrumentationDBOID", StringComparison.OrdinalIgnoreCase));
+
+                var isElectricalParentFkMapped = columnMappings.Any(m =>
+                    string.Equals(m.SqlColumnName, "ElectricalInstrumentationDBOID", StringComparison.OrdinalIgnoreCase));
+
+                if (electricalParentFk != null && !isElectricalParentFkMapped)
+                {
+                    var parentIdExcelColumn = excelData.Columns.Cast<DataColumn>().FirstOrDefault(c =>
+                        string.Equals(c.ColumnName, "id", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(c.ColumnName, "record_id", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(c.ColumnName, "ElectricalInstrumentationDBOID", StringComparison.OrdinalIgnoreCase));
+
+                    if (parentIdExcelColumn != null)
+                    {
+                        columnMappings.Insert(0, new ColumnMapping
+                        {
+                            ExcelColumnName = parentIdExcelColumn.ColumnName,
+                            SqlColumnName = electricalParentFk.ColumnName,
+                            SqlDataType = electricalParentFk.DataType,
+                            IsIdentity = electricalParentFk.IsIdentity,
+                            IsNullable = electricalParentFk.IsNullable,
+                            ForeignKeyTableSchema = electricalParentFk.ForeignKeyTableSchema,
+                            ForeignKeyTableName = electricalParentFk.ForeignKeyTableName,
+                            ForeignKeyColumnName = electricalParentFk.ForeignKeyColumnName,
+                            ForeignKeyLookupColumnName = electricalParentFk.ForeignKeyLookupColumnName
+                        });
+                    }
+                }
+            }
 
             // SPECIAL RULE: Ensure the first Excel column is mapped to the Primary Key
             // This supports the requirement: "use the value from the first column of the Excel sheet as the primary key"
@@ -5310,8 +5166,9 @@ public class ExcelMigrationService : IExcelMigrationService
             return MatchColumnsForOrderTransmittal(excelData, tableMetadata);
         }
 
-        // Check if table name starts with "ElectricalInstrumentationDBO" - use hardcoded mapping
-        if (tableName.StartsWith("ElectricalInstrumentationDBO", StringComparison.OrdinalIgnoreCase))
+        // Use hardcoded mapping only for ElectricalInstrumentationDBO parent table.
+        // Child tables should use dynamic matching against their own columns.
+        if (string.Equals(tableName, "ElectricalInstrumentationDBO", StringComparison.OrdinalIgnoreCase))
         {
             return MatchColumnsForElectricalInstrumentationDBO(excelData, tableMetadata);
         }
@@ -7645,6 +7502,7 @@ public class ExcelMigrationService : IExcelMigrationService
         var isOrderReceiptAcknowledgement = string.Equals(tableName, "OrderReceiptAcknowledgement", StringComparison.OrdinalIgnoreCase);
         var isAuditAction = string.Equals(tableName, "AuditAction", StringComparison.OrdinalIgnoreCase);
         var isRCCA = string.Equals(tableName, "RCCA", StringComparison.OrdinalIgnoreCase);
+        var isOTRisk = string.Equals(tableName, "OTRisk", StringComparison.OrdinalIgnoreCase);
         var isMonthlyProgressReport = tableName.StartsWith("MonthlyProgressReport", StringComparison.OrdinalIgnoreCase);
         var isOrderTransmittalNotes = string.Equals(tableName, "OrderTransmittal_Notes", StringComparison.OrdinalIgnoreCase);
 
@@ -7859,42 +7717,53 @@ public class ExcelMigrationService : IExcelMigrationService
                         }
                         else
                         {
-                            var valueKey = value.ToString()?.Trim() ?? string.Empty;
-
-                            // Check cache first
-                            if (!projectIdCache.TryGetValue(valueKey, out var resolvedProjectId))
+                            // ElectricalInstrumentationDBO fast path: numeric IDs are already target keys.
+                            // Avoid per-row lookup query in large uploads.
+                            if (isElectricalInstrumentationDBO &&
+                                long.TryParse(value.ToString()?.Trim(), out var directProjectId) &&
+                                directProjectId > 0)
                             {
-                                // Not in cache, resolve from database
-                                resolvedProjectId = await ResolveProjectIdAsync(
-                                    connection,
-                                    transaction,
-                                    value,
-                                    cancellationToken);
-
-                                // Cache the result (even if null)
-                                projectIdCache[valueKey] = resolvedProjectId;
-                            }
-
-                            if (resolvedProjectId == null)
-                            {
-                                // For CommunicationProtocol, OrderTransmittal, BankGuarantee, Turbine, and ElectricalInstrumentationDBO, if ProjectID doesn't exist, set to NULL instead of skipping
-                                if (isCommunicationProtocol || isOrderTransmittal || isBankGuarantee || isTurbine || isElectricalInstrumentationDBO || isBPAttachments || isMechanicalDBO || isContractClearance || isAdditionalOrderBooking || isMinutesOfMeeting || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isInitialCashFlowPlan || isMonthlyPlanning || isMonthlyPlanningLineItem || isMonthlyActualCollectionPlanned || isMonthlyActualUnplannedCollection || isSpecificationRelease || isOrderReceiptAcknowledgement || isSparesOrderTransmittal || isAuditAction || isRCCA || isMonthlyProgressReport || isLetterOfCorrespondence)
-                                {
-                                    value = DBNull.Value;
-                                }
-                                else
-                                {
-                                    // For other tables, skip row if ProjectID doesn't exist
-                                    errorColumn = mapping.ExcelColumnName;
-                                    errorValue = value;
-                                    errorMessage = $"Foreign key constraint violation: ProjectID '{value}' does not exist in table 'master.Project'";
-                                    skipRow = true;
-                                    break;
-                                }
+                                value = directProjectId;
                             }
                             else
                             {
-                                value = resolvedProjectId;
+                                var valueKey = value.ToString()?.Trim() ?? string.Empty;
+
+                                // Check cache first
+                                if (!projectIdCache.TryGetValue(valueKey, out var resolvedProjectId))
+                                {
+                                    // Not in cache, resolve from database
+                                    resolvedProjectId = await ResolveProjectIdAsync(
+                                        connection,
+                                        transaction,
+                                        value,
+                                        cancellationToken);
+
+                                    // Cache the result (even if null)
+                                    projectIdCache[valueKey] = resolvedProjectId;
+                                }
+
+                                if (resolvedProjectId == null)
+                                {
+                                    // For CommunicationProtocol, OrderTransmittal, BankGuarantee, Turbine, and ElectricalInstrumentationDBO, if ProjectID doesn't exist, set to NULL instead of skipping
+                                    if (isCommunicationProtocol || isOrderTransmittal || isBankGuarantee || isTurbine || isElectricalInstrumentationDBO || isBPAttachments || isMechanicalDBO || isContractClearance || isAdditionalOrderBooking || isMinutesOfMeeting || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isInitialCashFlowPlan || isMonthlyPlanning || isMonthlyPlanningLineItem || isMonthlyActualCollectionPlanned || isMonthlyActualUnplannedCollection || isSpecificationRelease || isOrderReceiptAcknowledgement || isSparesOrderTransmittal || isAuditAction || isRCCA || isMonthlyProgressReport || isLetterOfCorrespondence)
+                                    {
+                                        value = DBNull.Value;
+                                    }
+                                    else
+                                    {
+                                        // For other tables, skip row if ProjectID doesn't exist
+                                        errorColumn = mapping.ExcelColumnName;
+                                        errorValue = value;
+                                        errorMessage = $"Foreign key constraint violation: ProjectID '{value}' does not exist in table 'master.Project'";
+                                        skipRow = true;
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    value = resolvedProjectId;
+                                }
                             }
                         }
                     }
@@ -8974,32 +8843,41 @@ public class ExcelMigrationService : IExcelMigrationService
                         }
                         else
                         {
-                            var valueKey = value.ToString()?.Trim() ?? string.Empty;
-
-                            // Check cache first
-                            if (!orderTransmittalIdCache.TryGetValue(valueKey, out var resolvedOrderTransmittalId))
+                            if (isElectricalInstrumentationDBO &&
+                                long.TryParse(value.ToString()?.Trim(), out var directOrderTransmittalId) &&
+                                directOrderTransmittalId > 0)
                             {
-                                // Not in cache, resolve from database
-                                resolvedOrderTransmittalId = await ResolveOrderTransmittalIdAsync(
-                                    connection,
-                                    transaction,
-                                    value,
-                                    cancellationToken);
-
-                                // Cache the result (even if null)
-                                orderTransmittalIdCache[valueKey] = resolvedOrderTransmittalId;
+                                value = directOrderTransmittalId;
                             }
-
-                            if (resolvedOrderTransmittalId == null)
+                            else
                             {
-                                errorColumn = mapping.ExcelColumnName;
-                                errorValue = value;
-                                errorMessage = $"Foreign key constraint violation: OrderTransmittalID '{value}' does not exist in table 'bp.OrderTransmittal'";
-                                skipRow = true;
-                                break;
-                            }
+                                var valueKey = value.ToString()?.Trim() ?? string.Empty;
 
-                            value = resolvedOrderTransmittalId;
+                                // Check cache first
+                                if (!orderTransmittalIdCache.TryGetValue(valueKey, out var resolvedOrderTransmittalId))
+                                {
+                                    // Not in cache, resolve from database
+                                    resolvedOrderTransmittalId = await ResolveOrderTransmittalIdAsync(
+                                        connection,
+                                        transaction,
+                                        value,
+                                        cancellationToken);
+
+                                    // Cache the result (even if null)
+                                    orderTransmittalIdCache[valueKey] = resolvedOrderTransmittalId;
+                                }
+
+                                if (resolvedOrderTransmittalId == null)
+                                {
+                                    errorColumn = mapping.ExcelColumnName;
+                                    errorValue = value;
+                                    errorMessage = $"Foreign key constraint violation: OrderTransmittalID '{value}' does not exist in table 'bp.OrderTransmittal'";
+                                    skipRow = true;
+                                    break;
+                                }
+
+                                value = resolvedOrderTransmittalId;
+                            }
                         }
                     }
 
@@ -9011,218 +8889,223 @@ public class ExcelMigrationService : IExcelMigrationService
                         {
                             value = TransformStatusValue(value, mapping.IsNullable);
                         }
-                        else if (colName.EndsWith("ScopeID", StringComparison.OrdinalIgnoreCase))
+
+                        if (string.Equals(colName, "IndividualCTPTForTVM", StringComparison.OrdinalIgnoreCase))
                         {
-                            value = TransformMechanicalDBOScopeValue(value, mapping.IsNullable);
+                            value = TransformElectricalDBOCtPtValue(value, mapping.IsNullable);
                         }
-                        else if (colName.Equals("AlternatorMakeID", StringComparison.OrdinalIgnoreCase) || colName.Equals("VMS_MakeID", StringComparison.OrdinalIgnoreCase) || colName.Equals("sync_MakeID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOMakeValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("StandardID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorStandardID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOStandardValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("VoltageAlternatorID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorVoltageID", StringComparison.OrdinalIgnoreCase) || colName.Equals("Battery_VoltageRatingID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOVoltageValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("EnclosureID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorEnclosureID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOEnclosureValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("DesignTemperatureID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorDesignTempID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBODesignTempValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("RatedPFID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBORatedPfValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("TemperatureRaiseID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorTempRiseID", StringComparison.OrdinalIgnoreCase) || colName.Equals("TransformerTempRiseID", StringComparison.OrdinalIgnoreCase) || colName.Equals("TemperatureRiseID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOTempRiseValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("InsulationClassID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorInsulationClassID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOInsulationValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("TerminalBoxToSuitID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorTBToSuitID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOTerminalBoxValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.EndsWith("CertificationID", StringComparison.OrdinalIgnoreCase) || colName.EndsWith("CertID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOCertValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("NeutralCTStarFormationID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorNeutralCtStarID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBONeutralCtValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("PhaseSideCTLocationID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorPhaseSideCtID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOPhaseCtValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("ContinuousOverloadID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorOverloadID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOOverloadValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("NoiseLevelID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorNoiseLevelID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBONoiseValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("SlipRingID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorSlipRingID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOSlipRingValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("PMGID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorPMGID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOPMGValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("TestsID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorTestsID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOTestsValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("CoolingMethodID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorCoolingMethodID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOCoolingValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("CoolerConfigurationID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorCoolerConfigID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOCoolerConfigValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("CoolerTubesMOCID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorCoolerTubesMocID", StringComparison.OrdinalIgnoreCase) || colName.EndsWith("_MOCID", StringComparison.OrdinalIgnoreCase) || colName.EndsWith("MaterialID", StringComparison.OrdinalIgnoreCase))
-                        {
-                             if (colName.Contains("BusBar", StringComparison.OrdinalIgnoreCase))
-                                value = TransformElectricalInstrumentationDBOBusBarMocValue(value, mapping.IsNullable);
-                             else
-                                value = TransformElectricalInstrumentationDBOMocValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Contains("IPRatingID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOIPRatingValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("ControlModeID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOControlModeValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Contains("RelayTypeID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBORelayTypeValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Contains("SyncTypeOfSynchronizerID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOSyncTypeValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Contains("AccuracyID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOMeterAccuracyValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("TVMTypeID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOTvmTypeValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("SyncPQMID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOPqmValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("TransformerTypeOfPanelID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOTransformerTypeValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Contains("FaultRatingID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOFaultRatingValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("SwitchGearBreakerTypeID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOBreakerTypeValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("MotorControlConstTypeID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOMccConstTypeValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("TCP_TypeOfControlPanelID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOTcpTypeValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("TCP_RedundancyID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOTcpRedundancyValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("TGP_TypeID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOTgpTypeValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("VMS_VibrationMeasTypeID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOVmsVibrValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("AVRStandbyExcitationID", StringComparison.OrdinalIgnoreCase) || 
-                                 colName.Equals("SyncPQMID", StringComparison.OrdinalIgnoreCase) ||
-                                 colName.EndsWith("RequiredID", StringComparison.OrdinalIgnoreCase) ||
-                                 colName.Equals("LASCPT_PartOfBreakerID", StringComparison.OrdinalIgnoreCase) ||
-                                 colName.Equals("PLCBasedInstrumentsID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOYessNoRequiredValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("Battery_CapacityID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOBatteryCapacityValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("TCP_SpecificationID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOTcpSpecificationValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("TCP_CommunicationTypeID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOTcpCommunicationTypeValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("TVMMountingID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOTvmMountingValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("LTPowerCablingID", StringComparison.OrdinalIgnoreCase) ||
-                                 colName.Equals("ControlCablingID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOLtPowerCablingValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("HTPowerCablingID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOHtPowerCablingValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("LTPowerCableMOCID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOLtPowerCableMocValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("BusDuctID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOBusDuctValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("ControlCableMOCID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOControlCableMocValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("HTPowerCableMOCID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOHtPowerCableMocValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("BusDuctTypeID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOBusDuctTypeValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("Battery_TypeID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOBatteryTypeValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("Battery_TypeOfChargerID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOBatteryTypeOfChargerValue(value, mapping.IsNullable);
-                        }
-                        else if (colName.Equals("TCP_SILRatingID", StringComparison.OrdinalIgnoreCase))
-                        {
-                            value = TransformElectricalInstrumentationDBOTcpSilRatingValue(value, mapping.IsNullable);
-                        }
+                        //else if (colName.EndsWith("ScopeID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformMechanicalDBOScopeValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("AlternatorMakeID", StringComparison.OrdinalIgnoreCase) || colName.Equals("VMS_MakeID", StringComparison.OrdinalIgnoreCase) || colName.Equals("sync_MakeID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOMakeValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("StandardID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorStandardID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOStandardValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("VoltageAlternatorID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorVoltageID", StringComparison.OrdinalIgnoreCase) || colName.Equals("Battery_VoltageRatingID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOVoltageValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("EnclosureID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorEnclosureID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOEnclosureValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("DesignTemperatureID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorDesignTempID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBODesignTempValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("RatedPFID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBORatedPfValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("TemperatureRaiseID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorTempRiseID", StringComparison.OrdinalIgnoreCase) || colName.Equals("TransformerTempRiseID", StringComparison.OrdinalIgnoreCase) || colName.Equals("TemperatureRiseID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOTempRiseValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("InsulationClassID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorInsulationClassID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOInsulationValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("TerminalBoxToSuitID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorTBToSuitID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOTerminalBoxValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.EndsWith("CertificationID", StringComparison.OrdinalIgnoreCase) || colName.EndsWith("CertID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOCertValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("NeutralCTStarFormationID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorNeutralCtStarID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBONeutralCtValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("PhaseSideCTLocationID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorPhaseSideCtID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOPhaseCtValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("ContinuousOverloadID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorOverloadID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOOverloadValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("NoiseLevelID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorNoiseLevelID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBONoiseValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("SlipRingID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorSlipRingID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOSlipRingValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("PMGID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorPMGID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOPMGValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("TestsID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorTestsID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOTestsValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("CoolingMethodID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorCoolingMethodID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOCoolingValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("CoolerConfigurationID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorCoolerConfigID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOCoolerConfigValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("CoolerTubesMOCID", StringComparison.OrdinalIgnoreCase) || colName.Equals("AlternatorCoolerTubesMocID", StringComparison.OrdinalIgnoreCase) || colName.EndsWith("_MOCID", StringComparison.OrdinalIgnoreCase) || colName.EndsWith("MaterialID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //     if (colName.Contains("BusBar", StringComparison.OrdinalIgnoreCase))
+                        //        value = TransformElectricalInstrumentationDBOBusBarMocValue(value, mapping.IsNullable);
+                        //     else
+                        //        value = TransformElectricalInstrumentationDBOMocValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Contains("IPRatingID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOIPRatingValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("ControlModeID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOControlModeValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Contains("RelayTypeID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBORelayTypeValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Contains("SyncTypeOfSynchronizerID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOSyncTypeValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Contains("AccuracyID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOMeterAccuracyValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("TVMTypeID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOTvmTypeValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("SyncPQMID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOPqmValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("TransformerTypeOfPanelID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOTransformerTypeValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Contains("FaultRatingID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOFaultRatingValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("SwitchGearBreakerTypeID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOBreakerTypeValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("MotorControlConstTypeID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOMccConstTypeValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("TCP_TypeOfControlPanelID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOTcpTypeValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("TCP_RedundancyID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOTcpRedundancyValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("TGP_TypeID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOTgpTypeValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("VMS_VibrationMeasTypeID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOVmsVibrValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("AVRStandbyExcitationID", StringComparison.OrdinalIgnoreCase) || 
+                        //         colName.Equals("SyncPQMID", StringComparison.OrdinalIgnoreCase) ||
+                        //         colName.EndsWith("RequiredID", StringComparison.OrdinalIgnoreCase) ||
+                        //         colName.Equals("LASCPT_PartOfBreakerID", StringComparison.OrdinalIgnoreCase) ||
+                        //         colName.Equals("PLCBasedInstrumentsID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOYessNoRequiredValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("Battery_CapacityID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOBatteryCapacityValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("TCP_SpecificationID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOTcpSpecificationValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("TCP_CommunicationTypeID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOTcpCommunicationTypeValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("TVMMountingID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOTvmMountingValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("LTPowerCablingID", StringComparison.OrdinalIgnoreCase) ||
+                        //         colName.Equals("ControlCablingID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOLtPowerCablingValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("HTPowerCablingID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOHtPowerCablingValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("LTPowerCableMOCID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOLtPowerCableMocValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("BusDuctID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOBusDuctValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("ControlCableMOCID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOControlCableMocValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("HTPowerCableMOCID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOHtPowerCableMocValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("BusDuctTypeID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOBusDuctTypeValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("Battery_TypeID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOBatteryTypeValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("Battery_TypeOfChargerID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOBatteryTypeOfChargerValue(value, mapping.IsNullable);
+                        //}
+                        //else if (colName.Equals("TCP_SILRatingID", StringComparison.OrdinalIgnoreCase))
+                        //{
+                        //    value = TransformElectricalInstrumentationDBOTcpSilRatingValue(value, mapping.IsNullable);
+                        //}
                     }
 
                     // Special handling for OrderTransmittalRecordID column in BPComments table (FK to OrderTransmittal)
@@ -10057,6 +9940,15 @@ public class ExcelMigrationService : IExcelMigrationService
                         value != DBNull.Value && value != null)
                     {
                         value = TransformOrderTransmittalCostOverrunRiskRatingValue(value, mapping.IsNullable);
+                    }
+
+                    // Special handling for CostOverrunRiskRating column in OTRisk
+                    // Mapping requested: R1 -> 0, R2 -> 1, R3 -> 2
+                    if (isOTRisk &&
+                        string.Equals(mapping.SqlColumnName, "CostOverrunRiskRating", StringComparison.OrdinalIgnoreCase) &&
+                        value != DBNull.Value && value != null)
+                    {
+                        value = TransformOTRiskCostOverrunRiskRatingValue(value, mapping.IsNullable);
                     }
 
                     // Special handling for ContractualDeliveryRiskRating column in OrderTransmittal
@@ -13439,6 +13331,27 @@ public class ExcelMigrationService : IExcelMigrationService
             // Default to NULL if column is nullable, otherwise 0
             return isNullable ? DBNull.Value : 0;
         }
+    }
+
+    private object TransformOTRiskCostOverrunRiskRatingValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value)
+            return DBNull.Value;
+
+        var ratingStr = value.ToString()?.Trim() ?? string.Empty;
+
+        if (string.Equals(ratingStr, "R1", StringComparison.OrdinalIgnoreCase))
+            return 0;
+        if (string.Equals(ratingStr, "R2", StringComparison.OrdinalIgnoreCase))
+            return 1;
+        if (string.Equals(ratingStr, "R3", StringComparison.OrdinalIgnoreCase))
+            return 2;
+
+        // Keep already-numeric values intact when Excel already stores 0/1/2.
+        if (int.TryParse(ratingStr, out var numeric))
+            return numeric;
+
+        return isNullable ? DBNull.Value : 0;
     }
 
     private object TransformOrderTransmittalCustomerRelationshipRiskRatingValue(object value, bool isNullable)
