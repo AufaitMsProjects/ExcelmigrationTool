@@ -7719,17 +7719,20 @@ public class ExcelMigrationService : IExcelMigrationService
 
 
                     // Special handling for ProjectID column (FK to master.Project)
-                    // Validate ProjectID exists in master.Project table
+                    // PositiveRecall.SelectProjectId (FK_PositiveRecall_SelectProject) uses the same master.Project lookup.
+                    // Validate ProjectID / SelectProjectId exists in master.Project table
                     // Skip validation if table is "Project" itself (ProjectID is primary key, not FK)
                     if (!isProject &&
-                        string.Equals(mapping.SqlColumnName, "ProjectID", StringComparison.OrdinalIgnoreCase) &&
+                        (string.Equals(mapping.SqlColumnName, "ProjectID", StringComparison.OrdinalIgnoreCase) ||
+                         (isPositiveRecall && string.Equals(mapping.SqlColumnName, "SelectProjectId", StringComparison.OrdinalIgnoreCase))) &&
                         value != DBNull.Value && value != null)
                     {
                         // If value is numeric 0, convert to NULL
                         if ((value is int intVal && intVal == 0) ||
                             (value is long longVal && longVal == 0) ||
                             (value is short shortVal && shortVal == 0) ||
-                            (long.TryParse(value.ToString()?.Trim(), out var projectNumeric) && projectNumeric == 0))
+                            (long.TryParse(value.ToString()?.Trim(), out var projectNumeric) && projectNumeric == 0) ||
+                            IsValueZero(value))
                         {
                             value = DBNull.Value;
                         }
@@ -7764,7 +7767,7 @@ public class ExcelMigrationService : IExcelMigrationService
                                 if (resolvedProjectId == null)
                                 {
                                     // For CommunicationProtocol, OrderTransmittal, BankGuarantee, Turbine, and ElectricalInstrumentationDBO, if ProjectID doesn't exist, set to NULL instead of skipping
-                                    if (isCommunicationProtocol || isOrderTransmittal || isBankGuarantee || isTurbine || isElectricalInstrumentationDBO || isBPAttachments || isMechanicalDBO || isContractClearance || isAdditionalOrderBooking || isMinutesOfMeeting || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isInitialCashFlowPlan || isMonthlyPlanning || isMonthlyPlanningLineItem || isMonthlyActualCollectionPlanned || isMonthlyActualUnplannedCollection || isSpecificationRelease || isOrderReceiptAcknowledgement || isSparesOrderTransmittal || isAuditAction || isRCCA || isMonthlyProgressReport || isLetterOfCorrespondence || isHandoverProtocol)
+                                    if (isCommunicationProtocol || isOrderTransmittal || isBankGuarantee || isTurbine || isElectricalInstrumentationDBO || isBPAttachments || isMechanicalDBO || isContractClearance || isAdditionalOrderBooking || isMinutesOfMeeting || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isInitialCashFlowPlan || isMonthlyPlanning || isMonthlyPlanningLineItem || isMonthlyActualCollectionPlanned || isMonthlyActualUnplannedCollection || isSpecificationRelease || isOrderReceiptAcknowledgement || isSparesOrderTransmittal || isAuditAction || isRCCA || isMonthlyProgressReport || isLetterOfCorrespondence || isHandoverProtocol || isPositiveRecall)
                                     {
                                         value = DBNull.Value;
                                     }
