@@ -1133,6 +1133,8 @@ public class ExcelMigrationService : IExcelMigrationService
         { "project_id", "ProjectId" },
         { "customermasterid", "CustomerMasterId" },
         { "ordertransmittalid", "OrderTransmittalID" },
+        { "turbineid", "TurbineId" },
+        { "contractclearanceid", "ContractClearanceId" },
         { "k__vendor_select_dp", "VendorId" },
         { "status", "Status" },
         { "record_no", "RecordNo" },
@@ -8319,17 +8321,27 @@ public class ExcelMigrationService : IExcelMigrationService
                         value = DBNull.Value;
                     }
 
-                    // PositiveRecall (PositiveRecallMapping): customermasterid -> CustomerMasterId; zero -> NULL
+                    // PositiveRecall (PositiveRecallMapping): FK-style IDs; zero -> NULL
                     if (isPositiveRecall &&
                         (string.Equals(mapping.ExcelColumnName, "customermasterid", StringComparison.OrdinalIgnoreCase) ||
-                         string.Equals(mapping.SqlColumnName, "CustomerMasterId", StringComparison.OrdinalIgnoreCase)) &&
+                         string.Equals(mapping.SqlColumnName, "CustomerMasterId", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.ExcelColumnName, "ordertransmittalid", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "OrderTransmittalID", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "OrderTransmittalId", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.ExcelColumnName, "turbineid", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "TurbineId", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.ExcelColumnName, "contractclearanceid", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "ContractClearanceId", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.ExcelColumnName, "enduserid", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "EndUserID", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "EndUserId", StringComparison.OrdinalIgnoreCase)) &&
                         value != DBNull.Value && value != null &&
-                        ((value is int prCustInt && prCustInt == 0) ||
-                         (value is long prCustLong && prCustLong == 0) ||
-                         (value is short prCustShort && prCustShort == 0) ||
-                         (value is decimal prCustDec && prCustDec == 0m) ||
-                         (value is double prCustDouble && prCustDouble == 0d) ||
-                         (value is float prCustFloat && prCustFloat == 0f) ||
+                        ((value is int prFkInt && prFkInt == 0) ||
+                         (value is long prFkLong && prFkLong == 0) ||
+                         (value is short prFkShort && prFkShort == 0) ||
+                         (value is decimal prFkDec && prFkDec == 0m) ||
+                         (value is double prFkDouble && prFkDouble == 0d) ||
+                         (value is float prFkFloat && prFkFloat == 0f) ||
                          IsValueZero(value)))
                     {
                         value = DBNull.Value;
