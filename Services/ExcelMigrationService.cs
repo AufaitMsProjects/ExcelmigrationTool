@@ -7505,6 +7505,7 @@ public class ExcelMigrationService : IExcelMigrationService
                                         string.Equals(tableName, "MonthlyPlanning_LineItem", StringComparison.OrdinalIgnoreCase);
         var isMonthlyActualCollectionPlanned = string.Equals(tableName, "MonthlyActualCollectionPlanned", StringComparison.OrdinalIgnoreCase);
         var isMonthlyActualUnplannedCollection = string.Equals(tableName, "MonthlyActualUnplannedCollection", StringComparison.OrdinalIgnoreCase);
+        var isMonthlyCashInflow = string.Equals(tableName, "MonthlyCashInflow", StringComparison.OrdinalIgnoreCase);
         var isSpecificationRelease = string.Equals(tableName, "SpecificationRelease", StringComparison.OrdinalIgnoreCase);
         var isSparesOrderTransmittal = string.Equals(tableName, "SparesOrderTransmittal", StringComparison.OrdinalIgnoreCase);
         var isSparesOrderTransmittalLineItem = string.Equals(tableName, "SparesOrderTransmittalLineItem", StringComparison.OrdinalIgnoreCase);
@@ -8230,6 +8231,22 @@ public class ExcelMigrationService : IExcelMigrationService
                     if (isContractClearance &&
                         string.Equals(mapping.SqlColumnName, "CCRecordSelectionId", StringComparison.OrdinalIgnoreCase) &&
                         IsZeroValue(value))
+                    {
+                        value = DBNull.Value;
+                    }
+
+                    // MonthlyCashInflow: k__mci_sel_rec_pk -> OldMonthlyCashInflowId; zero -> NULL
+                    if (isMonthlyCashInflow &&
+                        (string.Equals(mapping.ExcelColumnName, "k__mci_sel_rec_pk", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "OldMonthlyCashInflowId", StringComparison.OrdinalIgnoreCase)) &&
+                        value != DBNull.Value && value != null &&
+                        ((value is int mciInt && mciInt == 0) ||
+                         (value is long mciLong && mciLong == 0) ||
+                         (value is short mciShort && mciShort == 0) ||
+                         (value is decimal mciDec && mciDec == 0m) ||
+                         (value is double mciDouble && mciDouble == 0d) ||
+                         (value is float mciFloat && mciFloat == 0f) ||
+                         IsValueZero(value)))
                     {
                         value = DBNull.Value;
                     }
