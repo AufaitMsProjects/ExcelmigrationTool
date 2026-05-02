@@ -1,3 +1,7 @@
 .vs/
 obj/
 bin/
+
+# Ad-hoc dotnet build output paths (not part of the app)
+bin_temp_verify/
+bin_verify_build/
