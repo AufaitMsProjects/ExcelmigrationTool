@@ -8323,7 +8323,9 @@ public class ExcelMigrationService : IExcelMigrationService
 
                     // PositiveRecall (PositiveRecallMapping): FK-style IDs; zero -> NULL
                     if (isPositiveRecall &&
-                        (string.Equals(mapping.ExcelColumnName, "customermasterid", StringComparison.OrdinalIgnoreCase) ||
+                        (string.Equals(mapping.ExcelColumnName, "project_id", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "ProjectId", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.ExcelColumnName, "customermasterid", StringComparison.OrdinalIgnoreCase) ||
                          string.Equals(mapping.SqlColumnName, "CustomerMasterId", StringComparison.OrdinalIgnoreCase) ||
                          string.Equals(mapping.ExcelColumnName, "ordertransmittalid", StringComparison.OrdinalIgnoreCase) ||
                          string.Equals(mapping.SqlColumnName, "OrderTransmittalID", StringComparison.OrdinalIgnoreCase) ||
