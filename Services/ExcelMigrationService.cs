@@ -7506,6 +7506,7 @@ public class ExcelMigrationService : IExcelMigrationService
         var isMonthlyActualCollectionPlanned = string.Equals(tableName, "MonthlyActualCollectionPlanned", StringComparison.OrdinalIgnoreCase);
         var isMonthlyActualUnplannedCollection = string.Equals(tableName, "MonthlyActualUnplannedCollection", StringComparison.OrdinalIgnoreCase);
         var isMonthlyCashInflow = string.Equals(tableName, "MonthlyCashInflow", StringComparison.OrdinalIgnoreCase);
+        var isMonthlyCashInflowMarketingAdvance = string.Equals(tableName, "MonthlyCashInflow_MarketingAdvance", StringComparison.OrdinalIgnoreCase);
         var isSpecificationRelease = string.Equals(tableName, "SpecificationRelease", StringComparison.OrdinalIgnoreCase);
         var isSparesOrderTransmittal = string.Equals(tableName, "SparesOrderTransmittal", StringComparison.OrdinalIgnoreCase);
         var isSparesOrderTransmittalLineItem = string.Equals(tableName, "SparesOrderTransmittalLineItem", StringComparison.OrdinalIgnoreCase);
@@ -8246,6 +8247,22 @@ public class ExcelMigrationService : IExcelMigrationService
                          (value is decimal mciDec && mciDec == 0m) ||
                          (value is double mciDouble && mciDouble == 0d) ||
                          (value is float mciFloat && mciFloat == 0f) ||
+                         IsValueZero(value)))
+                    {
+                        value = DBNull.Value;
+                    }
+
+                    // MonthlyCashInflow_MarketingAdvance: ordertransmittalid -> OrderTransmittalID; zero -> NULL
+                    if (isMonthlyCashInflowMarketingAdvance &&
+                        (string.Equals(mapping.ExcelColumnName, "ordertransmittalid", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "OrderTransmittalID", StringComparison.OrdinalIgnoreCase)) &&
+                        value != DBNull.Value && value != null &&
+                        ((value is int maOtInt && maOtInt == 0) ||
+                         (value is long maOtLong && maOtLong == 0) ||
+                         (value is short maOtShort && maOtShort == 0) ||
+                         (value is decimal maOtDec && maOtDec == 0m) ||
+                         (value is double maOtDouble && maOtDouble == 0d) ||
+                         (value is float maOtFloat && maOtFloat == 0f) ||
                          IsValueZero(value)))
                     {
                         value = DBNull.Value;
