@@ -8285,6 +8285,22 @@ public class ExcelMigrationService : IExcelMigrationService
                         value = DBNull.Value;
                     }
 
+                    // Risks (RisksMapping): k__risk_sel_risk_dpk -> OldRiskId; zero -> NULL
+                    if (isRisks &&
+                        (string.Equals(mapping.ExcelColumnName, "k__risk_sel_risk_dpk", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "OldRiskId", StringComparison.OrdinalIgnoreCase)) &&
+                        value != DBNull.Value && value != null &&
+                        ((value is int riskOldInt && riskOldInt == 0) ||
+                         (value is long riskOldLong && riskOldLong == 0) ||
+                         (value is short riskOldShort && riskOldShort == 0) ||
+                         (value is decimal riskOldDec && riskOldDec == 0m) ||
+                         (value is double riskOldDouble && riskOldDouble == 0d) ||
+                         (value is float riskOldFloat && riskOldFloat == 0f) ||
+                         IsValueZero(value)))
+                    {
+                        value = DBNull.Value;
+                    }
+
                     // Special handling for OrderTransmittalId in ContractClearance or AdditionalOrderBooking (FK to bp.OrderTransmittal)
                     // If the OrderTransmittal doesn't exist, set to NULL instead of failing the migration
                     if ((isContractClearance || isAdditionalOrderBooking || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isSpecificationRelease || isOrderReceiptAcknowledgement || isLetterOfCorrespondence || isHandoverProtocol) &&
