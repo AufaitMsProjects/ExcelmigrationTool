@@ -1503,7 +1503,10 @@ public class ExcelMigrationService : IExcelMigrationService
         { "ci_net_pay_li_da", "SubTotalINR" },
         { "ci_tot_net_payable_da", "TotalNetPayableAmountINR" },
         { "otid", "OrderTransmittalId" },
-        { "projectid", "ProjectId" }
+        { "projectid", "ProjectId" },
+        { "ci_mil_per_da","MilestonePercent"},
+        { "ci_type_of_payment_ipd","TypeOfPayment"},
+        { "uec_payment_terms","PaymentTerms"}
     };
 
     // Hardcoded column mapping for MonthlyPlanning table
@@ -7511,6 +7514,7 @@ public class ExcelMigrationService : IExcelMigrationService
         var isOTRisk = string.Equals(tableName, "OTRisk", StringComparison.OrdinalIgnoreCase);
         var isMonthlyProgressReport = tableName.StartsWith("MonthlyProgressReport", StringComparison.OrdinalIgnoreCase);
         var isOrderTransmittalNotes = string.Equals(tableName, "OrderTransmittal_Notes", StringComparison.OrdinalIgnoreCase);
+        var isHandoverProtocol = tableName.StartsWith("HandoverProtocol", StringComparison.OrdinalIgnoreCase);
 
         // Performance optimization: Cache FK lookups to avoid repeated database queries
         var projectIdCache = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
@@ -7526,6 +7530,7 @@ public class ExcelMigrationService : IExcelMigrationService
         var monthlyPlanningLineItemIdCache = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
         var monthlyActualCollectionIdCache = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
         var monthlyProgressReportIdCache = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+        var handoverProtocolIdCache = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
 
 
         // Add columns in the order of mappings
@@ -7752,7 +7757,7 @@ public class ExcelMigrationService : IExcelMigrationService
                                 if (resolvedProjectId == null)
                                 {
                                     // For CommunicationProtocol, OrderTransmittal, BankGuarantee, Turbine, and ElectricalInstrumentationDBO, if ProjectID doesn't exist, set to NULL instead of skipping
-                                    if (isCommunicationProtocol || isOrderTransmittal || isBankGuarantee || isTurbine || isElectricalInstrumentationDBO || isBPAttachments || isMechanicalDBO || isContractClearance || isAdditionalOrderBooking || isMinutesOfMeeting || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isInitialCashFlowPlan || isMonthlyPlanning || isMonthlyPlanningLineItem || isMonthlyActualCollectionPlanned || isMonthlyActualUnplannedCollection || isSpecificationRelease || isOrderReceiptAcknowledgement || isSparesOrderTransmittal || isAuditAction || isRCCA || isMonthlyProgressReport || isLetterOfCorrespondence)
+                                    if (isCommunicationProtocol || isOrderTransmittal || isBankGuarantee || isTurbine || isElectricalInstrumentationDBO || isBPAttachments || isMechanicalDBO || isContractClearance || isAdditionalOrderBooking || isMinutesOfMeeting || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isInitialCashFlowPlan || isMonthlyPlanning || isMonthlyPlanningLineItem || isMonthlyActualCollectionPlanned || isMonthlyActualUnplannedCollection || isSpecificationRelease || isOrderReceiptAcknowledgement || isSparesOrderTransmittal || isAuditAction || isRCCA || isMonthlyProgressReport || isLetterOfCorrespondence || isHandoverProtocol)
                                     {
                                         value = DBNull.Value;
                                     }
@@ -8047,6 +8052,27 @@ public class ExcelMigrationService : IExcelMigrationService
                         }
                     }
 
+                    // Special handling for HandoverProtocolId column in HandoverProtocolLineItem (FK to bp.HandoverProtocol)
+                    if (isHandoverProtocol &&
+                        string.Equals(mapping.SqlColumnName, "HandoverProtocolId", StringComparison.OrdinalIgnoreCase) &&
+                        value != DBNull.Value && value != null)
+                    {
+                        var hpValueKey = value.ToString()?.Trim() ?? string.Empty;
+
+                        if (!handoverProtocolIdCache.TryGetValue(hpValueKey, out var hpExists))
+                        {
+                            var exists = await RecordExistsAsync(connection, transaction, "bp", "HandoverProtocol", "HandoverProtocolId", hpValueKey, cancellationToken);
+                            hpExists = exists;
+                            handoverProtocolIdCache[hpValueKey] = hpExists;
+                        }
+
+                        if (!(bool)hpExists!)
+                        {
+                            // If parent record doesn't exist, set to NULL
+                            value = DBNull.Value;
+                        }
+                    }
+
                     // Special handling for MonthlyActualCollectionId column in MonthlyActualCollectionPlanned (FK to bp.MonthlyActualCollection)
                     if (isMonthlyActualCollectionPlanned &&
                         string.Equals(mapping.SqlColumnName, "MonthlyActualCollectionId", StringComparison.OrdinalIgnoreCase) &&
@@ -8210,7 +8236,7 @@ public class ExcelMigrationService : IExcelMigrationService
 
                     // Special handling for OrderTransmittalId in ContractClearance or AdditionalOrderBooking (FK to bp.OrderTransmittal)
                     // If the OrderTransmittal doesn't exist, set to NULL instead of failing the migration
-                    if ((isContractClearance || isAdditionalOrderBooking || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isSpecificationRelease || isOrderReceiptAcknowledgement || isLetterOfCorrespondence) &&
+                    if ((isContractClearance || isAdditionalOrderBooking || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isSpecificationRelease || isOrderReceiptAcknowledgement || isLetterOfCorrespondence || isHandoverProtocol) &&
                         string.Equals(mapping.SqlColumnName, "OrderTransmittalId", StringComparison.OrdinalIgnoreCase))
                     {
                         if (IsValueZero(value))
