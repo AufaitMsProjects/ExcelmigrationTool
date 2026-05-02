@@ -7509,6 +7509,7 @@ public class ExcelMigrationService : IExcelMigrationService
         var isMonthlyCashInflowMarketingAdvance = string.Equals(tableName, "MonthlyCashInflow_MarketingAdvance", StringComparison.OrdinalIgnoreCase);
         var isRisks = string.Equals(tableName, "Risks", StringComparison.OrdinalIgnoreCase);
         var isRiskMitigationPlan = string.Equals(tableName, "Risk_MitigationPlan", StringComparison.OrdinalIgnoreCase);
+        var isPositiveRecall = string.Equals(tableName, "PositiveRecall", StringComparison.OrdinalIgnoreCase);
         var isSpecificationRelease = string.Equals(tableName, "SpecificationRelease", StringComparison.OrdinalIgnoreCase);
         var isSparesOrderTransmittal = string.Equals(tableName, "SparesOrderTransmittal", StringComparison.OrdinalIgnoreCase);
         var isSparesOrderTransmittalLineItem = string.Equals(tableName, "SparesOrderTransmittalLineItem", StringComparison.OrdinalIgnoreCase);
@@ -8313,6 +8314,22 @@ public class ExcelMigrationService : IExcelMigrationService
                          (value is decimal rmpRiskDec && rmpRiskDec == 0m) ||
                          (value is double rmpRiskDouble && rmpRiskDouble == 0d) ||
                          (value is float rmpRiskFloat && rmpRiskFloat == 0f) ||
+                         IsValueZero(value)))
+                    {
+                        value = DBNull.Value;
+                    }
+
+                    // PositiveRecall (PositiveRecallMapping): customermasterid -> CustomerMasterId; zero -> NULL
+                    if (isPositiveRecall &&
+                        (string.Equals(mapping.ExcelColumnName, "customermasterid", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "CustomerMasterId", StringComparison.OrdinalIgnoreCase)) &&
+                        value != DBNull.Value && value != null &&
+                        ((value is int prCustInt && prCustInt == 0) ||
+                         (value is long prCustLong && prCustLong == 0) ||
+                         (value is short prCustShort && prCustShort == 0) ||
+                         (value is decimal prCustDec && prCustDec == 0m) ||
+                         (value is double prCustDouble && prCustDouble == 0d) ||
+                         (value is float prCustFloat && prCustFloat == 0f) ||
                          IsValueZero(value)))
                     {
                         value = DBNull.Value;
