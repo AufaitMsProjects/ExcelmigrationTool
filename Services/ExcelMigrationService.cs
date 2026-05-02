@@ -693,7 +693,13 @@ public class ExcelMigrationService : IExcelMigrationService
         { "uuu_record_last_update_date", "UpdatedAt" },
         { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
         { "uuu_record_last_update_user", "UpdatedName" },
-        { "cf_icp_for_rb", "InitialCashFlowPlanFor" }
+        { "cf_icp_for_rb", "InitialCashFlowPlanFor" },
+         { "ci_order_date_dop", "OrderDate" },
+    { "uot_cur5_pd", "Currency" },
+    { "ci_ex_rate_da", "ExchangeRate" },
+    { "ci_total_basic_amt_da", "TotalBasicAmountINR" },
+    { "ot_total_order_value_da", "OrderValue" },
+    { "ci_order_valueinr_da", "OrderValueINR" }
     };
 
     private static readonly Dictionary<string, string> MinutesOfMeetingMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
