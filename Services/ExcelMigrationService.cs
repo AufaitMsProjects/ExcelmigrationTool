@@ -7507,6 +7507,7 @@ public class ExcelMigrationService : IExcelMigrationService
         var isMonthlyActualUnplannedCollection = string.Equals(tableName, "MonthlyActualUnplannedCollection", StringComparison.OrdinalIgnoreCase);
         var isMonthlyCashInflow = string.Equals(tableName, "MonthlyCashInflow", StringComparison.OrdinalIgnoreCase);
         var isMonthlyCashInflowMarketingAdvance = string.Equals(tableName, "MonthlyCashInflow_MarketingAdvance", StringComparison.OrdinalIgnoreCase);
+        var isRisks = string.Equals(tableName, "Risks", StringComparison.OrdinalIgnoreCase);
         var isSpecificationRelease = string.Equals(tableName, "SpecificationRelease", StringComparison.OrdinalIgnoreCase);
         var isSparesOrderTransmittal = string.Equals(tableName, "SparesOrderTransmittal", StringComparison.OrdinalIgnoreCase);
         var isSparesOrderTransmittalLineItem = string.Equals(tableName, "SparesOrderTransmittalLineItem", StringComparison.OrdinalIgnoreCase);
@@ -8263,6 +8264,22 @@ public class ExcelMigrationService : IExcelMigrationService
                          (value is decimal maOtDec && maOtDec == 0m) ||
                          (value is double maOtDouble && maOtDouble == 0d) ||
                          (value is float maOtFloat && maOtFloat == 0f) ||
+                         IsValueZero(value)))
+                    {
+                        value = DBNull.Value;
+                    }
+
+                    // Risks (RisksMapping): ordertransmittalid -> OrderTransmittalId; zero -> NULL
+                    if (isRisks &&
+                        (string.Equals(mapping.ExcelColumnName, "ordertransmittalid", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "OrderTransmittalId", StringComparison.OrdinalIgnoreCase)) &&
+                        value != DBNull.Value && value != null &&
+                        ((value is int riskOtInt && riskOtInt == 0) ||
+                         (value is long riskOtLong && riskOtLong == 0) ||
+                         (value is short riskOtShort && riskOtShort == 0) ||
+                         (value is decimal riskOtDec && riskOtDec == 0m) ||
+                         (value is double riskOtDouble && riskOtDouble == 0d) ||
+                         (value is float riskOtFloat && riskOtFloat == 0f) ||
                          IsValueZero(value)))
                     {
                         value = DBNull.Value;
