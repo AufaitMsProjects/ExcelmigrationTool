@@ -7560,6 +7560,7 @@ public class ExcelMigrationService : IExcelMigrationService
         var rowErrors = new List<Models.RowErrorDetail>();
         var isCommunicationProtocol = string.Equals(tableName, "CommunicationProtocol", StringComparison.OrdinalIgnoreCase);
         var isBankGuarantee = string.Equals(tableName, "BankGuarantee", StringComparison.OrdinalIgnoreCase);
+        var isBankGuaranteeSpares = string.Equals(tableName, "BankGuaranteeSpares", StringComparison.OrdinalIgnoreCase);
         var isCustomerMaster = string.Equals(tableName, "CustomerMaster", StringComparison.OrdinalIgnoreCase);
         var isCustomerContacts = string.Equals(tableName, "CustomerContacts", StringComparison.OrdinalIgnoreCase);
         var isVendorMaster = string.Equals(tableName, "VendorMaster", StringComparison.OrdinalIgnoreCase);
@@ -8246,15 +8247,19 @@ public class ExcelMigrationService : IExcelMigrationService
                         }
                     }
 
-                    if (isSparesOrderTransmittalLineItem &&
+                    if ((isSparesOrderTransmittalLineItem || isBankGuaranteeSpares) &&
                         string.Equals(mapping.SqlColumnName, "SparesOrderTransmittalID", StringComparison.OrdinalIgnoreCase) &&
                         value != DBNull.Value && value != null)
                     {
-                        // If value is numeric 0, convert to NULL to avoid FK constraint error
+                        // If value is numeric 0, convert to NULL to avoid FK constraint error (FK_BankGuaranteeSpares_SparesOrderTransmittal, etc.)
                         if ((value is int intVal && intVal == 0) ||
                             (value is long longVal && longVal == 0) ||
                             (value is short shortVal && shortVal == 0) ||
-                            (long.TryParse(value.ToString()?.Trim(), out var numericVal) && numericVal == 0))
+                            (value is decimal decVal && decVal == 0m) ||
+                            (value is double dVal && dVal == 0d) ||
+                            (value is float fVal && fVal == 0f) ||
+                            (long.TryParse(value.ToString()?.Trim(), out var numericVal) && numericVal == 0) ||
+                            IsValueZero(value))
                         {
                             value = DBNull.Value;
                         }
