@@ -2785,6 +2785,7 @@ public class ExcelMigrationService : IExcelMigrationService
     // Hardcoded column mapping for MonthlyProgressReport table
     private static readonly Dictionary<string, string> MonthlyProgressReportMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
+        { "id","MonthlyProgressReportID"},
         { "record_no", "RecordNo" },
         { "status", "Status" },
         { "k__bp_creator_n", "BpCreator" },
