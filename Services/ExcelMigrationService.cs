@@ -7601,6 +7601,8 @@ public class ExcelMigrationService : IExcelMigrationService
         var isRCCA = string.Equals(tableName, "RCCA", StringComparison.OrdinalIgnoreCase);
         var isOTRisk = string.Equals(tableName, "OTRisk", StringComparison.OrdinalIgnoreCase);
         var isMonthlyProgressReport = tableName.StartsWith("MonthlyProgressReport", StringComparison.OrdinalIgnoreCase);
+        // Child tables only; parent "MonthlyProgressReport" carries PK MonthlyProgressReportID — must not run parent-exists FK logic on it
+        var isMonthlyProgressReportChild = tableName.StartsWith("MonthlyProgressReport_", StringComparison.OrdinalIgnoreCase);
         var isOrderTransmittalNotes = string.Equals(tableName, "OrderTransmittal_Notes", StringComparison.OrdinalIgnoreCase);
         var isHandoverProtocol = tableName.StartsWith("HandoverProtocol", StringComparison.OrdinalIgnoreCase);
         var isDeviationRequest = string.Equals(tableName, "DeviationRequest", StringComparison.OrdinalIgnoreCase);
@@ -8130,8 +8132,9 @@ public class ExcelMigrationService : IExcelMigrationService
                         }
                     }
 
-                    // Special handling for MonthlyProgressReportID column in MonthlyProgressReport line items (FK to bp.MonthlyProgressReport)
-                    if (isMonthlyProgressReport &&
+                    // Special handling for MonthlyProgressReportID column in MonthlyProgressReport line items (FK to bp.MonthlyProgressReport).
+                    // Exclude parent table: its MonthlyProgressReportID is the PK being inserted, not an FK to an existing row.
+                    if (isMonthlyProgressReportChild &&
                         string.Equals(mapping.SqlColumnName, "MonthlyProgressReportID", StringComparison.OrdinalIgnoreCase) &&
                         value != DBNull.Value && value != null)
                     {
