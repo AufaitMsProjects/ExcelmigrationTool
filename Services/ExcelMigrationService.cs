@@ -8247,11 +8247,12 @@ public class ExcelMigrationService : IExcelMigrationService
                         }
                     }
 
-                    if ((isSparesOrderTransmittalLineItem || isBankGuaranteeSpares) &&
-                        string.Equals(mapping.SqlColumnName, "SparesOrderTransmittalID", StringComparison.OrdinalIgnoreCase) &&
-                        value != DBNull.Value && value != null)
+                    if (value != DBNull.Value && value != null &&
+                        ((isSparesOrderTransmittalLineItem && string.Equals(mapping.SqlColumnName, "SparesOrderTransmittalID", StringComparison.OrdinalIgnoreCase)) ||
+                         (isBankGuaranteeSpares && string.Equals(mapping.SqlColumnName, "SparesOrderTransmittalID", StringComparison.OrdinalIgnoreCase)) ||
+                         (isBankGuaranteeSpares && string.Equals(mapping.SqlColumnName, "SparesProvisionalOrderTransmittalId", StringComparison.OrdinalIgnoreCase))))
                     {
-                        // If value is numeric 0, convert to NULL to avoid FK constraint error (FK_BankGuaranteeSpares_SparesOrderTransmittal, etc.)
+                        // If value is numeric 0, convert to NULL to avoid FK errors (FK_BankGuaranteeSpares_SparesOrderTransmittal / SparesProvisionalOrderTransmittal, SparesOrderTransmittalLineItem, etc.)
                         if ((value is int intVal && intVal == 0) ||
                             (value is long longVal && longVal == 0) ||
                             (value is short shortVal && shortVal == 0) ||
