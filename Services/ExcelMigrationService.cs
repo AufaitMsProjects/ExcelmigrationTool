@@ -9974,13 +9974,22 @@ public class ExcelMigrationService : IExcelMigrationService
                         value = TransformOrderTransmittalCostOverrunRiskRatingValue(value, mapping.IsNullable);
                     }
 
-                    // Special handling for CostOverrunRiskRating column in OTRisk
-                    // Mapping requested: R1 -> 0, R2 -> 1, R3 -> 2
-                    if (isOTRisk &&
-                        string.Equals(mapping.SqlColumnName, "CostOverrunRiskRating", StringComparison.OrdinalIgnoreCase) &&
-                        value != DBNull.Value && value != null)
+                    // Special handling for all RiskRating and Impact columns in OTRisk
+                    if (isOTRisk && value != DBNull.Value && value != null)
                     {
-                        value = TransformOTRiskCostOverrunRiskRatingValue(value, mapping.IsNullable);
+                        var colName = mapping.SqlColumnName;
+                        // Mapping requested: R1 -> 0, R2 -> 1, R3 -> 2
+                        if (colName.EndsWith("RiskRating", StringComparison.OrdinalIgnoreCase) || 
+                            colName.EndsWith("RiskRatingPM", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformOTRiskRiskRatingValue(value, mapping.IsNullable);
+                        }
+                        // Mapping requested: Low -> 0, Medium -> 1, High -> 2
+                        else if (colName.EndsWith("Impact", StringComparison.OrdinalIgnoreCase) || 
+                                 colName.EndsWith("ImpactPM", StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = TransformOTRiskImpactValue(value, mapping.IsNullable);
+                        }
                     }
 
                     // Special handling for ContractualDeliveryRiskRating column in OrderTransmittal
@@ -13365,7 +13374,7 @@ public class ExcelMigrationService : IExcelMigrationService
         }
     }
 
-    private object TransformOTRiskCostOverrunRiskRatingValue(object value, bool isNullable)
+    private object TransformOTRiskRiskRatingValue(object value, bool isNullable)
     {
         if (value == null || value == DBNull.Value)
             return DBNull.Value;
@@ -13381,6 +13390,27 @@ public class ExcelMigrationService : IExcelMigrationService
 
         // Keep already-numeric values intact when Excel already stores 0/1/2.
         if (int.TryParse(ratingStr, out var numeric))
+            return numeric;
+
+        return isNullable ? DBNull.Value : 0;
+    }
+
+    private object TransformOTRiskImpactValue(object value, bool isNullable)
+    {
+        if (value == null || value == DBNull.Value)
+            return DBNull.Value;
+
+        var impactStr = value.ToString()?.Trim() ?? string.Empty;
+
+        if (string.Equals(impactStr, "Low", StringComparison.OrdinalIgnoreCase))
+            return 0;
+        if (string.Equals(impactStr, "Medium", StringComparison.OrdinalIgnoreCase))
+            return 1;
+        if (string.Equals(impactStr, "High", StringComparison.OrdinalIgnoreCase))
+            return 2;
+
+        // Keep already-numeric values intact when Excel already stores 0/1/2.
+        if (int.TryParse(impactStr, out var numeric))
             return numeric;
 
         return isNullable ? DBNull.Value : 0;
