@@ -3025,6 +3025,7 @@ public class ExcelMigrationService : IExcelMigrationService
             string.Equals(tableName, "LiquidatedDamage", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(tableName, "liquidated_damage", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(tableName, "Payment_ENC", StringComparison.OrdinalIgnoreCase) ||
+
             string.Equals(tableName, "payment_enc", StringComparison.OrdinalIgnoreCase))
         {
             return await MigrateToOrderTransmittalTablesAsync(connectionString, schemaName, tableName, excelData, cancellationToken);
@@ -3544,6 +3545,28 @@ public class ExcelMigrationService : IExcelMigrationService
                 var otTables = await GetTablesWithPrefixAsync(connection, schemaName, "OrderTransmittal", cancellationToken);
                 matchingTables.AddRange(otTables);
                 // Do NOT include payment_supply unless explicitly requested
+
+                // If the caller passed a specific child table (e.g. OrderTransmittal_FormatsReviewed), migrate only that
+                // table — not every OrderTransmittal_* table (otherwise the same Excel is MERGEd into all children in
+                // sort order, e.g. OrderTransmittal_CommercialClearance before FormatsReviewed, and the requested name is ignored).
+                var requestedOt = tableNamePrefix.Trim();
+                if (!string.Equals(requestedOt, "OrderTransmittal", StringComparison.OrdinalIgnoreCase) &&
+                    requestedOt.StartsWith("OrderTransmittal", StringComparison.OrdinalIgnoreCase))
+                {
+                    var singleOt = otTables.FirstOrDefault(t => string.Equals(t, requestedOt, StringComparison.OrdinalIgnoreCase));
+                    if (singleOt != null)
+                    {
+                        matchingTables.Clear();
+                        matchingTables.Add(singleOt);
+                    }
+                    else
+                    {
+                        response.ErrorMessages.Add(
+                            $"Table '{requestedOt}' was not found in schema '{schemaName}'. " +
+                            $"Available OrderTransmittal tables: {string.Join(", ", otTables)}.");
+                        return response;
+                    }
+                }
             }
 
             if (matchingTables.Count == 0)
