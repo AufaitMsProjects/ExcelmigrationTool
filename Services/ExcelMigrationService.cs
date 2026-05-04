@@ -307,6 +307,8 @@ public class ExcelMigrationService : IExcelMigrationService
         { "project_id", "ProjectId" },
         { "ordertransmittalid", "OrderTransmittalId" },
         { "customermasterid", "CustomerMasterId" },
+        { "k__uot_sold_party_dp", "CustomerID" },
+        { "customerid", "CustomerID" },
         { "enduserid", "EndUserId" },
         { "k__rcca_ref_bpp", "RCCAId" },
         { "k__dev_insp_bpp", "InspectionId" },
@@ -415,7 +417,9 @@ public class ExcelMigrationService : IExcelMigrationService
         { "id", "DesignRecommendationId" },
         { "project_id", "ProjectId" },
         { "ordertransmittalid", "OrderTransmittalId" },
-        { "customermasterid", "CustomerMasterId" },
+        { "customermasterid", "CustomerID" },
+        { "k__uot_sold_party_dp", "CustomerID" },
+        { "customerid", "CustomerID" },
         { "enduserid", "EndUserId" },
         { "k__dev_insp_bpp", "InspectionId" },
         { "dev_rework_res_upk", "ReworkResponsible" },
@@ -1133,6 +1137,8 @@ public class ExcelMigrationService : IExcelMigrationService
         { "project_id", "ProjectId" },
         { "customermasterid", "CustomerMasterId" },
         { "ordertransmittalid", "OrderTransmittalID" },
+        { "turbineid", "TurbineId" },
+        { "contractclearanceid", "ContractClearanceId" },
         { "k__vendor_select_dp", "VendorId" },
         { "status", "Status" },
         { "record_no", "RecordNo" },
@@ -1357,6 +1363,7 @@ public class ExcelMigrationService : IExcelMigrationService
         { "ia_scheduled_start_date", "ScheduledStartDate" },
         { "ia_scheduled_finish_date", "ScheduledFinishDate" },
         { "k__vendor_select_dp", "VendorId" },
+        { "vendorid", "VendorId" },
         { "dev_supp_name_sdt250", "SupplierName" },
         { "ia_auditee_upk", "AuditeeName" },
         { "ia_ext_aud_sdt250", "ExternalAuditee" },
@@ -1413,6 +1420,46 @@ public class ExcelMigrationService : IExcelMigrationService
         { "ia_requirement_df", "Requirement" },
         { "ia_evidence_df", "Evidence" },
         { "uuu_li_last_update_date", "UpdatedAt" }
+    };
+
+    // Hardcoded column mapping for PreDispatchInspectionReport table
+    private static readonly Dictionary<string, string> PreDispatchInspectionReportMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "PreDispatchInspectionReportId" },
+        { "ordertransmittalid", "OrderTransmittalId" },
+        { "project_id", "ProjectId" },
+        { "record_no", "RecordNo" },
+        { "status", "Status" },
+        { "mrt_test_bed_sdt250", "TestBedNo" },
+        { "mrt_loc_sdt250", "Location" },
+        { "pdi_offered_by_upk", "OfferedBy" },
+        { "mrt_insp_by_upk", "InspectedBy" },
+        { "in_date_of_inspection", "DateOfInspection" },
+        { "pdi_rep_stat_ipd", "ReportStatus" },
+        { "mrt_no_pr_da", "NoOfOpenPositiveRecalls" },
+        { "mrt_no_dr_da", "NoOfOpenDeviationRequests" },
+        { "mrt_no_nc_da", "NoOfOpenNcs" },
+        { "creator_id", "CreatedName" },
+        { "uuu_creation_date", "CreatedAt" },
+        { "uuu_record_last_update_user", "UpdatedName" },
+        { "uuu_record_last_update_date", "UpdatedAt" },
+        { "k__creator_id", "PrimaveraCreatedId" },
+        { "k__uuu_record_last_update_user", "PrimaveraUpdatedId" },
+        { "k__pdi_offered_by_upk", "PrimaveraOfferedById" },
+        { "k__mrt_insp_by_upk", "PrimaveraInspectedById" }
+    };
+
+    // Hardcoded column mapping for PreDispatchInspectionReport_LineItem table
+    private static readonly Dictionary<string, string> PreDispatchInspectionReportLineItemMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "mrt_obs_sdt500", "Observation" },
+        { "pdi_action_pd", "ActionRequired" },
+        { "mrt_resp_person_upk", "ResponsiblePerson" },
+        { "mrt_resp_dep_pd", "ResponsibleDepartment" },
+        { "mrt_comp_sdt500", "Compliance" },
+        { "record_id", "PreDispatchInspectionReportId" },
+        { "id", "PreDispatchInspectionReportLineItemId" },
+        { "k__mrt_resp_person_upk", "PrimaveraResponsbilePersonId" }
     };
 
     // Hardcoded column mapping for OTRisk table
@@ -2738,6 +2785,7 @@ public class ExcelMigrationService : IExcelMigrationService
     // Hardcoded column mapping for MonthlyProgressReport table
     private static readonly Dictionary<string, string> MonthlyProgressReportMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
+        { "id","MonthlyProgressReportID"},
         { "record_no", "RecordNo" },
         { "status", "Status" },
         { "k__bp_creator_n", "BpCreator" },
@@ -2977,6 +3025,7 @@ public class ExcelMigrationService : IExcelMigrationService
             string.Equals(tableName, "LiquidatedDamage", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(tableName, "liquidated_damage", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(tableName, "Payment_ENC", StringComparison.OrdinalIgnoreCase) ||
+
             string.Equals(tableName, "payment_enc", StringComparison.OrdinalIgnoreCase))
         {
             return await MigrateToOrderTransmittalTablesAsync(connectionString, schemaName, tableName, excelData, cancellationToken);
@@ -3011,6 +3060,20 @@ public class ExcelMigrationService : IExcelMigrationService
             await using var designRecommendationConnection = new SqlConnection(connectionString);
             await designRecommendationConnection.OpenAsync(cancellationToken);
             return await MigrateToSingleTableAsync(designRecommendationConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "PreDispatchInspectionReport", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var preDispatchInspectionReportConnection = new SqlConnection(connectionString);
+            await preDispatchInspectionReportConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(preDispatchInspectionReportConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
+        }
+
+        if (string.Equals(tableName, "PreDispatchInspectionReport_LineItem", StringComparison.OrdinalIgnoreCase))
+        {
+            await using var preDispatchInspectionReportLineItemConnection = new SqlConnection(connectionString);
+            await preDispatchInspectionReportLineItemConnection.OpenAsync(cancellationToken);
+            return await MigrateToSingleTableAsync(preDispatchInspectionReportLineItemConnection, schemaName, tableName, excelData, attachmentRecordType, cancellationToken);
         }
 
         if (string.Equals(tableName, "FrameMaster", StringComparison.OrdinalIgnoreCase))
@@ -3482,6 +3545,28 @@ public class ExcelMigrationService : IExcelMigrationService
                 var otTables = await GetTablesWithPrefixAsync(connection, schemaName, "OrderTransmittal", cancellationToken);
                 matchingTables.AddRange(otTables);
                 // Do NOT include payment_supply unless explicitly requested
+
+                // If the caller passed a specific child table (e.g. OrderTransmittal_FormatsReviewed), migrate only that
+                // table — not every OrderTransmittal_* table (otherwise the same Excel is MERGEd into all children in
+                // sort order, e.g. OrderTransmittal_CommercialClearance before FormatsReviewed, and the requested name is ignored).
+                var requestedOt = tableNamePrefix.Trim();
+                if (!string.Equals(requestedOt, "OrderTransmittal", StringComparison.OrdinalIgnoreCase) &&
+                    requestedOt.StartsWith("OrderTransmittal", StringComparison.OrdinalIgnoreCase))
+                {
+                    var singleOt = otTables.FirstOrDefault(t => string.Equals(t, requestedOt, StringComparison.OrdinalIgnoreCase));
+                    if (singleOt != null)
+                    {
+                        matchingTables.Clear();
+                        matchingTables.Add(singleOt);
+                    }
+                    else
+                    {
+                        response.ErrorMessages.Add(
+                            $"Table '{requestedOt}' was not found in schema '{schemaName}'. " +
+                            $"Available OrderTransmittal tables: {string.Join(", ", otTables)}.");
+                        return response;
+                    }
+                }
             }
 
             if (matchingTables.Count == 0)
@@ -4751,6 +4836,18 @@ public class ExcelMigrationService : IExcelMigrationService
             return MatchColumnsForDesignRecommendation(excelData, tableMetadata);
         }
 
+        // Check if this is PreDispatchInspectionReport table - use hardcoded mapping
+        if (string.Equals(tableName, "PreDispatchInspectionReport", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForPreDispatchInspectionReport(excelData, tableMetadata);
+        }
+
+        // Check if this is PreDispatchInspectionReport_LineItem table - use hardcoded mapping
+        if (string.Equals(tableName, "PreDispatchInspectionReport_LineItem", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForPreDispatchInspectionReportLineItem(excelData, tableMetadata);
+        }
+
         // Check if this is FrameMaster table - use hardcoded mapping
         if (string.Equals(tableName, "FrameMaster", StringComparison.OrdinalIgnoreCase))
         {
@@ -5978,6 +6075,16 @@ public class ExcelMigrationService : IExcelMigrationService
     private List<ColumnMapping> MatchColumnsForDesignRecommendation(DataTable excelData, List<ColumnMetadata> tableMetadata)
     {
         return MatchColumnsUsingDictionary(excelData, tableMetadata, DesignRecommendationMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForPreDispatchInspectionReport(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, PreDispatchInspectionReportMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForPreDispatchInspectionReportLineItem(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, PreDispatchInspectionReportLineItemMapping);
     }
 
     private List<ColumnMapping> MatchColumnsForFrameMaster(DataTable excelData, List<ColumnMetadata> tableMetadata)
@@ -7476,6 +7583,7 @@ public class ExcelMigrationService : IExcelMigrationService
         var rowErrors = new List<Models.RowErrorDetail>();
         var isCommunicationProtocol = string.Equals(tableName, "CommunicationProtocol", StringComparison.OrdinalIgnoreCase);
         var isBankGuarantee = string.Equals(tableName, "BankGuarantee", StringComparison.OrdinalIgnoreCase);
+        var isBankGuaranteeSpares = string.Equals(tableName, "BankGuaranteeSpares", StringComparison.OrdinalIgnoreCase);
         var isCustomerMaster = string.Equals(tableName, "CustomerMaster", StringComparison.OrdinalIgnoreCase);
         var isCustomerContacts = string.Equals(tableName, "CustomerContacts", StringComparison.OrdinalIgnoreCase);
         var isVendorMaster = string.Equals(tableName, "VendorMaster", StringComparison.OrdinalIgnoreCase);
@@ -7505,6 +7613,11 @@ public class ExcelMigrationService : IExcelMigrationService
                                         string.Equals(tableName, "MonthlyPlanning_LineItem", StringComparison.OrdinalIgnoreCase);
         var isMonthlyActualCollectionPlanned = string.Equals(tableName, "MonthlyActualCollectionPlanned", StringComparison.OrdinalIgnoreCase);
         var isMonthlyActualUnplannedCollection = string.Equals(tableName, "MonthlyActualUnplannedCollection", StringComparison.OrdinalIgnoreCase);
+        var isMonthlyCashInflow = string.Equals(tableName, "MonthlyCashInflow", StringComparison.OrdinalIgnoreCase);
+        var isMonthlyCashInflowMarketingAdvance = string.Equals(tableName, "MonthlyCashInflow_MarketingAdvance", StringComparison.OrdinalIgnoreCase);
+        var isRisks = string.Equals(tableName, "Risks", StringComparison.OrdinalIgnoreCase);
+        var isRiskMitigationPlan = string.Equals(tableName, "Risk_MitigationPlan", StringComparison.OrdinalIgnoreCase);
+        var isPositiveRecall = string.Equals(tableName, "PositiveRecall", StringComparison.OrdinalIgnoreCase);
         var isSpecificationRelease = string.Equals(tableName, "SpecificationRelease", StringComparison.OrdinalIgnoreCase);
         var isSparesOrderTransmittal = string.Equals(tableName, "SparesOrderTransmittal", StringComparison.OrdinalIgnoreCase);
         var isSparesOrderTransmittalLineItem = string.Equals(tableName, "SparesOrderTransmittalLineItem", StringComparison.OrdinalIgnoreCase);
@@ -7513,8 +7626,15 @@ public class ExcelMigrationService : IExcelMigrationService
         var isRCCA = string.Equals(tableName, "RCCA", StringComparison.OrdinalIgnoreCase);
         var isOTRisk = string.Equals(tableName, "OTRisk", StringComparison.OrdinalIgnoreCase);
         var isMonthlyProgressReport = tableName.StartsWith("MonthlyProgressReport", StringComparison.OrdinalIgnoreCase);
+        // Child tables only; parent "MonthlyProgressReport" carries PK MonthlyProgressReportID — must not run parent-exists FK logic on it
+        var isMonthlyProgressReportChild = tableName.StartsWith("MonthlyProgressReport_", StringComparison.OrdinalIgnoreCase);
         var isOrderTransmittalNotes = string.Equals(tableName, "OrderTransmittal_Notes", StringComparison.OrdinalIgnoreCase);
         var isHandoverProtocol = tableName.StartsWith("HandoverProtocol", StringComparison.OrdinalIgnoreCase);
+        var isDeviationRequest = string.Equals(tableName, "DeviationRequest", StringComparison.OrdinalIgnoreCase);
+        var isDesignRecommendation = string.Equals(tableName, "DesignRecommendation", StringComparison.OrdinalIgnoreCase);
+        var isInternalAudit = string.Equals(tableName, "InternalAudit", StringComparison.OrdinalIgnoreCase);
+        var isPreDispatchInspectionReport = string.Equals(tableName, "PreDispatchInspectionReport", StringComparison.OrdinalIgnoreCase);
+        var isPreDispatchInspectionReportLineItem = string.Equals(tableName, "PreDispatchInspectionReport_LineItem", StringComparison.OrdinalIgnoreCase);
 
         // Performance optimization: Cache FK lookups to avoid repeated database queries
         var projectIdCache = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
@@ -7531,7 +7651,10 @@ public class ExcelMigrationService : IExcelMigrationService
         var monthlyActualCollectionIdCache = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
         var monthlyProgressReportIdCache = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
         var handoverProtocolIdCache = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
-
+        var rccaFkExistsCache = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+        var inspectionFkExistsCache = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+        var vendorFkExistsCache = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+        var preDispatchInspectionReportParentIdCache = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
 
         // Add columns in the order of mappings
         foreach (var mapping in mappings)
@@ -7712,17 +7835,20 @@ public class ExcelMigrationService : IExcelMigrationService
 
 
                     // Special handling for ProjectID column (FK to master.Project)
-                    // Validate ProjectID exists in master.Project table
+                    // PositiveRecall.SelectProjectId (FK_PositiveRecall_SelectProject) uses the same master.Project lookup.
+                    // Validate ProjectID / SelectProjectId exists in master.Project table
                     // Skip validation if table is "Project" itself (ProjectID is primary key, not FK)
                     if (!isProject &&
-                        string.Equals(mapping.SqlColumnName, "ProjectID", StringComparison.OrdinalIgnoreCase) &&
+                        (string.Equals(mapping.SqlColumnName, "ProjectID", StringComparison.OrdinalIgnoreCase) ||
+                         (isPositiveRecall && string.Equals(mapping.SqlColumnName, "SelectProjectId", StringComparison.OrdinalIgnoreCase))) &&
                         value != DBNull.Value && value != null)
                     {
                         // If value is numeric 0, convert to NULL
                         if ((value is int intVal && intVal == 0) ||
                             (value is long longVal && longVal == 0) ||
                             (value is short shortVal && shortVal == 0) ||
-                            (long.TryParse(value.ToString()?.Trim(), out var projectNumeric) && projectNumeric == 0))
+                            (long.TryParse(value.ToString()?.Trim(), out var projectNumeric) && projectNumeric == 0) ||
+                            IsValueZero(value))
                         {
                             value = DBNull.Value;
                         }
@@ -7757,7 +7883,7 @@ public class ExcelMigrationService : IExcelMigrationService
                                 if (resolvedProjectId == null)
                                 {
                                     // For CommunicationProtocol, OrderTransmittal, BankGuarantee, Turbine, and ElectricalInstrumentationDBO, if ProjectID doesn't exist, set to NULL instead of skipping
-                                    if (isCommunicationProtocol || isOrderTransmittal || isBankGuarantee || isTurbine || isElectricalInstrumentationDBO || isBPAttachments || isMechanicalDBO || isContractClearance || isAdditionalOrderBooking || isMinutesOfMeeting || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isInitialCashFlowPlan || isMonthlyPlanning || isMonthlyPlanningLineItem || isMonthlyActualCollectionPlanned || isMonthlyActualUnplannedCollection || isSpecificationRelease || isOrderReceiptAcknowledgement || isSparesOrderTransmittal || isAuditAction || isRCCA || isMonthlyProgressReport || isLetterOfCorrespondence || isHandoverProtocol)
+                                    if (isCommunicationProtocol || isOrderTransmittal || isBankGuarantee || isTurbine || isElectricalInstrumentationDBO || isBPAttachments || isMechanicalDBO || isContractClearance || isAdditionalOrderBooking || isMinutesOfMeeting || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isInitialCashFlowPlan || isMonthlyPlanning || isMonthlyPlanningLineItem || isMonthlyActualCollectionPlanned || isMonthlyActualUnplannedCollection || isSpecificationRelease || isOrderReceiptAcknowledgement || isSparesOrderTransmittal || isAuditAction || isRCCA || isMonthlyProgressReport || isLetterOfCorrespondence || isHandoverProtocol || isPositiveRecall || isDesignRecommendation || isInternalAudit || isPreDispatchInspectionReport)
                                     {
                                         value = DBNull.Value;
                                     }
@@ -8031,8 +8157,9 @@ public class ExcelMigrationService : IExcelMigrationService
                         }
                     }
 
-                    // Special handling for MonthlyProgressReportID column in MonthlyProgressReport line items (FK to bp.MonthlyProgressReport)
-                    if (isMonthlyProgressReport &&
+                    // Special handling for MonthlyProgressReportID column in MonthlyProgressReport line items (FK to bp.MonthlyProgressReport).
+                    // Exclude parent table: its MonthlyProgressReportID is the PK being inserted, not an FK to an existing row.
+                    if (isMonthlyProgressReportChild &&
                         string.Equals(mapping.SqlColumnName, "MonthlyProgressReportID", StringComparison.OrdinalIgnoreCase) &&
                         value != DBNull.Value && value != null)
                     {
@@ -8073,6 +8200,57 @@ public class ExcelMigrationService : IExcelMigrationService
                         }
                     }
 
+                    // PreDispatchInspectionReport_LineItem: PreDispatchInspectionReportId (record_id) must exist in bp.PreDispatchInspectionReport
+                    if (isPreDispatchInspectionReportLineItem &&
+                        (string.Equals(mapping.SqlColumnName, "PreDispatchInspectionReportId", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.ExcelColumnName, "record_id", StringComparison.OrdinalIgnoreCase)) &&
+                        value != DBNull.Value && value != null)
+                    {
+                        if (IsValueZero(value) ||
+                            (value is int pdirParInt && pdirParInt == 0) ||
+                            (value is long pdirParLong && pdirParLong == 0) ||
+                            (value is short pdirParShort && pdirParShort == 0) ||
+                            (value is decimal pdirParDec && pdirParDec == 0m) ||
+                            (value is double pdirParDouble && pdirParDouble == 0d) ||
+                            (value is float pdirParFloat && pdirParFloat == 0f))
+                        {
+                            value = DBNull.Value;
+                        }
+                        else
+                        {
+                            var pdirParentKey = value.ToString()?.Trim() ?? string.Empty;
+
+                            if (!preDispatchInspectionReportParentIdCache.TryGetValue(pdirParentKey, out var pdirParentExists))
+                            {
+                                var exists = await RecordExistsAsync(connection, transaction, "bp", "PreDispatchInspectionReport", "PreDispatchInspectionReportId", pdirParentKey, cancellationToken);
+                                pdirParentExists = exists;
+                                preDispatchInspectionReportParentIdCache[pdirParentKey] = pdirParentExists;
+                            }
+
+                            if (!(bool)pdirParentExists!)
+                            {
+                                value = DBNull.Value;
+                            }
+                        }
+                    }
+
+                    // PreDispatchInspectionReport_LineItem: Primavera responsible person id; zero -> NULL (column name per mapping)
+                    if (isPreDispatchInspectionReportLineItem &&
+                        (string.Equals(mapping.ExcelColumnName, "k__mrt_resp_person_upk", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "PrimaveraResponsbilePersonId", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "PrimaveraResponsiblePersonId", StringComparison.OrdinalIgnoreCase)) &&
+                        value != DBNull.Value && value != null &&
+                        ((value is int pdirPrimaInt && pdirPrimaInt == 0) ||
+                         (value is long pdirPrimaLong && pdirPrimaLong == 0) ||
+                         (value is short pdirPrimaShort && pdirPrimaShort == 0) ||
+                         (value is decimal pdirPrimaDec && pdirPrimaDec == 0m) ||
+                         (value is double pdirPrimaDouble && pdirPrimaDouble == 0d) ||
+                         (value is float pdirPrimaFloat && pdirPrimaFloat == 0f) ||
+                         IsValueZero(value)))
+                    {
+                        value = DBNull.Value;
+                    }
+
                     // Special handling for MonthlyActualCollectionId column in MonthlyActualCollectionPlanned (FK to bp.MonthlyActualCollection)
                     if (isMonthlyActualCollectionPlanned &&
                         string.Equals(mapping.SqlColumnName, "MonthlyActualCollectionId", StringComparison.OrdinalIgnoreCase) &&
@@ -8092,15 +8270,20 @@ public class ExcelMigrationService : IExcelMigrationService
                         }
                     }
 
-                    if (isSparesOrderTransmittalLineItem &&
-                        string.Equals(mapping.SqlColumnName, "SparesOrderTransmittalID", StringComparison.OrdinalIgnoreCase) &&
-                        value != DBNull.Value && value != null)
+                    if (value != DBNull.Value && value != null &&
+                        ((isSparesOrderTransmittalLineItem && string.Equals(mapping.SqlColumnName, "SparesOrderTransmittalID", StringComparison.OrdinalIgnoreCase)) ||
+                         (isBankGuaranteeSpares && string.Equals(mapping.SqlColumnName, "SparesOrderTransmittalID", StringComparison.OrdinalIgnoreCase)) ||
+                         (isBankGuaranteeSpares && string.Equals(mapping.SqlColumnName, "SparesProvisionalOrderTransmittalId", StringComparison.OrdinalIgnoreCase))))
                     {
-                        // If value is numeric 0, convert to NULL to avoid FK constraint error
+                        // If value is numeric 0, convert to NULL to avoid FK errors (FK_BankGuaranteeSpares_SparesOrderTransmittal / SparesProvisionalOrderTransmittal, SparesOrderTransmittalLineItem, etc.)
                         if ((value is int intVal && intVal == 0) ||
                             (value is long longVal && longVal == 0) ||
                             (value is short shortVal && shortVal == 0) ||
-                            (long.TryParse(value.ToString()?.Trim(), out var numericVal) && numericVal == 0))
+                            (value is decimal decVal && decVal == 0m) ||
+                            (value is double dVal && dVal == 0d) ||
+                            (value is float fVal && fVal == 0f) ||
+                            (long.TryParse(value.ToString()?.Trim(), out var numericVal) && numericVal == 0) ||
+                            IsValueZero(value))
                         {
                             value = DBNull.Value;
                         }
@@ -8191,37 +8374,72 @@ public class ExcelMigrationService : IExcelMigrationService
 
                     // Special handling for CustomerMasterID and EndUserID in ContractClearance (FK to master.CustomerMaster) 
                     // Special handling for CustomerId in CommunicationProtocol (FK to master.CustomerMaster)
+                    // DeviationRequest / DesignRecommendation / Spares EndUserID / etc.: same resolve; zero -> NULL before lookup
                     // If the customer doesn't exist, set to NULL instead of failing the migration
                     if ( ((isContractClearance && (string.Equals(mapping.SqlColumnName, "CustomerMasterID", StringComparison.OrdinalIgnoreCase) || string.Equals(mapping.SqlColumnName, "EndUserID", StringComparison.OrdinalIgnoreCase))) ||
                           (isCommunicationProtocol && string.Equals(mapping.SqlColumnName, "CustomerId", StringComparison.OrdinalIgnoreCase)) ||
                           (isLetterOfCorrespondence && (string.Equals(mapping.SqlColumnName, "CustomerMasterID", StringComparison.OrdinalIgnoreCase) || string.Equals(mapping.SqlColumnName, "EndUserID", StringComparison.OrdinalIgnoreCase))) ||
-                          (isSparesOrderTransmittal && (string.Equals(mapping.SqlColumnName, "CustomerID", StringComparison.OrdinalIgnoreCase) || string.Equals(mapping.SqlColumnName, "EndUserID", StringComparison.OrdinalIgnoreCase)))) &&
+                          (isSparesOrderTransmittal && (string.Equals(mapping.SqlColumnName, "CustomerID", StringComparison.OrdinalIgnoreCase) || string.Equals(mapping.SqlColumnName, "EndUserID", StringComparison.OrdinalIgnoreCase))) ||
+                          (isDeviationRequest && (string.Equals(mapping.SqlColumnName, "CustomerID", StringComparison.OrdinalIgnoreCase) ||
+                                                  string.Equals(mapping.SqlColumnName, "CustomerId", StringComparison.OrdinalIgnoreCase) ||
+                                                  string.Equals(mapping.SqlColumnName, "CustomerMasterID", StringComparison.OrdinalIgnoreCase) ||
+                                                  string.Equals(mapping.SqlColumnName, "CustomerMasterId", StringComparison.OrdinalIgnoreCase) ||
+                                                  string.Equals(mapping.SqlColumnName, "EndUserID", StringComparison.OrdinalIgnoreCase) ||
+                                                  string.Equals(mapping.SqlColumnName, "EndUserId", StringComparison.OrdinalIgnoreCase))) ||
+                          (isDesignRecommendation && (string.Equals(mapping.SqlColumnName, "CustomerID", StringComparison.OrdinalIgnoreCase) ||
+                                                     string.Equals(mapping.SqlColumnName, "CustomerId", StringComparison.OrdinalIgnoreCase) ||
+                                                     string.Equals(mapping.SqlColumnName, "CustomerMasterID", StringComparison.OrdinalIgnoreCase) ||
+                                                     string.Equals(mapping.SqlColumnName, "CustomerMasterId", StringComparison.OrdinalIgnoreCase) ||
+                                                     string.Equals(mapping.SqlColumnName, "EndUserID", StringComparison.OrdinalIgnoreCase) ||
+                                                     string.Equals(mapping.SqlColumnName, "EndUserId", StringComparison.OrdinalIgnoreCase)))) &&
                          value != DBNull.Value && value != null )
                     {
-                        var valueKey = value.ToString()?.Trim() ?? string.Empty;
+                        var isCustomerMasterFkColumn =
+                            string.Equals(mapping.SqlColumnName, "CustomerID", StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals(mapping.SqlColumnName, "CustomerId", StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals(mapping.SqlColumnName, "CustomerMasterID", StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals(mapping.SqlColumnName, "CustomerMasterId", StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals(mapping.SqlColumnName, "EndUserID", StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals(mapping.SqlColumnName, "EndUserId", StringComparison.OrdinalIgnoreCase);
 
-                        // Check cache first
-                        if (!customerIdCache.TryGetValue(valueKey, out var resolvedCustomerId))
+                        if (isCustomerMasterFkColumn &&
+                            (IsValueZero(value) ||
+                             (value is int custFkZInt && custFkZInt == 0) ||
+                             (value is long custFkZLong && custFkZLong == 0) ||
+                             (value is short custFkZShort && custFkZShort == 0) ||
+                             (value is decimal custFkZDec && custFkZDec == 0m) ||
+                             (value is double custFkZDouble && custFkZDouble == 0d) ||
+                             (value is float custFkZFloat && custFkZFloat == 0f)))
                         {
-                            // Not in cache, resolve from database
-                            resolvedCustomerId = await ResolveCustomerIdByNameAsync(
-                                connection,
-                                transaction,
-                                value,
-                                cancellationToken);
-
-                            // Cache the result (even if null)
-                            customerIdCache[valueKey] = resolvedCustomerId;
-                        }
-
-                        if (resolvedCustomerId == null)
-                        {
-                            // If Customer doesn't exist, set to NULL instead of skipping row/failing
                             value = DBNull.Value;
                         }
                         else
                         {
-                            value = resolvedCustomerId;
+                            var valueKey = value.ToString()?.Trim() ?? string.Empty;
+
+                            // Check cache first
+                            if (!customerIdCache.TryGetValue(valueKey, out var resolvedCustomerId))
+                            {
+                                // Not in cache, resolve from database
+                                resolvedCustomerId = await ResolveCustomerIdByNameAsync(
+                                    connection,
+                                    transaction,
+                                    value,
+                                    cancellationToken);
+
+                                // Cache the result (even if null)
+                                customerIdCache[valueKey] = resolvedCustomerId;
+                            }
+
+                            if (resolvedCustomerId == null)
+                            {
+                                // If Customer doesn't exist, set to NULL instead of skipping row/failing
+                                value = DBNull.Value;
+                            }
+                            else
+                            {
+                                value = resolvedCustomerId;
+                            }
                         }
                     }
 
@@ -8234,9 +8452,252 @@ public class ExcelMigrationService : IExcelMigrationService
                         value = DBNull.Value;
                     }
 
+                    // MonthlyCashInflow: k__mci_sel_rec_pk -> OldMonthlyCashInflowId; zero -> NULL
+                    if (isMonthlyCashInflow &&
+                        (string.Equals(mapping.ExcelColumnName, "k__mci_sel_rec_pk", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "OldMonthlyCashInflowId", StringComparison.OrdinalIgnoreCase)) &&
+                        value != DBNull.Value && value != null &&
+                        ((value is int mciInt && mciInt == 0) ||
+                         (value is long mciLong && mciLong == 0) ||
+                         (value is short mciShort && mciShort == 0) ||
+                         (value is decimal mciDec && mciDec == 0m) ||
+                         (value is double mciDouble && mciDouble == 0d) ||
+                         (value is float mciFloat && mciFloat == 0f) ||
+                         IsValueZero(value)))
+                    {
+                        value = DBNull.Value;
+                    }
+
+                    // MonthlyCashInflow_MarketingAdvance: ordertransmittalid -> OrderTransmittalID; zero -> NULL
+                    if (isMonthlyCashInflowMarketingAdvance &&
+                        (string.Equals(mapping.ExcelColumnName, "ordertransmittalid", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "OrderTransmittalID", StringComparison.OrdinalIgnoreCase)) &&
+                        value != DBNull.Value && value != null &&
+                        ((value is int maOtInt && maOtInt == 0) ||
+                         (value is long maOtLong && maOtLong == 0) ||
+                         (value is short maOtShort && maOtShort == 0) ||
+                         (value is decimal maOtDec && maOtDec == 0m) ||
+                         (value is double maOtDouble && maOtDouble == 0d) ||
+                         (value is float maOtFloat && maOtFloat == 0f) ||
+                         IsValueZero(value)))
+                    {
+                        value = DBNull.Value;
+                    }
+
+                    // Risks (RisksMapping): ordertransmittalid -> OrderTransmittalId; zero -> NULL
+                    if (isRisks &&
+                        (string.Equals(mapping.ExcelColumnName, "ordertransmittalid", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "OrderTransmittalId", StringComparison.OrdinalIgnoreCase)) &&
+                        value != DBNull.Value && value != null &&
+                        ((value is int riskOtInt && riskOtInt == 0) ||
+                         (value is long riskOtLong && riskOtLong == 0) ||
+                         (value is short riskOtShort && riskOtShort == 0) ||
+                         (value is decimal riskOtDec && riskOtDec == 0m) ||
+                         (value is double riskOtDouble && riskOtDouble == 0d) ||
+                         (value is float riskOtFloat && riskOtFloat == 0f) ||
+                         IsValueZero(value)))
+                    {
+                        value = DBNull.Value;
+                    }
+
+                    // Risks (RisksMapping): k__risk_sel_risk_dpk -> OldRiskId; zero -> NULL
+                    if (isRisks &&
+                        (string.Equals(mapping.ExcelColumnName, "k__risk_sel_risk_dpk", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "OldRiskId", StringComparison.OrdinalIgnoreCase)) &&
+                        value != DBNull.Value && value != null &&
+                        ((value is int riskOldInt && riskOldInt == 0) ||
+                         (value is long riskOldLong && riskOldLong == 0) ||
+                         (value is short riskOldShort && riskOldShort == 0) ||
+                         (value is decimal riskOldDec && riskOldDec == 0m) ||
+                         (value is double riskOldDouble && riskOldDouble == 0d) ||
+                         (value is float riskOldFloat && riskOldFloat == 0f) ||
+                         IsValueZero(value)))
+                    {
+                        value = DBNull.Value;
+                    }
+
+                    // Risk_MitigationPlan (RiskMitigationPlanMapping): record_id -> RiskId; zero -> NULL
+                    if (isRiskMitigationPlan &&
+                        (string.Equals(mapping.ExcelColumnName, "record_id", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "RiskId", StringComparison.OrdinalIgnoreCase)) &&
+                        value != DBNull.Value && value != null &&
+                        ((value is int rmpRiskInt && rmpRiskInt == 0) ||
+                         (value is long rmpRiskLong && rmpRiskLong == 0) ||
+                         (value is short rmpRiskShort && rmpRiskShort == 0) ||
+                         (value is decimal rmpRiskDec && rmpRiskDec == 0m) ||
+                         (value is double rmpRiskDouble && rmpRiskDouble == 0d) ||
+                         (value is float rmpRiskFloat && rmpRiskFloat == 0f) ||
+                         IsValueZero(value)))
+                    {
+                        value = DBNull.Value;
+                    }
+
+                    // PositiveRecall (PositiveRecallMapping): FK-style IDs; zero -> NULL
+                    if (isPositiveRecall &&
+                        (string.Equals(mapping.ExcelColumnName, "project_id", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "ProjectId", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.ExcelColumnName, "customermasterid", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "CustomerMasterId", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.ExcelColumnName, "ordertransmittalid", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "OrderTransmittalID", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "OrderTransmittalId", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.ExcelColumnName, "turbineid", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "TurbineId", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.ExcelColumnName, "contractclearanceid", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "ContractClearanceId", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.ExcelColumnName, "enduserid", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "EndUserID", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "EndUserId", StringComparison.OrdinalIgnoreCase)) &&
+                        value != DBNull.Value && value != null &&
+                        ((value is int prFkInt && prFkInt == 0) ||
+                         (value is long prFkLong && prFkLong == 0) ||
+                         (value is short prFkShort && prFkShort == 0) ||
+                         (value is decimal prFkDec && prFkDec == 0m) ||
+                         (value is double prFkDouble && prFkDouble == 0d) ||
+                         (value is float prFkFloat && prFkFloat == 0f) ||
+                         IsValueZero(value)))
+                    {
+                        value = DBNull.Value;
+                    }
+
+                    // DeviationRequest (DeviationRequestMapping): FK columns incl. OrderTransmittalId; zero -> NULL
+                    if (isDeviationRequest &&
+                        (string.Equals(mapping.ExcelColumnName, "k__dev_insp_bpp", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "InspectionId", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.ExcelColumnName, "k__rcca_ref_bpp", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "RCCAId", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.ExcelColumnName, "k__uot_sold_party_dp", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.ExcelColumnName, "customerid", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "CustomerID", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "CustomerId", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.ExcelColumnName, "customermasterid", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "CustomerMasterID", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "CustomerMasterId", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.ExcelColumnName, "enduserid", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "EndUserID", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "EndUserId", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.ExcelColumnName, "ordertransmittalid", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "OrderTransmittalID", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "OrderTransmittalId", StringComparison.OrdinalIgnoreCase)) &&
+                        value != DBNull.Value && value != null &&
+                        ((value is int devReqFkInt && devReqFkInt == 0) ||
+                         (value is long devReqFkLong && devReqFkLong == 0) ||
+                         (value is short devReqFkShort && devReqFkShort == 0) ||
+                         (value is decimal devReqFkDec && devReqFkDec == 0m) ||
+                         (value is double devReqFkDouble && devReqFkDouble == 0d) ||
+                         (value is float devReqFkFloat && devReqFkFloat == 0f) ||
+                         IsValueZero(value)))
+                    {
+                        value = DBNull.Value;
+                    }
+
+                    // DeviationRequest: RCCAId must exist in bp.RCCA (FK_DeviationRequest_RCCA); missing or invalid -> NULL
+                    if (isDeviationRequest &&
+                        string.Equals(mapping.SqlColumnName, "RCCAId", StringComparison.OrdinalIgnoreCase) &&
+                        value != DBNull.Value && value != null)
+                    {
+                        if (IsValueZero(value) ||
+                            (value is int rccaDrInt && rccaDrInt == 0) ||
+                            (value is long rccaDrLong && rccaDrLong == 0) ||
+                            (value is short rccaDrShort && rccaDrShort == 0) ||
+                            (value is decimal rccaDrDec && rccaDrDec == 0m) ||
+                            (value is double rccaDrDouble && rccaDrDouble == 0d) ||
+                            (value is float rccaDrFloat && rccaDrFloat == 0f))
+                        {
+                            value = DBNull.Value;
+                        }
+                        else
+                        {
+                            var rccaValueKey = value.ToString()?.Trim() ?? string.Empty;
+
+                            if (!rccaFkExistsCache.TryGetValue(rccaValueKey, out var rccaIdExists))
+                            {
+                                var exists = await RecordExistsAsync(connection, transaction, "bp", "RCCA", "RCCAId", rccaValueKey, cancellationToken);
+                                rccaIdExists = exists;
+                                rccaFkExistsCache[rccaValueKey] = rccaIdExists;
+                            }
+
+                            if (!(bool)rccaIdExists!)
+                            {
+                                value = DBNull.Value;
+                            }
+                        }
+                    }
+
+                    // DeviationRequest / DesignRecommendation: InspectionId must exist in bp.Inspection (FK_DR_Inspection / FK to Inspection); missing or invalid -> NULL
+                    if ((isDeviationRequest || isDesignRecommendation) &&
+                        (string.Equals(mapping.SqlColumnName, "InspectionId", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "InspectionID", StringComparison.OrdinalIgnoreCase)) &&
+                        value != DBNull.Value && value != null)
+                    {
+                        if (IsValueZero(value) ||
+                            (value is int inspFkInt && inspFkInt == 0) ||
+                            (value is long inspFkLong && inspFkLong == 0) ||
+                            (value is short inspFkShort && inspFkShort == 0) ||
+                            (value is decimal inspFkDec && inspFkDec == 0m) ||
+                            (value is double inspFkDouble && inspFkDouble == 0d) ||
+                            (value is float inspFkFloat && inspFkFloat == 0f))
+                        {
+                            value = DBNull.Value;
+                        }
+                        else
+                        {
+                            var inspValueKey = value.ToString()?.Trim() ?? string.Empty;
+
+                            if (!inspectionFkExistsCache.TryGetValue(inspValueKey, out var inspectionIdExists))
+                            {
+                                var exists = await RecordExistsAsync(connection, transaction, "bp", "Inspection", "InspectionID", inspValueKey, cancellationToken);
+                                inspectionIdExists = exists;
+                                inspectionFkExistsCache[inspValueKey] = inspectionIdExists;
+                            }
+
+                            if (!(bool)inspectionIdExists!)
+                            {
+                                value = DBNull.Value;
+                            }
+                        }
+                    }
+
+                    // InternalAudit: VendorId must exist in master.VendorMaster (FK_InternalAudit_Vendor); missing or invalid -> NULL
+                    if (isInternalAudit &&
+                        (string.Equals(mapping.SqlColumnName, "VendorId", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.SqlColumnName, "VendorID", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.ExcelColumnName, "k__vendor_select_dp", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(mapping.ExcelColumnName, "vendorid", StringComparison.OrdinalIgnoreCase)) &&
+                        value != DBNull.Value && value != null)
+                    {
+                        if (IsValueZero(value) ||
+                            (value is int vendIaInt && vendIaInt == 0) ||
+                            (value is long vendIaLong && vendIaLong == 0) ||
+                            (value is short vendIaShort && vendIaShort == 0) ||
+                            (value is decimal vendIaDec && vendIaDec == 0m) ||
+                            (value is double vendIaDouble && vendIaDouble == 0d) ||
+                            (value is float vendIaFloat && vendIaFloat == 0f))
+                        {
+                            value = DBNull.Value;
+                        }
+                        else
+                        {
+                            var vendorValueKey = value.ToString()?.Trim() ?? string.Empty;
+
+                            if (!vendorFkExistsCache.TryGetValue(vendorValueKey, out var vendorIdExists))
+                            {
+                                var exists = await RecordExistsAsync(connection, transaction, "master", "VendorMaster", "VendorID", vendorValueKey, cancellationToken);
+                                vendorIdExists = exists;
+                                vendorFkExistsCache[vendorValueKey] = vendorIdExists;
+                            }
+
+                            if (!(bool)vendorIdExists!)
+                            {
+                                value = DBNull.Value;
+                            }
+                        }
+                    }
+
                     // Special handling for OrderTransmittalId in ContractClearance or AdditionalOrderBooking (FK to bp.OrderTransmittal)
+                    // DeviationRequest / DesignRecommendation / PreDispatchInspectionReport: same resolve; zero -> NULL (e.g. FK_PDIR_OrderTransmittal)
                     // If the OrderTransmittal doesn't exist, set to NULL instead of failing the migration
-                    if ((isContractClearance || isAdditionalOrderBooking || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isSpecificationRelease || isOrderReceiptAcknowledgement || isLetterOfCorrespondence || isHandoverProtocol) &&
+                    if ((isContractClearance || isAdditionalOrderBooking || isContractOnHold || isLCReview || isInitialCashPlan || isPaymentSupply || isLiquidatedDamage || isPaymentENC || isSpecificationRelease || isOrderReceiptAcknowledgement || isLetterOfCorrespondence || isHandoverProtocol || isDeviationRequest || isDesignRecommendation || isPreDispatchInspectionReport) &&
                         string.Equals(mapping.SqlColumnName, "OrderTransmittalId", StringComparison.OrdinalIgnoreCase))
                     {
                         if (IsValueZero(value))
