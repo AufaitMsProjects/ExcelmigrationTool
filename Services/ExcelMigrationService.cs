@@ -2717,6 +2717,12 @@ public class ExcelMigrationService : IExcelMigrationService
         { "ia_corrective_action_tak_df", "CorrectiveActionTaken" }
     };
 
+    private static readonly Dictionary<string, string> SQDCMComplaintsMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "id", "SQDCMComplaintsId" },
+        { "k__creator_id", "PrimaveraCreatedId" }
+    };
+
     private static readonly Dictionary<string, string> RCCAMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
             { "id", "RCCAId" },
@@ -4934,6 +4940,11 @@ public class ExcelMigrationService : IExcelMigrationService
             return MatchColumnsForAuditLog(excelData, tableMetadata);
         }
 
+        if (string.Equals(tableName, "SQDCM_Complaints", StringComparison.OrdinalIgnoreCase))
+        {
+            return MatchColumnsForSQDCMComplaints(excelData, tableMetadata);
+        }
+
         if (string.Equals(tableName, "RCCA", StringComparison.OrdinalIgnoreCase))
         {
             return MatchColumnsForRCCA(excelData, tableMetadata);
@@ -6777,6 +6788,11 @@ public class ExcelMigrationService : IExcelMigrationService
     private List<ColumnMapping> MatchColumnsForAuditLog(DataTable excelData, List<ColumnMetadata> tableMetadata)
     {
         return MatchColumnsUsingDictionary(excelData, tableMetadata, AuditLogMapping);
+    }
+
+    private List<ColumnMapping> MatchColumnsForSQDCMComplaints(DataTable excelData, List<ColumnMetadata> tableMetadata)
+    {
+        return MatchColumnsUsingDictionary(excelData, tableMetadata, SQDCMComplaintsMapping);
     }
 
     private List<ColumnMapping> MatchColumnsForRCCA(DataTable excelData, List<ColumnMetadata> tableMetadata)
